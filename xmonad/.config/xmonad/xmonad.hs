@@ -5,7 +5,7 @@ import XMonad.Hooks.EwmhDesktops (ewmh, ewmhFullscreen)
 import XMonad.Hooks.DynamicLog
 import XMonad.Util.Run (spawnPipe, hPutStrLn)
 
--- Importación de módulos locales
+-- Importación de tus módulos locales
 import Variables
 import Layouts
 import Rules
@@ -14,25 +14,35 @@ import Keys
 
 main :: IO ()
 main = do
-    -- Iniciamos las barras y capturamos sus procesos (pipes)
-    xmprocTop    <- spawnPipe "xmobar ~/.config/xmonad/xmobar-top.hs"
-    xmprocBottom <- spawnPipe "xmobar ~/.config/xmonad/xmobar-bottom.hs"
+    -- 1. Rutas corregidas para xmobar según la estructura de tu carpeta
+    xmprocTop    <- spawnPipe "xmobar ~/.config/xmobar/xmobar-top.hs"
+    xmprocBottom <- spawnPipe "xmobar ~/.config/xmobar/xmobar-bottom.hs"
     
     xmonad $ ewmhFullscreen $ ewmh $ docks $ def
-        { terminal           = myTerminal
-        , modMask            = myModMask
-        , workspaces         = myWorkspaces
-        , manageHook         = myManageHook
-        , layoutHook         = myLayout
-        , startupHook        = myStartupHook
-        , borderWidth        = myBorderWidth
+        { terminal           = myTerminal       -- Definido en Variables.hs
+        , modMask            = myModMask        -- Definido en Variables.hs
+        , workspaces         = myWorkspaces     -- Definido en Variables.hs
+        , manageHook         = myManageHook     -- Definido en Rules.hs
+        , layoutHook         = myLayout         -- Definido en Layouts.hs
+        , startupHook        = myStartupHook    -- Definido en Startup.hs
+        , borderWidth        = myBorderWidth    -- Definido en Variables.hs
         , normalBorderColor  = "#282c34"
         , focusedBorderColor = "#c678dd"
-        , logHook            = dynamicLogWithPP xmobarPP
-            { ppOutput = \x -> hPutStrLn xmprocTop x >> hPutStrLn xmprocBottom x
-            , ppCurrent = xmobarColor "#bd93f9" "" . wrap "[" "]"
-            , ppVisible = xmobarColor "#f8f8f2" ""
-            , ppHidden  = xmobarColor "#6272a4" ""
-            , ppTitle   = xmobarColor "#50fa7b" "" . shorten 60
-            }
-        } `additionalKeysP` myKeys
+        
+        -- 2. LogHook optimizado para separar la información entre barras
+        , logHook            = do
+            -- Salida para la barra SUPERIOR (Workspaces y Layout)
+            dynamicLogWithPP xmobarPP
+                { ppOutput  = hPutStrLn xmprocTop
+                , ppCurrent = xmobarColor "#bd93f9" "" . wrap "[" "]"
+                , ppVisible = xmobarColor "#f8f8f2" ""
+                , ppHidden  = xmobarColor "#6272a4" ""
+                , ppTitle   = const ""  -- No mostramos el título arriba para no duplicar
+                }
+            -- Salida para la barra INFERIOR (Título de ventana activa)
+            dynamicLogWithPP xmobarPP
+                { ppOutput  = hPutStrLn xmprocBottom
+                , ppOrder   = \(_:_:t:_) -> [t] -- Solo toma el tercer elemento (el título)
+                , ppTitle   = xmobarColor "#50fa7b" "" . shorten 80
+                }
+        } `additionalKeysP` myKeys -- Definido en Keys.hs
