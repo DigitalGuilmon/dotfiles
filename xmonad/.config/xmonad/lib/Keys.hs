@@ -9,13 +9,22 @@ import XMonad.Layout.MultiToggle.Instances (StdTransformers(NBFULL))
 -- Importación de tus variables y módulos locales
 import Variables (myTerminal, myTheme, myWorkspaces)
 import Scratchpads (myScratchpads)
--- Importamos la función desde el nuevo módulo que crearemos
 import Scripts.Screenshot (screenshot)
+
+-- Importaciones de tus módulos extra y prompts
+import Scripts.GridMenu (gridGoToWindow)
+import Scripts.WindowControls (sinkWindow, sinkAll)
+import Scripts.Prompts (searchGoogle, searchYouTube, searchMan, runShell)
+import Scripts.PowerMenu (powerMenu)
+import Scripts.Monitors (monitorMenu)
+import Scripts.Wallpaper (changeWallpaper) -- Importamos el script de Wallpaper
 
 myKeys :: [(String, X ())]
 myKeys = 
     -- --- SISTEMA Y CONTROL ---
-    [ ("M-q",          spawn "xmonad --recompile && xmonad --restart") -- Recompilar y reiniciar seguro
+    [ ("M-q",          spawn "xmonad --recompile && xmonad --restart") -- Recompilar y reiniciar
+    , ("M-S-q",        powerMenu)                                   -- Menú de Energía (Apagar, Reiniciar...)
+    , ("M-S-m",        monitorMenu)                                 -- Menú de configuración de Monitores
     , ("M-x",          kill)                                        -- Cerrar ventana activa
     , ("M-<Escape>",   withWindowSet $ \s -> mapM_ killWindow (W.allWindows s)) -- Cerrar todas las ventanas
     
@@ -26,10 +35,18 @@ myKeys =
     , ("M-<Tab>",      spawn ("rofi -show window -show-icons -theme " ++ myTheme)) -- Selector de ventanas
     , ("M-s",          namedScratchpadAction myScratchpads "terminal") -- Terminal flotante
     
-    -- --- UTILIDADES (Haskell Script) ---
-    , ("M-p",          screenshot)                                  -- Captura de pantalla (Lógica en Haskell)
+    -- --- UTILIDADES (Haskell Scripts) ---
+    , ("M-p",          screenshot)                                  -- Captura de pantalla
+    , ("M-w",          changeWallpaper)                             -- Cambiar a un fondo de Anime aleatorio
     
-    -- --- GESTIÓN DE VENTANAS (Foco y Layout) ---
+    -- --- BÚSQUEDAS Y MENÚS EXTRA (Prompts) ---
+    , ("M-g",          gridGoToWindow)             -- Lanzar Grid visual de ventanas
+    , ("M-S-g",        searchGoogle)               -- Buscar en Google
+    , ("M-S-y",        searchYouTube)              -- Buscar en YouTube
+    , ("M-S-h",        searchMan)                  -- Buscar manuales de terminal (Man Pages)
+    , ("M-S-r",        runShell)                   -- Ejecutar comando rápido (Shell Prompt)
+    
+    -- --- GESTIÓN DE VENTANAS (Foco, Layout y Flotantes) ---
     , ("M-j",          windows W.focusDown)    -- Mover foco a la siguiente ventana
     , ("M-k",          windows W.focusUp)      -- Mover foco a la ventana anterior
     , ("M-S-j",        windows W.swapDown)     -- Intercambiar posición con la ventana siguiente
@@ -38,6 +55,15 @@ myKeys =
     , ("M-h",          sendMessage Shrink)     -- Encoger área maestra
     , ("M-l",          sendMessage Expand)     -- Expandir área maestra
     , ("M-n",          refresh)                -- Corregir tamaño de ventanas
+    , ("M-t",          sinkWindow)             -- Hundir ventana enfocada (quitar float)
+    , ("M-S-t",        sinkAll)                -- Hundir todas las ventanas flotantes
+    
+    -- --- TECLAS MULTIMEDIA Y BRILLO ---
+    , ("<XF86AudioRaiseVolume>", spawn "wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%+")
+    , ("<XF86AudioLowerVolume>", spawn "wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-")
+    , ("<XF86AudioMute>",        spawn "wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle")
+    , ("<XF86MonBrightnessUp>",  spawn "brightnessctl set +5%")
+    , ("<XF86MonBrightnessDown>",spawn "brightnessctl set 5%-")
     ]
     ++
     -- --- WORKSPACES (Atajos dinámicos) ---

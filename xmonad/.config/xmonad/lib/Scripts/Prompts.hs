@@ -1,27 +1,47 @@
-module Scripts.Prompts where
+module Scripts.Prompts 
+    ( searchGoogle
+    , searchYouTube
+    , searchMan
+    , runShell
+    ) where
 
 import XMonad
 import XMonad.Prompt
-import XMonad.Actions.Search
+import XMonad.Prompt.FuzzyMatch (fuzzyMatch)  -- ¡Añadido!
+import qualified XMonad.Actions.Search as S   -- ¡Corregido! (Era Actions, no Prompt)
+import XMonad.Prompt.Man (manPrompt)
+import XMonad.Prompt.Shell (shellPrompt)
 
--- Configuración visual del prompt para que coincida con tu tema Dracula
-myXPConfig :: XPConfig
-myXPConfig = def 
-    { font = "xft:JetBrainsMono Nerd Font:pixelsize=14"
-    , bgColor           = "#282a36"
-    , fgColor           = "#f8f8f2"
-    , bgHLight          = "#bd93f9"
-    , fgHLight          = "#282a36"
-    , borderColor       = "#6272a4"
+-- Configuración visual unificada para todos tus Prompts (Estética Drácula)
+myPromptConfig :: XPConfig
+myPromptConfig = def
+    { font              = "xft:JetBrainsMono Nerd Font:size=11"
+    , bgColor           = "#282a36" 
+    , fgColor           = "#f8f8f2" 
+    , bgHLight          = "#ff79c6" 
+    , fgHLight          = "#282a36" 
+    , borderColor       = "#50fa7b" 
     , promptBorderWidth = 2
-    , position          = Top
-    , height            = 36
+    , position          = CenteredAt 0.5 0.5 
+    , height            = 50
+    , alwaysHighlight   = True
+    , searchPredicate   = fuzzyMatch 
     }
 
--- Función para buscar en Google
+-- ==========================================
+-- BÚSQUEDAS EN INTERNET
+-- ==========================================
 searchGoogle :: X ()
-searchGoogle = promptSearch myXPConfig google
+searchGoogle = S.promptSearch myPromptConfig S.google
 
--- Función para buscar en YouTube
 searchYouTube :: X ()
-searchYouTube = promptSearch myXPConfig youtube
+searchYouTube = S.promptSearch myPromptConfig S.youtube
+
+-- ==========================================
+-- HERRAMIENTAS DE SISTEMA Y DESARROLLO
+-- ==========================================
+searchMan :: X ()
+searchMan = manPrompt myPromptConfig
+
+runShell :: X ()
+runShell = shellPrompt myPromptConfig
