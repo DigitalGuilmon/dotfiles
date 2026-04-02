@@ -15,4 +15,4 @@ changeWallpaper = spawn "mkdir -p ~/.cache && url=$(curl -s \"https://api.waifu.
 -- Acción para restaurar el fondo al iniciar Xmonad
 -- Intenta cargar la última imagen de anime guardada. Si no hay ninguna, usa tu wall.png de Descargas.
 restoreWallpaper :: X ()
-restoreWallpaper = spawn "feh --bg-fill ~/.cache/wallpaper.jpg || feh --bg-fill ~/Descargas/wall.png"
+restoreWallpaper = spawn "feh --bg-fill ~/.cache/wallpaper.jpg || feh --bg-fill ~/Downloads/a.jpg"
