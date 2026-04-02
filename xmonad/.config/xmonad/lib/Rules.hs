@@ -7,21 +7,22 @@ import XMonad.Util.NamedScratchpad (namedScratchpadManageHook)
 import qualified XMonad.StackSet as W
 
 import Scratchpads (myScratchpads)
+import Variables (myWorkspaces) -- Se importa la variable centralizada
 
 myManageHook :: ManageHook
 myManageHook = composeAll
-    [ className =? "jetbrains-idea"     --> doShift "1:dev"
-    , className =? "Code"               --> doShift "1:dev"
-    , className =? "Brave-browser"      --> doShift "2:web"
-    , className =? "firefox"            --> doShift "2:web"
-    , className =? "DBeaver"            --> doShift "4:db"
-    , className =? "Postman"            --> doShift "5:api"
-    , className =? "Insomnia"           --> doShift "5:api"
-    , className =? "discord"            --> doShift "6:chat"
-    , className =? "TelegramDesktop"    --> doShift "6:chat"
-    , className =? "Steam"              --> doShift "7:media"
-    , className =? "Spotify"            --> doShift "7:media"
-    , className =? "VirtualBox Manager" --> doShift "9:vm"
+    [ className =? "jetbrains-idea"     --> doShift (myWorkspaces !! 0) -- 1:dev
+    , className =? "Code"               --> doShift (myWorkspaces !! 0)
+    , className =? "Brave-browser"      --> doShift (myWorkspaces !! 1) -- 2:web
+    , className =? "firefox"            --> doShift (myWorkspaces !! 1)
+    , className =? "DBeaver"            --> doShift (myWorkspaces !! 3) -- 4:db
+    , className =? "Postman"            --> doShift (myWorkspaces !! 4) -- 5:api
+    , className =? "Insomnia"           --> doShift (myWorkspaces !! 4)
+    , className =? "discord"            --> doShift (myWorkspaces !! 5) -- 6:chat
+    , className =? "TelegramDesktop"    --> doShift (myWorkspaces !! 5)
+    , className =? "Steam"              --> doShift (myWorkspaces !! 6) -- 7:media
+    , className =? "Spotify"            --> doShift (myWorkspaces !! 6)
+    , className =? "VirtualBox Manager" --> doShift (myWorkspaces !! 8) -- 9:vm
     , className =? "pavucontrol"        --> doCenterFloat
     , className =? "Lxappearance"       --> doCenterFloat
     , isFullscreen                      --> doFullFloat

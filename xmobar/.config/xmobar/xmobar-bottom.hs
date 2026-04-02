@@ -14,8 +14,8 @@ Config {
     
     -- Módulos
     commands = [
-        -- Ejecuta tu script de cava
-        Run CommandReader "~/.config/polybar/scripts/cava.sh" "cava",
+        -- Ejecuta el script de cava desde una ruta agnóstica a polybar
+        Run CommandReader "~/.config/xmobar/scripts/cava.sh" "cava",
         
         -- Lector para recibir los workspaces desde XMonad
         Run UnsafeStdinReader
@@ -25,6 +25,5 @@ Config {
     alignSep = "}{",
     
     -- Plantilla: Izquierda } Centro { Derecha
-    -- Workspaces izquierda, cava al centro, derecha vacío
     template = " %UnsafeStdinReader% } <fc=#bd93f9>%cava%</fc> { "
 }

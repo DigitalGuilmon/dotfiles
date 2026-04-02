@@ -15,7 +15,7 @@ import Scripts.Screenshot (screenshot)
 myKeys :: [(String, X ())]
 myKeys = 
     -- --- SISTEMA Y CONTROL ---
-    [ ("M-q",          spawn "xmonad --recompile; xmonad --restart") -- Recompilar y reiniciar
+    [ ("M-q",          spawn "xmonad --recompile && xmonad --restart") -- Recompilar y reiniciar seguro
     , ("M-x",          kill)                                        -- Cerrar ventana activa
     , ("M-<Escape>",   withWindowSet $ \s -> mapM_ killWindow (W.allWindows s)) -- Cerrar todas las ventanas
     

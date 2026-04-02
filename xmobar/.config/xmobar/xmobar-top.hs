@@ -14,9 +14,8 @@ Config {
     
     -- Módulos optimizados
     commands = [ 
-        -- RED: Uso del monitor nativo en lugar de scripts de Bash para ahorrar CPU
-        -- Nota: Cambia "enp3s0" por tu interfaz real (ej. wlan0) si es necesario
-        Run Network "enp3s0" ["-t", "<fc=#ff79c6>󰤨 </fc><rx> KB/s", "-L", "10", "-H", "100", "--normal", "#f1fa8c", "--high", "#ff5555"] 20,
+        -- RED: DynNetwork detecta automáticamente la interfaz activa
+        Run DynNetwork ["-t", "<fc=#ff79c6>󰤨 </fc><rx> KB/s", "-L", "10", "-H", "100", "--normal", "#f1fa8c", "--high", "#ff5555"] 20,
 
         -- CPU
         Run Cpu ["-t", "<fc=#bd93f9> CPU</fc> <total>%", "-H", "50", "-h", "#ff5555"] 20,
@@ -46,9 +45,6 @@ Config {
     sepChar = "%",
     alignSep = "}{",
     
-    -- Plantilla mejorada:
-    -- IZQUIERDA: Espacios de trabajo (UnsafeStdinReader)
-    -- CENTRO: Actualizaciones y Sistema
-    -- DERECHA: Sensores, Red y Fecha
-    template = " %UnsafeStdinReader% } <fc=#ff5555>󰚰</fc> %updates%  <fc=#6272a4>|</fc>  %cpu%  <fc=#6272a4>|</fc>  %coretemp% { <fc=#ff79c6>󰤨 </fc>%enp3s0%  <fc=#6272a4>|</fc>  %memory%  <fc=#6272a4>|</fc>  <fc=#50fa7b>󰕾</fc> %vol%%  <fc=#6272a4>|</fc>  %date% "
+    -- Plantilla mejorada (Usando %dynnetwork%)
+    template = " %UnsafeStdinReader% } <fc=#ff5555>󰚰</fc> %updates%  <fc=#6272a4>|</fc>  %cpu%  <fc=#6272a4>|</fc>  %coretemp% { <fc=#ff79c6>󰤨 </fc>%dynnetwork%  <fc=#6272a4>|</fc>  %memory%  <fc=#6272a4>|</fc>  <fc=#50fa7b>󰕾</fc> %vol%%  <fc=#6272a4>|</fc>  %date% "
 }
