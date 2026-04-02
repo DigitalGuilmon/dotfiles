@@ -45,6 +45,6 @@ Config {
     sepChar = "%",
     alignSep = "}{",
     
-    -- Plantilla mejorada (Usando %dynnetwork%)
-    template = " %UnsafeStdinReader% } <fc=#ff5555>󰚰</fc> %updates%  <fc=#6272a4>|</fc>  %cpu%  <fc=#6272a4>|</fc>  %coretemp% { <fc=#ff79c6>󰤨 </fc>%dynnetwork%  <fc=#6272a4>|</fc>  %memory%  <fc=#6272a4>|</fc>  <fc=#50fa7b>󰕾</fc> %vol%%  <fc=#6272a4>|</fc>  %date% "
+    -- Plantilla mejorada (Usando %dynnetwork% y corrigiendo el parseo del porcentaje de volumen)
+    template = " %UnsafeStdinReader% } <fc=#ff5555>󰚰</fc> %updates%  <fc=#6272a4>|</fc>  %cpu%  <fc=#6272a4>|</fc>  %coretemp% { <fc=#ff79c6>󰤨 </fc>%dynnetwork%  <fc=#6272a4>|</fc>  %memory%  <fc=#6272a4>|</fc>  <fc=#50fa7b>󰕾</fc> %vol%<fc=#f8f8f2>%</fc>  <fc=#6272a4>|</fc>  %date% "
 }

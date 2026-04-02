@@ -42,7 +42,9 @@ main = do
             -- Salida para la barra INFERIOR (Título de ventana activa)
             dynamicLogWithPP xmobarPP
                 { ppOutput  = hPutStrLn xmprocBottom
-                , ppOrder   = \(_:_:t:_) -> [t] -- Solo toma el tercer elemento (el título)
+                , ppOrder   = \xs -> case xs of
+                    (_:_:t:_) -> [t]
+                    _         -> [] -- Patrón seguro para evitar que XMonad crashee
                 , ppTitle   = xmobarColor "#50fa7b" "" . shorten 80
                 }
         } `additionalKeysP` myKeys -- Definido en Keys.hs

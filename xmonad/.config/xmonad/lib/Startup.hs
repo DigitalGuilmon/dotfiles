@@ -11,8 +11,8 @@ myStartupHook = do
     
     -- 2. Composición y Fondo de pantalla
     spawnOnce "picom --config ~/.config/picom/picom.conf &"
-    spawnOnce "feh --bg-fill ~/Descargas/wall.png"
-
+    
+    -- Eliminamos la llamada directa a feh para evitar la condición de carrera
     restoreWallpaper 
     
     -- 3. Bandeja del sistema (Systray)
