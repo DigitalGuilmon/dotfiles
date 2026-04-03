@@ -30,18 +30,14 @@ main = do
         , focusedBorderColor = "#c678dd"
         
         , logHook            = do
-            -- Barra SUPERIOR: [Layout] }{ [Título]
+            -- Barra SUPERIOR: Solo enviamos el Layout
             dynamicLogWithPP xmobarPP
                 { ppOutput  = hPutStrLn xmprocTop
-                -- Usamos el separador de Xmobar para dividir Layout y Título
-                , ppSep     = "}{" 
-                -- ppOrder determina el orden: [Layout, Título]. 
-                -- Al unirse con "}{", Xmobar ve "Layout}{Título"
-                , ppOrder   = \(ws:l:t:_) -> [l, t] 
-                , ppTitle   = xmobarColor "#50fa7b" "" . shorten 80
+                , ppSep     = "" 
+                , ppOrder   = \(ws:l:t:_) -> [l] 
                 , ppLayout  = xmobarColor "#f1fa8c" ""
                 }
-            -- Barra INFERIOR: [Workspaces]
+            -- Barra INFERIOR: Workspaces
             dynamicLogWithPP xmobarPP
                 { ppOutput  = hPutStrLn xmprocBottom
                 , ppOrder   = \(ws:l:t:_) -> [ws]
