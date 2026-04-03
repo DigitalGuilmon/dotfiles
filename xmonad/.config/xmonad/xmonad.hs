@@ -33,7 +33,11 @@ main = do
             -- Barra SUPERIOR: [Layout] }{ [Título]
             dynamicLogWithPP xmobarPP
                 { ppOutput  = hPutStrLn xmprocTop
-                , ppOrder   = \(ws:l:t:_) -> [l ++ " }{ " ++ t] 
+                -- Usamos el separador de Xmobar para dividir Layout y Título
+                , ppSep     = "}{" 
+                -- ppOrder determina el orden: [Layout, Título]. 
+                -- Al unirse con "}{", Xmobar ve "Layout}{Título"
+                , ppOrder   = \(ws:l:t:_) -> [l, t] 
                 , ppTitle   = xmobarColor "#50fa7b" "" . shorten 80
                 , ppLayout  = xmobarColor "#f1fa8c" ""
                 }
@@ -41,7 +45,8 @@ main = do
             dynamicLogWithPP xmobarPP
                 { ppOutput  = hPutStrLn xmprocBottom
                 , ppOrder   = \(ws:l:t:_) -> [ws]
-                , ppCurrent = xmobarColor "#bd93f9" "" . wrap "[" "]"
+                , ppWsSep   = "    "
+                , ppCurrent = xmobarColor "#bd93f9" "" . wrap "[ " " ]"
                 , ppVisible = xmobarColor "#f8f8f2" ""
                 , ppHidden  = xmobarColor "#6272a4" ""
                 }
