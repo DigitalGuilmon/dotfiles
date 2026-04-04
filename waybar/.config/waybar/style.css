@@ -8,12 +8,24 @@ window#waybar {
     background: transparent; /* Fondo de la barra transparente para efecto isla */
 }
 
+/* 🌈 Animación para el borde RGB que rota suavemente los colores */
+@keyframes rgb-border {
+    0%   { border-color: #c678dd; } /* Púrpura (tu color actual) */
+    20%  { border-color: #61afef; } /* Azul */
+    40%  { border-color: #98c379; } /* Verde (tu color secundario de Hyprland) */
+    60%  { border-color: #e5c07b; } /* Amarillo */
+    80%  { border-color: #e06c75; } /* Rojo */
+    100% { border-color: #c678dd; } /* Regresa al púrpura */
+}
+
 .modules-left, .modules-center, .modules-right {
     background: #1e1e2e;
     border: 2px solid #c678dd;
     border-radius: 12px;
     padding: 2px 10px;
     margin: 0 5px;
+    /* Aplica la animación: 8 segundos de duración, velocidad lineal, loop infinito */
+    animation: rgb-border 8s linear infinite;
 }
 
 #workspaces button {
@@ -23,6 +35,8 @@ window#waybar {
 
 #workspaces button.active {
     color: #c678dd;
+    /* Opcional: También puedes descomentar la siguiente línea para que el texto del workspace también cambie de color */
+    /* animation: rgb-border 8s linear infinite; */
 }
 
 #clock, #cpu, #memory, #pulseaudio, #tray {
