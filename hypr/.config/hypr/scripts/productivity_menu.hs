@@ -13,7 +13,6 @@ import Data.Time (getCurrentTime, formatTime, defaultTimeLocale)
 iconClip    = "\xf014c"
 iconProject = "\xf14de"
 iconEmoji   = "\xf0785"
-iconCalc    = "\xf0a9a"
 iconNote    = "\xf044"  
 iconWeb     = "\xf0ac"  
 iconTimer   = "\xf017"  
@@ -22,20 +21,16 @@ iconBack    = "\xf006e"
 -- ==========================================
 -- SISTEMA DE NOTIFICACIONES SEGURO (UX & Anti-Inyección)
 -- ==========================================
--- Al usar spawnProcess, evitamos la terminal. Puedes usar comillas simples, 
--- dobles o símbolos raros en tus notas/cálculos sin que el script crashee.
 notify :: String -> String -> String -> IO ()
 notify urgency title message = 
-    -- ¡CORRECCIÓN APLICADA AQUÍ! El 'void' ahora está dentro del catch.
     catch (void $ spawnProcess "notify-send" ["-u", urgency, "-a", "Hyprland Menu", title, message]) handleErr
   where
     handleErr :: IOException -> IO ()
-    handleErr _ = return () -- Falla silenciosa si no existe notify-send
+    handleErr _ = return () 
 
 -- ==========================================
 -- RUTAS DINÁMICAS
 -- ==========================================
-
 getThemePath :: IO String
 getThemePath = do
     home <- getHomeDirectory
@@ -44,7 +39,6 @@ getThemePath = do
 -- ==========================================
 -- MOTOR CORE
 -- ==========================================
-
 type MenuOption = (String, IO ())
 
 runMenu :: String -> [MenuOption] -> IO ()
@@ -58,7 +52,6 @@ runMenu prompt options = do
 -- ==========================================
 -- MENÚ PRINCIPAL
 -- ==========================================
-
 main :: IO ()
 main = mainMenu
 
@@ -69,7 +62,6 @@ mainMenu = runMenu "Productividad"
     , (iconTimer   ++ " Temporizadores",   timerMenu)
     , (iconWeb     ++ " Búsqueda Web",     webSearchMenu)
     , (iconClip    ++ " Portapapeles",     clipboardMenu)
-    , (iconCalc    ++ " Calculadora",      calcMenu "")
     , (iconEmoji   ++ " Emojis",           emojiMenu)
     ]
 
@@ -89,21 +81,8 @@ emojiMenu = do
     safeSpawn $ "rofi -show emoji -theme " ++ theme
     exitSuccess
 
-calcMenu :: String -> IO ()
-calcMenu lastResult = do
-    let promptText = if null lastResult then "Calculadora (ej: 2+2)" else "Resultado: " ++ lastResult
-    input <- rofi promptText ""
-    unless (null input) $ do
-        result <- safeReadProcess "bc" ["-l"] (input ++ "\n")
-        let cleanResult = if null result then "Error de sintaxis" else init result 
-        
-        -- Notificación limpia y segura
-        notify "normal" "Calculadora" (input ++ " = " ++ cleanResult)
-        calcMenu cleanResult
-    exitSuccess
-
 -- ==========================================
--- 1. NOTAS RÁPIDAS (Auto-reparación y Vault)
+-- 1. NOTAS RÁPIDAS
 -- ==========================================
 notesMenu :: IO ()
 notesMenu = do
@@ -113,7 +92,6 @@ notesMenu = do
         let vaultDir = home ++ "/dev/vault/notes"
         let inboxPath = vaultDir ++ "/Inbox.md"
         
-        -- MAGIA UX: Si el directorio no existe, lo creamos automáticamente recursivamente (mkdir -p)
         createDirectoryIfMissing True vaultDir
         
         now <- getCurrentTime
@@ -135,7 +113,6 @@ webSearchMenu = do
     query <- rofi "Buscar en Web (DuckDuckGo)" ""
     unless (null query) $ do
         let urlQuery = map (\c -> if c == ' ' then '+' else c) query
-        -- spawnProcess evita problemas con caracteres especiales en la búsqueda
         catch (void $ spawnProcess "xdg-open" ["https://duckduckgo.com/?q=" ++ urlQuery]) 
               (\e -> let _ = e :: IOException in notify "critical" "Error" "No se pudo abrir el navegador")
     exitSuccess
@@ -147,20 +124,19 @@ timerMenu :: IO ()
 timerMenu = runMenu "Temporizador"
     [ ("25 Minutos (Modo Enfoque)", startTimer 25)
     , ("15 Minutos (Breve)",        startTimer 15)
-    , ("05 Minutos (Descanso)",     startTimer 5)
-    , (iconBack ++ " Volver",       mainMenu)
+    , ("05 Minutos (Descanso)",      startTimer 5)
+    , (iconBack ++ " Volver",        mainMenu)
     ]
 
 startTimer :: Int -> IO ()
 startTimer mins = do
     let seconds = mins * 60
     notify "normal" "Temporizador Iniciado" ("Te avisaré en " ++ show mins ++ " minutos.")
-    -- Script asíncrono para la notificación final
     safeSpawn $ "bash -c 'sleep " ++ show seconds ++ " && notify-send -u critical -a Pomodoro \"¡Tiempo Terminado!\" \"Han pasado " ++ show mins ++ " minutos.\"' &"
     exitSuccess
 
 -- ==========================================
--- 4. PROYECTOS (Manejo de Errores Avanzado)
+-- 4. PROYECTOS
 -- ==========================================
 projectsMenu :: IO ()
 projectsMenu = do

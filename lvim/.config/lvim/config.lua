@@ -2,6 +2,11 @@
 -- =================================================================
 -- 🚀 LUNARVIM 2026 - M4 ULTRA-OPTIMIZED (FULL STACK + AI + OBSIDIAN)
 -- =================================================================
+-- Silenciar avisos de funciones obsoletas (Deprecation warnings)
+-- Esto evitará que los popups de advertencia aparezcan al iniciar
+
+-- Opcional: También puedes silenciar avisos específicos de la API si los anteriores persisten
+vim.g.deprecation_warnings = false
 
 -- 0. OPTIMIZACIÓN DE ARRANQUE
 if vim.loader then vim.loader.enable() end
