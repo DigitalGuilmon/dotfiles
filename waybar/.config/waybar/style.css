@@ -1,44 +1,31 @@
-/* Definición de la animación de colores */
-@keyframes rgb-border {
-  0% {
-    border-image-source: linear-gradient(45deg, #c678dd, #98c379);
-  }
-  50% {
-    border-image-source: linear-gradient(45deg, #98c379, #82aaff);
-  }
-  100% {
-    border-image-source: linear-gradient(45deg, #c678dd, #98c379);
-  }
+* {
+    font-family: "JetBrainsMono Nerd Font";
+    font-size: 13px;
+    font-weight: bold;
 }
 
-/* Estilo para los espacios de trabajo activos */
+window#waybar {
+    background: transparent; /* Fondo de la barra transparente para efecto isla */
+}
+
+.modules-left, .modules-center, .modules-right {
+    background: #1e1e2e;
+    border: 2px solid #c678dd;
+    border-radius: 12px;
+    padding: 2px 10px;
+    margin: 0 5px;
+}
+
+#workspaces button {
+    padding: 0 5px;
+    color: #f8f8f2;
+}
+
 #workspaces button.active {
-  background-color: rgba(49, 50, 68, 0.8);
-  color: #cdd6f4;
-  border: 2px solid;
-  border-image-slice: 1;
-  border-image-source: linear-gradient(45deg, #c678dd, #98c379);
-  animation: rgb-border 3s linear infinite;
-  border-radius: 10px;
+    color: #c678dd;
 }
 
-/* Todos los módulos de información con RGB */
-#cpu, 
-#memory, 
-#disk, 
-#network, 
-#language, 
-#window, 
-#clock, 
-#tray, 
-#custom-updates, 
-#custom-cava {
-  background-color: rgba(30, 30, 46, 0.8);
-  color: #cdd6f4;
-  padding: 0 10px;
-  margin: 4px 4px;
-  border: 2px solid;
-  border-image-slice: 1;
-  border-image-source: linear-gradient(45deg, #c678dd, #98c379);
-  animation: rgb-border 3s linear infinite;
+#clock, #cpu, #memory, #pulseaudio, #tray {
+    padding: 0 10px;
+    color: #f8f8f2;
 }

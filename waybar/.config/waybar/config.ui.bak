@@ -1,0 +1,43 @@
+[
+    {
+        "layer": "top",
+        "position": "top",
+        "height": 24,
+        "modules-left": ["hyprland/language", "cpu", "memory"],
+        "modules-center": ["hyprland/window"],
+        "modules-right": ["network", "disk", "custom/updates", "clock"],
+
+        "cpu": { "format": "󰒼 CPU {usage}%" },
+        "memory": { "format": "󰍛 RAM {percentage}%" },
+        "disk": { "format": "󰋊 {free}", "path": "/" },
+        "network": { "format": "󰤨 {bandwidthDownBytes}" },
+        "custom/updates": {
+            "exec": "checkupdates | wc -l",
+            "interval": 3600,
+            "format": "󰚰 {}"
+        },
+        "clock": { "format": " {:%d %b - %H:%M}" }
+    },
+    {
+        "layer": "top",
+        "position": "bottom",
+        "height": 24,
+        "modules-left": ["hyprland/workspaces"],
+        "modules-center": ["custom/cava"],
+        "modules-right": ["tray"],
+        "hyprland/workspaces": {
+            "format": "{name}: {icon}",
+            "format-icons": {
+                "1": "λ_logic",
+                "2": "🌐_web",
+                "3": "🐚_term",
+                "4": "📝_spec",
+                "5": "⚙️_smt",
+                "6": "💬_chat",
+                "7": "📚_docs",
+                "8": "📊_sys",
+                "9": "🧪_test"
+            }
+        }
+    }
+]

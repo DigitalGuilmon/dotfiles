@@ -1,43 +1,47 @@
-[
-    {
-        "layer": "top",
-        "position": "top",
-        "height": 24,
-        "modules-left": ["hyprland/language", "cpu", "memory"],
-        "modules-center": ["hyprland/window"],
-        "modules-right": ["network", "disk", "custom/updates", "clock"],
+{
+    "layer": "top",
+    "position": "top",
+    "mod": "dock",
+    "exclusive": true,
+    "passthrough": false,
+    "gtk-layer-shell": true,
+    "height": 40,
+    "margin-top": 10,
+    "margin-left": 15,
+    "margin-right": 15,
 
-        "cpu": { "format": "󰒼 CPU {usage}%" },
-        "memory": { "format": "󰍛 RAM {percentage}%" },
-        "disk": { "format": "󰋊 {free}", "path": "/" },
-        "network": { "format": "󰤨 {bandwidthDownBytes}" },
-        "custom/updates": {
-            "exec": "checkupdates | wc -l",
-            "interval": 3600,
-            "format": "󰚰 {}"
-        },
-        "clock": { "format": " {:%d %b - %H:%M}" }
-    },
-    {
-        "layer": "top",
-        "position": "bottom",
-        "height": 24,
-        "modules-left": ["hyprland/workspaces"],
-        "modules-center": ["custom/cava"],
-        "modules-right": ["tray"],
-        "hyprland/workspaces": {
-            "format": "{name}: {icon}",
-            "format-icons": {
-                "1": "λ_logic",
-                "2": "🌐_web",
-                "3": "🐚_term",
-                "4": "📝_spec",
-                "5": "⚙️_smt",
-                "6": "💬_chat",
-                "7": "📚_docs",
-                "8": "📊_sys",
-                "9": "🧪_test"
-            }
+    "modules-left": ["hyprland/workspaces"],
+    "modules-center": ["clock"],
+    "modules-right": ["cpu", "memory", "pulseaudio", "tray"],
+
+    "hyprland/workspaces": {
+        "disable-scroll": true,
+        "all-outputs": true,
+        "on-click": "activate",
+        "format": "{icon}",
+        "format-icons": {
+            "1": "󰈹",
+            "2": "",
+            "3": "💬",
+            "4": "󰓓",
+            "5": "🎵",
+            "urgent": "",
+            "active": "",
+            "default": ""
         }
+    },
+
+    "clock": {
+        "format": "󰥔 {:%H:%M}",
+        "tooltip-format": "<big>{:%Y %B}</big>\n<tt><small>{calendar}</small></tt>"
+    },
+
+    "cpu": { "format": " {usage}%" },
+    "memory": { "format": " {percentage}%" },
+    "pulseaudio": {
+        "format": "{icon} {volume}%",
+        "format-muted": "󰝟",
+        "format-icons": { "default": ["󰕿", "󰖀", "󰕾"] },
+        "on-click": "pavucontrol"
     }
-]
+}

@@ -13,13 +13,3 @@ windowrulev2 = workspace 9, class:^(VirtualBox Manager)$
 # Flotación
 windowrulev2 = float, class:^(pavucontrol|blueman-manager|nm-connection-editor)$
 windowrulev2 = float, title:^(Confirmar|Archivos)$
-
-# --- Reglas de Capa para Efectos de Cristal ---
-layerrule = blur, waybar
-layerrule = ignorezero, waybar
-layerrule = blur, rofi
-layerrule = ignorealpha 0.5, rofi
-layerrule = blur, swaync-control-center
-layerrule = blur, swaync-notification-window
-layerrule = ignorezero, swaync-control-center
-layerrule = ignorezero, swaync-notification-window

@@ -11,7 +11,3 @@ env = XDG_SESSION_TYPE,wayland
 env = XDG_SESSION_DESKTOP,Hyprland
 env = QT_QPA_PLATFORM,wayland;xcb
 env = GDK_BACKEND,wayland,x11
-
-# --- Configuración de Cursor ---
-env = HYPRCURSOR_THEME,Rose-Pine
-env = HYPRCURSOR_SIZE,24
