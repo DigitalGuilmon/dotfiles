@@ -1,75 +1,218 @@
 #!/usr/bin/env runhaskell
 {-# LANGUAGE OverloadedStrings #-}
 
-import System.Process (readProcess, spawnCommand, callCommand)
-import System.Exit (exitSuccess)
-import Data.List (isInfixOf)
-import Control.Monad (unless)
-
--- Configuración estética
-theme = "~/.config/rofi/themes/modern.rasi"
+import System.Process (readProcessWithExitCode, spawnCommand, spawnProcess)
+import System.Exit (exitSuccess, ExitCode(..))
+import Control.Monad (unless, void)
+import System.Directory (getHomeDirectory, doesDirectoryExist, createDirectoryIfMissing)
+import Control.Exception (catch, IOException)
+import Data.List (sort)
+import Data.Time (getCurrentTime, formatTime, defaultTimeLocale)
 
 -- Iconos (Nerd Fonts)
-iconClip    = "󰅌"
-iconProject = "󱓞"
-iconEmoji   = "󰞅"
-iconCalc    = "󰪚"
-iconBack    = "󰁮"
+iconClip    = "\xf014c"
+iconProject = "\xf14de"
+iconEmoji   = "\xf0785"
+iconCalc    = "\xf0a9a"
+iconNote    = "\xf044"  
+iconWeb     = "\xf0ac"  
+iconTimer   = "\xf017"  
+iconBack    = "\xf006e"
+
+-- ==========================================
+-- SISTEMA DE NOTIFICACIONES SEGURO (UX & Anti-Inyección)
+-- ==========================================
+-- Al usar spawnProcess, evitamos la terminal. Puedes usar comillas simples, 
+-- dobles o símbolos raros en tus notas/cálculos sin que el script crashee.
+notify :: String -> String -> String -> IO ()
+notify urgency title message = 
+    -- ¡CORRECCIÓN APLICADA AQUÍ! El 'void' ahora está dentro del catch.
+    catch (void $ spawnProcess "notify-send" ["-u", urgency, "-a", "Hyprland Menu", title, message]) handleErr
+  where
+    handleErr :: IOException -> IO ()
+    handleErr _ = return () -- Falla silenciosa si no existe notify-send
+
+-- ==========================================
+-- RUTAS DINÁMICAS
+-- ==========================================
+
+getThemePath :: IO String
+getThemePath = do
+    home <- getHomeDirectory
+    return $ home ++ "/dotfiles/rofi/.config/rofi/themes/modern.rasi"
+
+-- ==========================================
+-- MOTOR CORE
+-- ==========================================
+
+type MenuOption = (String, IO ())
+
+runMenu :: String -> [MenuOption] -> IO ()
+runMenu prompt options = do
+    let optsStr = unlines $ map fst options
+    selection <- rofi prompt optsStr
+    case lookup selection options of
+        Just action -> action
+        Nothing     -> exitSuccess 
+
+-- ==========================================
+-- MENÚ PRINCIPAL
+-- ==========================================
 
 main :: IO ()
 main = mainMenu
 
 mainMenu :: IO ()
-mainMenu = do
-    let options = iconClip    ++ " Portapapeles\n" ++ 
-                  iconProject ++ " Proyectos\n" ++ 
-                  iconEmoji   ++ " Emojis\n" ++ 
-                  iconCalc    ++ " Calculadora"
-    selection <- rofi "Productividad" options
-    case selection of
-        _ | "Portapapeles" `isInfixOf` selection -> clipboardMenu
-        _ | "Proyectos"    `isInfixOf` selection -> projectsMenu
-        _ | "Emojis"       `isInfixOf` selection -> emojiMenu
-        _ | "Calculadora"  `isInfixOf` selection -> calcMenu
-        _ -> exitSuccess
+mainMenu = runMenu "Productividad"
+    [ (iconProject ++ " Proyectos (dev)",  projectsMenu)
+    , (iconNote    ++ " Notas Rápidas",    notesMenu)
+    , (iconTimer   ++ " Temporizadores",   timerMenu)
+    , (iconWeb     ++ " Búsqueda Web",     webSearchMenu)
+    , (iconClip    ++ " Portapapeles",     clipboardMenu)
+    , (iconCalc    ++ " Calculadora",      calcMenu "")
+    , (iconEmoji   ++ " Emojis",           emojiMenu)
+    ]
+
+-- ==========================================
+-- ACCIONES
+-- ==========================================
 
 clipboardMenu :: IO ()
 clipboardMenu = do
-    -- Requiere cliphist
-    spawnCommand "cliphist list | rofi -dmenu -p 'Portapapeles' -theme ~/.config/rofi/themes/modern.rasi | cliphist decode | wl-copy"
+    theme <- getThemePath
+    safeSpawn $ "cliphist list | rofi -dmenu -p 'Portapapeles' -theme " ++ theme ++ " | cliphist decode | wl-copy"
     exitSuccess
-
-projectsMenu :: IO ()
-projectsMenu = do
-    -- Busca carpetas en ~/Projects (ajusta tu ruta si es necesario)
-    projects <- readProcess "find" ["/home/" ++ "elsadeveloper" ++ "/Projects", "-maxdepth", "2", "-type", "d", "-printf", "%P\n"] ""
-    selection <- rofi "Abrir Proyecto" (projects ++ iconBack ++ " Volver")
-    unless (null selection || "Volver" `isInfixOf` selection) $ do
-        -- Abre Ghostty y LunarVim en esa ruta
-        spawnCommand $ "ghostty --working-directory=~/Projects/" ++ selection ++ " -e lvim"
-    if "Volver" `isInfixOf` selection then mainMenu else exitSuccess
 
 emojiMenu :: IO ()
 emojiMenu = do
-    -- Requiere un archivo simple de emojis o usa un comando directo
-    spawnCommand "rofi -show emoji -theme ~/.config/rofi/themes/modern.rasi"
+    theme <- getThemePath
+    safeSpawn $ "rofi -show emoji -theme " ++ theme
     exitSuccess
 
-calcMenu :: IO ()
-calcMenu = do
-    input <- rofi "Calculadora (ej: 2+2)" ""
+calcMenu :: String -> IO ()
+calcMenu lastResult = do
+    let promptText = if null lastResult then "Calculadora (ej: 2+2)" else "Resultado: " ++ lastResult
+    input <- rofi promptText ""
     unless (null input) $ do
-        result <- readProcess "bc" ["-l"] <<< input
-        spawnCommand $ "notify-send 'Resultado' '" ++ result ++ "'"
-        calcMenu -- Re-abrir para más cálculos
+        result <- safeReadProcess "bc" ["-l"] (input ++ "\n")
+        let cleanResult = if null result then "Error de sintaxis" else init result 
+        
+        -- Notificación limpia y segura
+        notify "normal" "Calculadora" (input ++ " = " ++ cleanResult)
+        calcMenu cleanResult
     exitSuccess
 
--- Función auxiliar para rofi
+-- ==========================================
+-- 1. NOTAS RÁPIDAS (Auto-reparación y Vault)
+-- ==========================================
+notesMenu :: IO ()
+notesMenu = do
+    input <- rofi "Añadir al Inbox (Vault)" ""
+    unless (null input) $ do
+        home <- getHomeDirectory
+        let vaultDir = home ++ "/dev/vault/notes"
+        let inboxPath = vaultDir ++ "/Inbox.md"
+        
+        -- MAGIA UX: Si el directorio no existe, lo creamos automáticamente recursivamente (mkdir -p)
+        createDirectoryIfMissing True vaultDir
+        
+        now <- getCurrentTime
+        let timestamp = formatTime defaultTimeLocale "%Y-%m-%d %H:%M" now
+        
+        let saveAction = appendFile inboxPath ("- [" ++ timestamp ++ "] " ++ input ++ "\n")
+        catch saveAction (\e -> do
+            let _ = e :: IOException
+            notify "critical" "Error de Disco" ("No se pudo escribir en " ++ inboxPath))
+        
+        notify "normal" "Nota Guardada" input
+    exitSuccess
+
+-- ==========================================
+-- 2. BÚSQUEDA WEB
+-- ==========================================
+webSearchMenu :: IO ()
+webSearchMenu = do
+    query <- rofi "Buscar en Web (DuckDuckGo)" ""
+    unless (null query) $ do
+        let urlQuery = map (\c -> if c == ' ' then '+' else c) query
+        -- spawnProcess evita problemas con caracteres especiales en la búsqueda
+        catch (void $ spawnProcess "xdg-open" ["https://duckduckgo.com/?q=" ++ urlQuery]) 
+              (\e -> let _ = e :: IOException in notify "critical" "Error" "No se pudo abrir el navegador")
+    exitSuccess
+
+-- ==========================================
+-- 3. TEMPORIZADORES
+-- ==========================================
+timerMenu :: IO ()
+timerMenu = runMenu "Temporizador"
+    [ ("25 Minutos (Modo Enfoque)", startTimer 25)
+    , ("15 Minutos (Breve)",        startTimer 15)
+    , ("05 Minutos (Descanso)",     startTimer 5)
+    , (iconBack ++ " Volver",       mainMenu)
+    ]
+
+startTimer :: Int -> IO ()
+startTimer mins = do
+    let seconds = mins * 60
+    notify "normal" "Temporizador Iniciado" ("Te avisaré en " ++ show mins ++ " minutos.")
+    -- Script asíncrono para la notificación final
+    safeSpawn $ "bash -c 'sleep " ++ show seconds ++ " && notify-send -u critical -a Pomodoro \"¡Tiempo Terminado!\" \"Han pasado " ++ show mins ++ " minutos.\"' &"
+    exitSuccess
+
+-- ==========================================
+-- 4. PROYECTOS (Manejo de Errores Avanzado)
+-- ==========================================
+projectsMenu :: IO ()
+projectsMenu = do
+    home <- getHomeDirectory
+    let devDir = home ++ "/dev"
+    
+    dirExists <- doesDirectoryExist devDir
+    if not dirExists
+        then do
+            notify "critical" "Directorio no encontrado" ("No se encontró la carpeta: " ++ devDir)
+            mainMenu
+        else do
+            projectsRaw <- safeReadProcess "find" [devDir, "-mindepth", "1", "-maxdepth", "2", "-type", "d", "-printf", "%P\n"] ""
+            let projectsList = sort (lines projectsRaw)
+            
+            if null projectsList
+                then do
+                    notify "normal" "Proyectos" "No se encontraron carpetas en ~/dev"
+                    mainMenu
+                else do
+                    let projectOptions = map (\folder -> (folder, openProject devDir folder)) projectsList
+                                         ++ [(iconBack ++ " Volver", mainMenu)]
+                    runMenu "Abrir Proyecto" projectOptions
+
+openProject :: String -> String -> IO ()
+openProject baseDir folder = do
+    safeSpawn $ "ghostty --working-directory=" ++ baseDir ++ "/" ++ folder ++ " -e lvim"
+    exitSuccess
+
+-- ==========================================
+-- WRAPPERS Rofi & Shell Seguros
+-- ==========================================
+
 rofi :: String -> String -> IO String
 rofi prompt opts = do
-    res <- readProcess "rofi" ["-dmenu", "-i", "-p", prompt, "-theme", theme] opts
+    theme <- getThemePath
+    res <- safeReadProcess "rofi" ["-dmenu", "-i", "-p", prompt, "-theme", theme] opts
     return $ if null res then "" else init res
 
--- Operador para pasar entrada a procesos
-(<<<) :: (String -> [String] -> String -> IO a) -> String -> IO a
-f <<< input = f "bc" ["-l"] input
+safeSpawn :: String -> IO ()
+safeSpawn cmd = catch (void $ spawnCommand cmd) handler
+  where
+    handler :: IOException -> IO ()
+    handler _ = notify "critical" "Error de Ejecución" ("Fallo al ejecutar comando en Bash.")
+
+safeReadProcess :: String -> [String] -> String -> IO String
+safeReadProcess cmd args input = catch runCmd handler
+  where
+    runCmd = do
+        (exitCode, out, _) <- readProcessWithExitCode cmd args input
+        case exitCode of
+            ExitSuccess   -> return out
+            ExitFailure _ -> return ""
+    handler :: IOException -> IO String
+    handler _ = return ""

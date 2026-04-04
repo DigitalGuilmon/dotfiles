@@ -1,5 +1,5 @@
 configuration {
-    modi: "drun,run,window";
+    modi: "window,run,drun,emoji";
     icon-theme: "Papirus-Dark";
     show-icons: true;
     terminal: "ghostty"; // Tu terminal configurada

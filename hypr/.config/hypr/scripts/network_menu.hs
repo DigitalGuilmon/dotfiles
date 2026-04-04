@@ -1,17 +1,15 @@
 #!/usr/bin/env runhaskell
 {-# LANGUAGE OverloadedStrings #-}
 
-import System.Process (readProcess, spawnCommand)
+import System.Process (readProcessWithExitCode, spawnCommand)
 import System.Exit (exitSuccess)
 import Data.List (isInfixOf)
-
--- Configuración
-theme = "~/.config/rofi/themes/modern.rasi"
+import System.Directory (getHomeDirectory) -- Importante para leer la ruta del HOME
 
 -- Iconos
-iconWifi = "󰖩"
-iconBt   = "󰂯"
-iconVpn  = "󱚽"
+iconWifi = "\xf05a9"
+iconBt   = "\xf00af"
+iconVpn  = "\xf16bd"
 
 main :: IO ()
 main = mainMenu
@@ -28,37 +26,44 @@ mainMenu = do
 
 wifiMenu :: IO ()
 wifiMenu = do
-    status <- readProcess "nmcli" ["radio", "wifi"] ""
+    -- readProcessWithExitCode evita que el script crashee si el comando falla
+    (_, status, _) <- readProcessWithExitCode "nmcli" ["radio", "wifi"] ""
     let toggle = if "enabled" `isInfixOf` status then "Desactivar Wi-Fi" else "Activar Wi-Fi"
     selection <- rofi "Wi-Fi" (toggle ++ "\nVolver")
     case selection of
-        "Activar Wi-Fi"   -> spawnCommand "nmcli radio wifi on"
-        "Desactivar Wi-Fi" -> spawnCommand "nmcli radio wifi off"
+        -- Añadimos >> return () para que el tipo coincida con IO ()
+        "Activar Wi-Fi"    -> spawnCommand "nmcli radio wifi on" >> return ()
+        "Desactivar Wi-Fi" -> spawnCommand "nmcli radio wifi off" >> return ()
         "Volver"           -> mainMenu
         _                  -> exitSuccess
 
 btMenu :: IO ()
 btMenu = do
-    status <- readProcess "bluetoothctl" ["show"] ""
+    (_, status, _) <- readProcessWithExitCode "bluetoothctl" ["show"] ""
     let toggle = if "Powered: yes" `isInfixOf` status then "Desactivar Bluetooth" else "Activar Bluetooth"
     selection <- rofi "Bluetooth" (toggle ++ "\nVolver")
     case selection of
-        "Activar Bluetooth"    -> spawnCommand "bluetoothctl power on"
-        "Desactivar Bluetooth" -> spawnCommand "bluetoothctl power off"
+        "Activar Bluetooth"    -> spawnCommand "bluetoothctl power on" >> return ()
+        "Desactivar Bluetooth" -> spawnCommand "bluetoothctl power off" >> return ()
         "Volver"               -> mainMenu
         _                      -> exitSuccess
 
 vpnMenu :: IO ()
 vpnMenu = do
-    -- Lista solo conexiones VPN configuradas
-    vpns <- readProcess "nmcli" ["-t", "-f", "NAME,TYPE", "connection", "show"] ""
+    (_, vpns, _) <- readProcessWithExitCode "nmcli" ["-t", "-f", "NAME,TYPE", "connection", "show"] ""
     let vpnList = unlines [line | line <- lines vpns, "vpn" `isInfixOf` line || "wireguard" `isInfixOf` line]
     selection <- rofi "VPN" (vpnList ++ "Volver")
     if selection == "Volver" || null selection
         then mainMenu
-        else spawnCommand $ "nmcli connection up " ++ (head $ lines selection)
+        else spawnCommand ("nmcli connection up " ++ head (lines selection)) >> return ()
 
 rofi :: String -> String -> IO String
 rofi prompt opts = do
-    res <- readProcess "rofi" ["-dmenu", "-i", "-p", prompt, "-theme", theme] opts
-    return $ init res -- Elimina el newline final
+    home <- getHomeDirectory
+    let theme = home ++ "/.config/rofi/themes/modern.rasi" -- Construimos la ruta real
+    
+    -- Manejo seguro por si rofi se cierra con Escape
+    (exitCode, out, _) <- readProcessWithExitCode "rofi" ["-dmenu", "-i", "-p", prompt, "-theme", theme] opts
+    
+    -- Evita hacer 'init' a una string vacía
+    return $ if null out then "" else init out

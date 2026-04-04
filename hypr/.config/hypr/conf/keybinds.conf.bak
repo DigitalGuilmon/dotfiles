@@ -1,0 +1,77 @@
+# =============================================================================
+# KEYBINDINGS - CONFIGURACIÓN OPTIMIZADA Y CORREGIDA
+# =============================================================================
+
+# --- Sistema y Gestión de Hyprland ---
+bind = $mainMod SHIFT, R, exec, hyprctl reload       # Recargar configuración
+bind = $mainMod SHIFT, Q, exec, wlogout              # Menú de salida
+bind = $mainMod CTRL, Q, exit,                        # Forzar salida
+bind = $mainMod SHIFT, W, exec, killall waybar; waybar & disown # Reiniciar Waybar
+
+# --- Lanzadores de Aplicaciones (Acceso Directo) ---
+bind = $mainMod, Return, exec, $terminal             # Abrir Ghostty
+bind = $mainMod, D, exec, $menu                      # Lanzador Rofi
+bind = $mainMod, B, exec, $browser                   # Abrir Brave
+bind = $mainMod, V, exec, $terminal -e lvim          # LunarVim
+bind = $mainMod, N, exec, swaync-client -t -sw       # Panel de notificaciones
+
+# --- Scripts y Menús (Lógica de Modificadores para evitar conflictos) ---
+# Acciones Directas (SUPER)
+bind = $mainMod, P, exec, ~/.config/hypr/scripts/screenshot.hs     # Captura de pantalla
+bind = $mainMod, W, exec, ~/.config/hypr/scripts/window_manager.hs # Gestor de ventanas
+bind = $mainMod, A, exec, ~/.config/hypr/scripts/ai_menu.hs        # Menú de IAs
+bind = $mainMod, G, exec, ~/.config/hypr/scripts/steam_menu.hs     # Lanzador de Steam
+bind = $mainMod, M, exec, ~/.config/hypr/scripts/multimedia_menu.hs # Menú multimedia
+bind = $mainMod, S, exec, ~/.config/hypr/scripts/system_utils.hs    # Utilidades de sistema
+
+# Menús Extendidos (SUPER + ALT) para resolver duplicados
+bind = $mainMod ALT, N, exec, ~/.config/hypr/scripts/network_menu.hs      # Menú de Red
+bind = $mainMod ALT, P, exec, ~/.config/hypr/scripts/productivity_menu.hs # Menú de Productividad
+bind = $mainMod ALT, W, exec, $wallpaperScript                            # Cambiar Fondo
+bind = $mainMod SHIFT, B, exec, ~/.config/hypr/scripts/web_menu.hs        # Menú web
+
+# --- Gestión de Ventanas ---
+bind = $mainMod, X, killactive                       # Cerrar ventana activa
+bind = $mainMod, F, fullscreen                       # Pantalla completa
+bind = $mainMod, T, togglefloating                   # Alternar estado flotante
+bind = $mainMod, Space, layoutmsg, swapwithmaster    # Mover a ventana principal
+bind = $mainMod, C, centerwindow,                    # Centrar ventana flotante
+
+# --- Navegación y Foco (Estilo Vim) ---
+bind = $mainMod, H, movefocus, l
+bind = $mainMod, L, movefocus, r
+bind = $mainMod, K, movefocus, u
+bind = $mainMod, J, movefocus, d
+
+# Navegación rápida de Workspaces
+bind = $mainMod, Tab, workspace, e+1
+bind = $mainMod SHIFT, Tab, workspace, e-1
+
+# --- Organización (Mover Ventanas) ---
+bind = $mainMod SHIFT, H, movewindow, l
+bind = $mainMod SHIFT, L, movewindow, r
+bind = $mainMod SHIFT, K, movewindow, u
+bind = $mainMod SHIFT, J, movewindow, d
+
+# --- Redimensionar Ventanas (Modo Control) ---
+binde = $mainMod CTRL, L, resizeactive, 30 0
+binde = $mainMod CTRL, H, resizeactive, -30 0
+binde = $mainMod CTRL, K, resizeactive, 0 -30
+binde = $mainMod CTRL, J, resizeactive, 0 30
+
+# --- Gestión de Workspaces (1-9) ---
+$(for i in {1..9}; do
+    echo "bind = \$mainMod, $i, workspace, $i"
+    echo "bind = \$mainMod SHIFT, $i, movetoworkspace, $i"
+done)
+
+# --- Controles Hardware (Multimedia) ---
+bindle = , XF86AudioRaiseVolume, exec, wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%+
+bindle = , XF86AudioLowerVolume, exec, wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-
+bindl  = , XF86AudioMute, exec, wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle
+bindle = , XF86MonBrightnessUp, exec, brightnessctl set 5%+
+bindle = , XF86MonBrightnessDown, exec, brightnessctl set 5%-
+
+# --- Ratón ---
+bindm = $mainMod, mouse:272, movewindow
+bindm = $mainMod, mouse:273, resizewindow

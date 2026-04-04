@@ -9,11 +9,11 @@ import Data.List (isInfixOf)
 theme = "~/.config/rofi/themes/modern.rasi"
 
 -- Iconos (Nerd Fonts)
-iconAudio  = "󰓃"
-iconBright = "󰃠"
-iconMedia  = "󰝚"
-iconNight  = "󰖔"
-iconBack   = "󰁮"
+iconAudio  = "\xf04c3"
+iconBright = "\xf00e0"
+iconMedia  = "\xf075a"
+iconNight  = "\xf0594"
+iconBack   = "\xf006e"
 
 main :: IO ()
 main = mainMenu
