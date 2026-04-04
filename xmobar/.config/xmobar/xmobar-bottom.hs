@@ -1,5 +1,3 @@
--- Archivo: xmobar/.config/xmobar/xmobar-bottom.hs
-
 Config {
     font = "xft:JetBrainsMono Nerd Font:weight=bold:pixelsize=16:antialias=true:hinting=true",
     additionalFonts = ["xft:JetBrainsMono Nerd Font:pixelsize=20:antialias=true:hinting=true"],
@@ -20,6 +18,6 @@ Config {
     sepChar = "%",
     alignSep = "}{",
     
-    -- Estructura: Workspaces }{ Cava }{ Fecha
-    template = " %UnsafeStdinReader% }{ <fc=#bd93f9>%cava%</fc> }{ %date% "
+    -- Izquierda: Workspaces } Centro: Cava { Derecha: Reloj
+    template = " %UnsafeStdinReader% } <fc=#bd93f9>%cava%</fc> { %date% "
 }
