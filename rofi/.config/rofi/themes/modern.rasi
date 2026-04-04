@@ -1,29 +1,35 @@
 * {
-    /* Colores coherentes con tu configuración */
-    bg-col:     #1e1e2eE6; 
-    bg-item:    #31324480; 
-    purple:     #c678dd;    /* Tu púrpura de Hyprland */
-    fg-col:     #cdd6f4;
+    /* Paleta de colores */
+    bg-col:      #1e1e2e;
+    bg-item:     #31324480;
+    fg-col:      #cdd6f4;
+    
+    /* Variables de color clásico (para texto/fondos sólidos) */
+    purple:      #c678dd;
+    green:       #98c379;
+    blue:        #82aaff;
     
     background-color:   transparent;
     text-color:         @fg-col;
-    /* Fuente ligeramente más pequeña para el escalado 1.6 */
     font:               "JetBrainsMono Nerd Font 10";
 }
 
 window {
-    /* Reducimos el ancho de 600px a 400px */
-    width:            400px;
-    /* Reducimos la altura de 450px a 320px */
-    height:           320px;
-    border:           2px;
-    border-color:     @purple;
-    border-radius:    12px; /* Mantenemos tu redondeo */
-    background-color: @bg-col;
+    width:            600px;
+    border-radius:    12px;
+    
+    /* CORRECCIÓN: Uso de HEX directo con 'to right' */
+    background-image: linear-gradient(to right, #c678dd, #82aaff);
+    
+    border:           0px; 
+    padding:          3px; 
 }
 
 mainbox {
-    padding: 8px; /* Menos relleno interno */
+    background-color: @bg-col;
+    border-radius:    10px;
+    padding:          15px;
+    spacing:          10px;
 }
 
 inputbar {
@@ -36,10 +42,12 @@ inputbar {
 }
 
 prompt {
-    background-color: @purple;
+    /* CORRECCIÓN: Uso de HEX directo */
+    background-image: linear-gradient(to right, #c678dd, #82aaff);
     text-color:       #1e1e2e;
-    padding:          2px 8px;
+    padding:          2px 10px;
     border-radius:    4px;
+    font:             "JetBrainsMono Nerd Font Bold 10";
 }
 
 entry {
@@ -48,33 +56,35 @@ entry {
 }
 
 listview {
-    columns:      1;
-    lines:        6; /* Menos líneas para una caja más pequeña */
-    cycle:        true;
-    dynamic:      true;
-    fixed-height: true;
+    columns:       1;
+    lines:         6;
+    cycle:         true;
+    dynamic:       true;
+    fixed-height:  true;
 }
 
 element {
-    padding:      4px 8px; /* Padding mucho más estrecho */
-    spacing:      8px;
+    padding:       6px 10px;
+    spacing:       8px;
     border-radius: 6px;
 }
 
-/* Forzar transparencia para evitar "cajas blancas" */
+element selected.normal {
+    /* CORRECCIÓN: Uso de HEX directo */
+    background-image: linear-gradient(to right, #98c379, #82aaff);
+    text-color:       #1e1e2e;
+    border-radius:    8px;
+}
+
 element normal.normal, element alternate.normal {
     background-color: transparent;
 }
 
-element selected.normal {
-    background-color: @purple;
-    text-color:       #1e1e2e;
-}
-
 element-icon {
-    size: 22px; /* Iconos más pequeños (antes 32px) */
+    size: 22px;
 }
 
 element-text {
     vertical-align: 0.5;
+    text-color: inherit;
 }
