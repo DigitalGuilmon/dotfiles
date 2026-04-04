@@ -1,0 +1,87 @@
+{
+    "layer": "top",
+    "position": "top",
+    "height": 32,
+    "spacing": 5,
+
+    "modules-left": [
+        "custom/appmenuicon"
+    ],
+    "modules-center": [
+        "hyprland/window"
+    ],
+    "modules-right": [
+        "tray",
+        "group/tools",
+        "network",
+        "pulseaudio",
+        "battery",
+        "clock",
+        "custom/exit"
+    ],
+    
+    "hyprland/window": {
+        "max-length": 80,
+        "rewrite": {
+            "(.*) - YouTube": "$1",
+            "(.*) - Brave": "$1",
+            "(.*) - Chromium": "$1"
+        }
+    },
+    "custom/appmenuicon": {
+        "format": "",
+        "tooltip-format": "Abrir lanzador de aplicaciones",
+        "on-click": "pkill rofi || rofi -show drun"
+    },
+    "tray": {
+        "icon-size": 20,
+        "spacing": 10
+    },
+    "group/tools": {
+        "orientation": "horizontal",
+        "modules": ["custom/updates", "custom/cliphist"]
+    },
+    "custom/updates": {
+        "format": "",
+        "exec": "checkupdates | wc -l",
+        "interval": 300,
+        "tooltip-format": "{} actualizaciones pendientes",
+        "on-click": "~/.config/ml4w/settings/installupdates.sh"
+    },
+    "custom/cliphist": {
+        "format": "",
+        "on-click": "sleep 0.1 && ~/.config/ml4w/scripts/cliphist.sh",
+        "tooltip-format": "Administrador del portapapeles"
+    },
+    "network": {
+        "format-wifi": "",
+        "format-ethernet": "",
+        "format-disconnected": "⚠",
+        "tooltip-format": "{ifname} @ {essid}",
+        "on-click": "nm-connection-editor"
+    },
+    "pulseaudio": {
+        "format": "{icon}",
+        "format-muted": "",
+        "format-icons": {"default": ["", "", ""]},
+        "on-click": "pavucontrol",
+        "tooltip-format": "{volume}%"
+    },
+    "battery": {
+        "states": {"warning": 30, "critical": 15},
+        "format": "{icon}",
+        "format-charging": "",
+        "format-plugged": "",
+        "format-icons": ["", "", "", "", ""],
+        "tooltip-format": "{capacity}%"
+    },
+    "clock": {
+        "format": "{:%H:%M}",
+        "tooltip-format": "<big>{:%A, %d de %B de %Y}</big>"
+    },
+    "custom/exit": {
+        "format": "",
+        "on-click": "~/.config/ml4w/scripts/wlogout.sh",
+        "tooltip-format": "Menú de apagado"
+    }
+}

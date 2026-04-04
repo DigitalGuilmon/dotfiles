@@ -1,0 +1,25 @@
+{
+    "layer": "bottom",
+    "position": "bottom",
+    "height": 30,
+
+    //--- SECCIÓN DE POSICIONAMIENTO AÑADIDA ---
+    "modules-center": ["hyprland/workspaces"],
+
+    //--- TU MÓDULO DE WORKSPACES (SIN CAMBIOS) ---
+    "hyprland/workspaces": {
+    "format": "{name}",
+    "format-map": {
+      "Web": "",
+      "Terminal": "",
+      "Archivos": "",
+      "Código": "",
+      "Juegos": "",
+      "Discord": "󰙯",
+      "Música": "",
+      "Otros": "",
+      "VM": "🐳",
+      "Sistema": ""
+    }
+}
+}

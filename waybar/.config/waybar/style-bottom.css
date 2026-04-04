@@ -1,0 +1,22 @@
+@import './themes/ml4w-modern/default/style.css';
+
+/* Estilo específico para la barra inferior */
+window#waybar {
+    background-color: transparent; /* Barra transparente */
+    border: none;
+    box-shadow: none;
+}
+
+#workspaces button {
+    background-color: rgba(30, 30, 40, 0.7); /* Fondo semi-transparente para botones */
+    border-radius: 10px;
+    padding: 2px 12px;
+    margin: 4px 4px;
+    font-weight: bold;
+    color: #cdd6f4; /* Color de texto base */
+}
+
+#workspaces button.active {
+    background-color: rgba(137, 220, 235, 0.9); /* Fondo para workspace activo */
+    color: #1e1e2e; /* Texto oscuro para contraste */
+}
