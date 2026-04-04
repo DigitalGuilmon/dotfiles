@@ -60,8 +60,6 @@ decoration {
     rounding = 12
     active_opacity = 1.0
     inactive_opacity = 0.9
-    dim_inactive = true
-    dim_strength = 0.15
     
     blur {
         enabled = true
@@ -69,13 +67,6 @@ decoration {
         passes = 3
         new_optimizations = true
         xray = true
-    }
-
-    shadow {
-        enabled = true
-        range = 20
-        render_power = 3
-        color = rgba(00000066)
     }
 
   }
@@ -88,7 +79,6 @@ animations {
     
     animation = windows, 1, 3, fluent_decel, popin 60%
     animation = border, 1, 5, default
-    animation = borderangle, 1, 30, default, loop
     animation = fade, 1, 3, default
     animation = workspaces, 1, 3.5, easeOutExpo, slide
 }
@@ -110,12 +100,10 @@ bind = $mainMod, N, exec, swaync-client -t -sw # Abrir panel de notificaciones
 bind = $mainMod SHIFT, Q, exec, wlogout
 
 # Utilidades de Captura (Grim + Slurp + Swappy para editar)
-#bind = $mainMod, P, exec, grim -g "$(slurp)" - | swappy -f -
-bind = $mainMod, P, exec, ~/.config/hypr/scripts/screenshot.hs
+bind = $mainMod, P, exec, grim -g "$(slurp)" - | swappy -f -
 
 # Wallpaper del Universo
 bind = $mainMod, W, exec, $wallpaperScript
-bind = $mainMod, I, exec, ~/.config/hypr/scripts/ai_menu.hs
 
 # Navegación (Focus)
 bind = $mainMod, J, movefocus, d
@@ -129,9 +117,6 @@ bind = $mainMod SHIFT, K, swapwindow, u
 bind = $mainMod, Space, layoutmsg, swapwithmaster
 bind = $mainMod, F, fullscreen
 bind = $mainMod, T, togglefloating
-# Lanzador de juegos de Steam en Haskell
-bind = $mainMod, G, exec, ~/.config/hypr/scripts/steam_menu.hs
-bind = $mainMod SHIFT, B, exec, ~/.config/hypr/scripts/web_menu.hs
 
 bind = $mainMod, 1, workspace, 1
 bind = $mainMod, 2, workspace, 2

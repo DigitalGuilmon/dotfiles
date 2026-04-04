@@ -4,7 +4,6 @@
 window#waybar {
     background-color: transparent; /* Barra transparente */
     border: none;
-    margin: 10px 20px;
     box-shadow: none;
 }
 
@@ -14,18 +13,10 @@ window#waybar {
     padding: 2px 12px;
     margin: 4px 4px;
     font-weight: bold;
-    color: #cdd6f4;
-    transition: all 0.3s ease; /* Color de texto base */
+    color: #cdd6f4; /* Color de texto base */
 }
 
 #workspaces button.active {
     background-color: rgba(137, 220, 235, 0.9); /* Fondo para workspace activo */
-    color: #1e1e2e;
-    box-shadow: 0 0 8px rgba(137, 220, 235, 0.6); /* Texto oscuro para contraste */
-}
-
-#workspaces button:hover {
-    background-color: rgba(137, 220, 235, 0.4);
-    box-shadow: 0 0 5px rgba(137, 220, 235, 0.5);
-    text-shadow: 0 0 5px rgba(255, 255, 255, 0.5);
+    color: #1e1e2e; /* Texto oscuro para contraste */
 }

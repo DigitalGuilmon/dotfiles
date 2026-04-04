@@ -1,0 +1,80 @@
+* {
+    /* Colores coherentes con tu configuración */
+    bg-col:     #1e1e2eE6; 
+    bg-item:    #31324480; 
+    purple:     #c678dd;    /* Tu púrpura de Hyprland */
+    fg-col:     #cdd6f4;
+    
+    background-color:   transparent;
+    text-color:         @fg-col;
+    /* Fuente ligeramente más pequeña para el escalado 1.6 */
+    font:               "JetBrainsMono Nerd Font 10";
+}
+
+window {
+    /* Reducimos el ancho de 600px a 400px */
+    width:            400px;
+    /* Reducimos la altura de 450px a 320px */
+    height:           320px;
+    border:           2px;
+    border-color:     @purple;
+    border-radius:    12px; /* Mantenemos tu redondeo */
+    background-color: @bg-col;
+}
+
+mainbox {
+    padding: 8px; /* Menos relleno interno */
+}
+
+inputbar {
+    spacing:    4px; 
+    padding:    6px;
+    children:   [ "prompt", "entry" ];
+    background-color: @bg-item;
+    border-radius: 8px;
+    margin: 0 0 8px 0;
+}
+
+prompt {
+    background-color: @purple;
+    text-color:       #1e1e2e;
+    padding:          2px 8px;
+    border-radius:    4px;
+}
+
+entry {
+    placeholder:       "Buscar...";
+    placeholder-color: #6c7086;
+}
+
+listview {
+    columns:      1;
+    lines:        6; /* Menos líneas para una caja más pequeña */
+    cycle:        true;
+    dynamic:      true;
+    fixed-height: true;
+}
+
+element {
+    padding:      4px 8px; /* Padding mucho más estrecho */
+    spacing:      8px;
+    border-radius: 6px;
+}
+
+/* Forzar transparencia para evitar "cajas blancas" */
+element normal.normal, element alternate.normal {
+    background-color: transparent;
+}
+
+element selected.normal {
+    background-color: @purple;
+    text-color:       #1e1e2e;
+}
+
+element-icon {
+    size: 22px; /* Iconos más pequeños (antes 32px) */
+}
+
+element-text {
+    vertical-align: 0.5;
+}
