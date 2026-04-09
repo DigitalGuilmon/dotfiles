@@ -255,7 +255,7 @@ m["w"] = {
   c = { "<cmd>close<cr>", "Cerrar Ventana" },
   o = { "<cmd>only<cr>", "Cerrar Todas Menos Ésta" },
   ["="] = { "<C-w>=", "Igualar Tamaños" },
-  m = { "<cmd>resize | vertical resize<cr>", "Maximizar Ventana" },
+  m = { "<C-w>_<C-w>|", "Maximizar Ventana" },
   h = { "<C-w>H", "Mover Ventana a la Izquierda" },
   j = { "<C-w>J", "Mover Ventana Abajo" },
   k = { "<C-w>K", "Mover Ventana Arriba" },
@@ -314,7 +314,7 @@ map("i", "<A-k>", "<Esc><cmd>m .-2<cr>==gi", { desc = "Mover Línea Arriba" })
 
 -- 💾 Guardado Rápido
 map("n", "<C-s>", "<cmd>w<cr>", { desc = "Guardar Archivo" })
-map("i", "<C-s>", "<Esc><cmd>w<cr>a", { desc = "Guardar Archivo" })
+map("i", "<C-s>", "<Esc><cmd>w<cr>gi", { desc = "Guardar Archivo" })
 
 -- 🎯 Flash.nvim: Treesitter Select (complementa el 's' ya mapeado)
 map("n", "S", function() require("flash").treesitter() end, { desc = "Flash Treesitter" })
