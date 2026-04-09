@@ -43,7 +43,9 @@ r() {
 
   if [[ -r "$chooser_file" ]]; then
     IFS= read -r target_dir < "$chooser_file"
-    [[ -n "$target_dir" && -d "$target_dir" ]] && cd -- "$target_dir"
+    if [[ -n "$target_dir" && -d "$target_dir" ]]; then
+      cd -- "$target_dir" || return 1
+    fi
   fi
 }
 
