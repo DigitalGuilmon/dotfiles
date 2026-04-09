@@ -166,7 +166,7 @@ class spotlight(Command):
         elif shutil.which("locate"):
             search_command = f"locate -i {shlex.quote(query)}"
         elif shutil.which("fd"):
-            search_command = f"fd -HI {shlex.quote(query)} {shlex.quote(_expand_path('~'))}"
+            search_command = f"fd --hidden --no-ignore {shlex.quote(query)} {shlex.quote(_expand_path('~'))}"
         else:
             pattern = shlex.quote(f"*{query}*")
             search_command = f"find {shlex.quote(_expand_path('~'))} -iname {pattern}"
@@ -268,7 +268,11 @@ class ocr_to_clipboard(Command):
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
         )
+        if ocr.stdout:
+            ocr.stdout.close()
         copy.communicate()
+        if copy.returncode is None:
+            copy.wait()
         ocr_returncode = ocr.wait()
 
         if ocr_returncode != 0 or copy.returncode != 0:
