@@ -64,6 +64,7 @@ class my_edit(Command):
 
 import os
 import platform
+import re
 import shlex
 import shutil
 import subprocess
@@ -83,6 +84,32 @@ def _notify_missing_dependency(fm, dependency):
 
 def _expand_path(path):
     return os.path.expandvars(os.path.expanduser(path))
+
+
+def _selected_path(fm):
+    if fm.thisfile:
+        return fm.thisfile.path
+    return fm.thisdir.path
+
+
+def _project_root(path):
+    base_path = path if os.path.isdir(path) else os.path.dirname(path)
+    try:
+        root = subprocess.check_output(
+            ["git", "-C", base_path, "rev-parse", "--show-toplevel"],
+            stderr=subprocess.DEVNULL,
+            text=True,
+        ).strip()
+        if root:
+            return root
+    except (subprocess.CalledProcessError, FileNotFoundError):
+        pass
+    return base_path or os.getcwd()
+
+
+def _session_name_from_path(path):
+    session_name = re.sub(r"[^A-Za-z0-9_-]", "_", os.path.basename(path) or "dev")
+    return session_name[:60]
 
 
 class fzf_select(Command):
@@ -278,3 +305,81 @@ class ocr_to_clipboard(Command):
             return
 
         self.fm.notify("OCR copied to clipboard")
+
+
+class dev_open_in_lvim(Command):
+    """:dev_open_in_lvim
+    Abre archivo/carpeta actual en lvim (fallback nvim/vim).
+    """
+
+    def execute(self):
+        editor = _first_available("lvim", "nvim", "vim")
+        if not editor:
+            _notify_missing_dependency(self.fm, "lvim/nvim/vim")
+            return
+
+        target = _selected_path(self.fm)
+        self.fm.execute_command([editor, target])
+
+
+class dev_tmux_lvim(Command):
+    """:dev_tmux_lvim
+    Abre el proyecto actual en una ventana de tmux con lvim.
+    """
+
+    def execute(self):
+        if not shutil.which("tmux"):
+            _notify_missing_dependency(self.fm, "tmux")
+            return
+
+        editor = _first_available("lvim", "nvim", "vim")
+        if not editor:
+            _notify_missing_dependency(self.fm, "lvim/nvim/vim")
+            return
+
+        target = _selected_path(self.fm)
+        root = _project_root(target)
+        relative_target = os.path.relpath(target, root)
+        if relative_target == ".":
+            relative_target = ""
+
+        launch = f"cd {shlex.quote(root)} && {shlex.quote(editor)}"
+        if relative_target:
+            launch = f"{launch} {shlex.quote(relative_target)}"
+
+        if os.getenv("TMUX"):
+            self.fm.execute_command(
+                ["tmux", "new-window", "-c", root, "-n", os.path.basename(root), launch]
+            )
+            return
+
+        session_name = _session_name_from_path(root)
+        self.fm.execute_command(["tmux", "new-session", "-A", "-s", session_name, "-c", root, launch])
+
+
+class dev_tmux_split_lvim(Command):
+    """:dev_tmux_split_lvim
+    Divide el pane actual y abre el archivo/carpeta en lvim.
+    """
+
+    def execute(self):
+        if not os.getenv("TMUX"):
+            self.fm.notify("Requires running inside tmux", bad=True)
+            return
+
+        editor = _first_available("lvim", "nvim", "vim")
+        if not editor:
+            _notify_missing_dependency(self.fm, "lvim/nvim/vim")
+            return
+
+        target = _selected_path(self.fm)
+        root = _project_root(target)
+        relative_target = os.path.relpath(target, root)
+        if relative_target == ".":
+            relative_target = ""
+
+        launch = f"cd {shlex.quote(root)} && {shlex.quote(editor)}"
+        if relative_target:
+            launch = f"{launch} {shlex.quote(relative_target)}"
+
+        self.fm.execute_command(["tmux", "split-window", "-h", "-c", root, launch])
