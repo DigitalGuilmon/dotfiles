@@ -11,7 +11,7 @@ setopt HIST_IGNORE_DUPS
 # Aliases y funciones
 # ===============================================================
 alias cls='clear'
-alias zconf='lvim ~/.zshrc'
+alias zconf='lvim ${XDG_CONFIG_HOME:-$HOME/.config}/zsh/rc.d'
 alias tconf='lvim ~/.tmux.conf.local' # Apunta al archivo de Oh My Tmux
 alias reload='source ~/.zshrc'
 

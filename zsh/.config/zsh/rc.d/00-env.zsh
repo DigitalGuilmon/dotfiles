@@ -20,10 +20,13 @@ typeset -gU path PATH
 path_prepend_if_dir "$HOME/.local/bin"
 path_prepend_if_dir "$HOME/.npm-global/bin"
 path_append_if_dir "$HOME/.antigravity/antigravity/bin"
-for py_bin in "$HOME"/Library/Python/*/bin(N); do
-  path_append_if_dir "$py_bin"
-done
-unset py_bin
+
+if [[ "$OSTYPE" == darwin* ]]; then
+  for py_bin in "$HOME"/Library/Python/*/bin(N); do
+    path_append_if_dir "$py_bin"
+  done
+  unset py_bin
+fi
 
 # ===============================================================
 # Configuración pre-Oh My Zsh (vital para plugin tmux)
