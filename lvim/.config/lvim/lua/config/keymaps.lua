@@ -51,6 +51,9 @@ m["o"] = {
     "Buscar en Vault"
   },
   l = { "<cmd>ObsidianLink<cr>", "Linkear Selección" },
+  d = { "<cmd>ObsidianToday<cr>", "Nota Diaria (Hoy)" },
+  b = { "<cmd>ObsidianBacklinks<cr>", "Ver Backlinks" },
+  f = { "<cmd>ObsidianFollowLink<cr>", "Seguir Enlace Bajo el Cursor" },
 }
 
 -- ⚙️ TOGGLES Y UI
@@ -133,6 +136,8 @@ m["x"] = {
   q = { "<cmd>Trouble qflist toggle<cr>", "Quickfix List" },
   l = { "<cmd>Trouble loclist toggle<cr>", "Location List" },
   r = { "<cmd>Trouble lsp toggle focus=false win.position=right<cr>", "Referencias LSP" },
+  t = { "<cmd>Trouble todo toggle<cr>", "Ver TODOs del Proyecto" },
+  T = { "<cmd>Trouble todo toggle filter.buf=0<cr>", "Ver TODOs (Buffer Actual)" },
 }
 
 
@@ -148,25 +153,12 @@ m["q"] = {
   d = { function() Snacks.session.delete() end, "Borrar Sesión" },
 }
 
--- 2. LAZYGIT (Activaste lazygit en Snacks, pero no tenía tecla de acceso)
-m["g"]["g"] = { function() Snacks.lazygit() end, "Abrir Lazygit" }
-m["g"]["l"] = { function() Snacks.lazygit.log() end, "Git Log (Lazygit)" }
-
--- 3. TODO-COMMENTS (Instalado, pero sin forma de buscarlos. Lo enlazamos a Trouble)
-m["x"]["t"] = { "<cmd>Trouble todo toggle<cr>", "Ver TODOs del Proyecto" }
-m["x"]["T"] = { "<cmd>Trouble todo toggle filter.buf=0<cr>", "Ver TODOs (Buffer Actual)" }
-
--- 4. NOICE.NVIM (Necesario para limpiar mensajes flotantes que se queden pegados)
+-- 2. NOICE.NVIM (Necesario para limpiar mensajes flotantes que se queden pegados)
 m["n"] = {
   name = "Noice UI",
   d = { "<cmd>Noice dismiss<cr>", "Ocultar Notificaciones" },
   h = { "<cmd>Noice history<cr>", "Historial de Mensajes" },
 }
-
--- 5. OBSIDIAN (Faltan las notas diarias y navegación de enlaces)
-m["o"]["d"] = { "<cmd>ObsidianToday<cr>", "Nota Diaria (Hoy)" }
-m["o"]["b"] = { "<cmd>ObsidianBacklinks<cr>", "Ver Backlinks" }
-m["o"]["f"] = { "<cmd>ObsidianFollowLink<cr>", "Seguir Enlace Bajo el Cursor" }
 
 
 -- 🐞 DEBUGGING (DAP)
@@ -253,4 +245,3 @@ vm["M"] = {
   name = "Math & Jupyter (Molten)",
   e = { ":<C-u>MoltenEvaluateVisual<CR>gv", "Evaluar Selección" },
 }
-

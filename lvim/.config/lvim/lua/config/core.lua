@@ -30,12 +30,11 @@ local undodir = vim.fn.expand("~/.local/state/nvim/undo")
 if vim.fn.isdirectory(undodir) == 0 then
   vim.fn.mkdir(undodir, "p")
 end
-vim.opt.undodir = undodir
 
+-- Directorio para que no ensucie tus carpetas de proyecto
+vim.opt.undodir = undodir
 vim.opt.undofile = true
 vim.opt.undolevels = 10000
--- Directorio para que no ensucie tus carpetas de proyecto
-vim.opt.undodir = vim.fn.expand("~/.local/state/nvim/undo")
 
 
 lvim.builtin.dap.active = true
@@ -71,5 +70,3 @@ vim.diagnostic.config({
   severity_sort = true,
   float = { border = "rounded", source = "if_many" },
 })
-
-
