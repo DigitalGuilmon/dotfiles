@@ -20,7 +20,7 @@ ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE='fg=#808080'
 
 # ===============================================================
 # Atajos de teclado para herramientas TUI
-# Alt+v -> lvim | Alt+g -> lazygit | Alt+d -> lazydocker
+# Ctrl+x Ctrl+v -> lvim | Ctrl+x Ctrl+g -> lazygit | Ctrl+x Ctrl+d -> lazydocker
 # ===============================================================
 if [[ -o interactive ]]; then
   _open_lvim() {
@@ -57,7 +57,7 @@ if [[ -o interactive ]]; then
   zle -N open-lazygit _open_lazygit
   zle -N open-lazydocker _open_lazydocker
 
-  bindkey '^[v' open-lvim
-  bindkey '^[g' open-lazygit
-  bindkey '^[d' open-lazydocker
+  bindkey '^X^V' open-lvim
+  bindkey '^X^G' open-lazygit
+  bindkey '^X^D' open-lazydocker
 fi
