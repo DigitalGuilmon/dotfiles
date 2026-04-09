@@ -29,6 +29,13 @@ import Scripts.Bookmarks (bookmarkMenu)
 import Scripts.NotificationCenter (notificationMenu)
 import Scripts.DevTools (devMenu)
 
+-- Scripts de productividad con Rofi
+import Scripts.EmojiPicker (emojiPicker)
+import Scripts.Calculator (calculator)
+import Scripts.Timer (timerMenu)
+import Scripts.TodoList (todoMenu)
+import Scripts.SystemInfo (systemInfo)
+
 myKeys :: [(String, X ())]
 myKeys = 
     -- --- SISTEMA Y CONTROL ---
@@ -62,6 +69,13 @@ myKeys =
     , ("M-o",          projectMenu)                                 -- Saltar a un proyecto (terminal + editor)
     , ("M-b",          bookmarkMenu)                                -- Abrir bookmarks favoritos
     , ("M-S-d",        devMenu)                                     -- Herramientas de desarrollo (Docker, Git, Tmux...)
+    
+    -- --- PRODUCTIVIDAD CON ROFI ---
+    , ("M-e",          emojiPicker)                                  -- Selector de emojis (copia al clipboard)
+    , ("M-r",          calculator)                                   -- Calculadora rápida con Rofi
+    , ("M-y",          timerMenu)                                    -- Temporizador Pomodoro con Rofi
+    , ("M-z",          todoMenu)                                     -- Gestor de tareas TODO con Rofi
+    , ("M-i",          systemInfo)                                   -- Info del sistema con Rofi
     
     -- --- BÚSQUEDAS Y MENÚS EXTRA (Prompts) ---
     , ("M-g",          gridGoToWindow)             -- Lanzar Grid visual de ventanas
