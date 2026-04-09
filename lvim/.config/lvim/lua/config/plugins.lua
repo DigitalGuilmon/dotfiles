@@ -3,7 +3,6 @@
 -- =================================================================
 lvim.plugins = {
   { "mbbill/undotree",                 cmd = "UndotreeToggle" },
-  -- Bind recomendado: m["u"] = { "<cmd>UndotreeToggle<cr>", "Árbol de Deshacer" }
   -- --- [ ESTÉTICA Y UI PREMIUM ] ---
   {
     "zbirenbaum/copilot.lua",
