@@ -224,6 +224,19 @@ m["S"] = {
 }
 
 
+-- 📄 ACCIONES RÁPIDAS DE ARCHIVO (<leader>v)
+m["v"] = {
+  name = "Archivo Rápido",
+  w = { "<cmd>w<cr>", "Guardar" },
+  W = { "<cmd>wa<cr>", "Guardar Todo" },
+  q = { "<cmd>confirm q<cr>", "Cerrar (Confirmar)" },
+  Q = { "<cmd>qa!<cr>", "Forzar Salir de Todo" },
+  x = { "<cmd>x<cr>", "Guardar y Cerrar" },
+  a = { "<cmd>%y+<cr>", "Copiar Todo al Portapapeles" },
+  n = { "<cmd>enew<cr>", "Nuevo Buffer Vacío" },
+}
+
+
 -- 🔬 EJECUCIÓN CIENTÍFICA (Molten / Jupyter)
 m["M"] = {
   name = "Math & Jupyter (Molten)",
@@ -340,6 +353,24 @@ map("v", ">", ">gv", { desc = "Indentar y Mantener Selección" })
 -- 📐 Mover Selección Visual con Alt+j/k
 map("v", "<A-j>", ":m '>+1<cr>gv=gv", { desc = "Mover Selección Abajo" })
 map("v", "<A-k>", ":m '<-2<cr>gv=gv", { desc = "Mover Selección Arriba" })
+
+-- 🧹 Limpiar Resaltado de Búsqueda
+map("n", "<Esc>", "<cmd>nohlsearch<cr>", { desc = "Limpiar Resaltado de Búsqueda" })
+
+-- 📋 Seleccionar Todo
+map("n", "<C-a>", "ggVG", { desc = "Seleccionar Todo" })
+
+-- ❌ Cerrar / Salir
+map("n", "<C-q>", "<cmd>confirm q<cr>", { desc = "Cerrar (con confirmación)" })
+
+-- 📋 Copiar Selección al Portapapeles del Sistema
+map("v", "<C-c>", '"+y', { desc = "Copiar al Portapapeles del Sistema" })
+
+-- 📄 Duplicar Línea
+map("n", "<S-A-j>", "<cmd>t.<cr>", { desc = "Duplicar Línea Abajo" })
+map("n", "<S-A-k>", "<cmd>t -1<cr>", { desc = "Duplicar Línea Arriba" })
+map("i", "<S-A-j>", "<Esc><cmd>t.<cr>gi", { desc = "Duplicar Línea Abajo" })
+map("i", "<S-A-k>", "<Esc><cmd>t -1<cr>gi", { desc = "Duplicar Línea Arriba" })
 
 -- 🧭 Centrar al Navegar (Productividad)
 map("n", "<C-d>", "<C-d>zz", { desc = "Media Página Abajo (Centrado)" })
