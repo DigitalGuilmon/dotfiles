@@ -268,13 +268,10 @@ class ocr_to_clipboard(Command):
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
         )
-        if ocr.stdout:
-            ocr.stdout.close()
         copy.communicate()
-        copy_returncode = copy.returncode if copy.returncode is not None else copy.wait()
         ocr_returncode = ocr.wait()
 
-        if ocr_returncode != 0 or copy_returncode != 0:
+        if ocr_returncode != 0 or copy.returncode != 0:
             self.fm.notify("No se pudo copiar el OCR al portapapeles", bad=True)
             return
 
