@@ -47,6 +47,12 @@ PYGMENTIZE_STYLE=${PYGMENTIZE_STYLE:-autumn}
 OPENSCAD_IMGSIZE=${RNGR_OPENSCAD_IMGSIZE:-1000,1000}
 OPENSCAD_COLORSCHEME=${RNGR_OPENSCAD_COLORSCHEME:-Tomorrow Night}
 
+file_size() {
+    stat --printf='%s' -- "${1}" 2>/dev/null && return
+    stat -f '%z' -- "${1}" 2>/dev/null && return
+    wc -c < "${1}"
+}
+
 handle_extension() {
     case "${FILE_EXTENSION_LOWER}" in
         ## Archive
@@ -292,7 +298,7 @@ handle_mime() {
         ## Text
         text/* | */xml)
             ## Syntax highlight
-            if [[ "$( stat --printf='%s' -- "${FILE_PATH}" )" -gt "${HIGHLIGHT_SIZE_MAX}" ]]; then
+            if [[ "$( file_size "${FILE_PATH}" )" -gt "${HIGHLIGHT_SIZE_MAX}" ]]; then
                 exit 2
             fi
             if [[ "$( tput colors )" -ge 256 ]]; then

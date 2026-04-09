@@ -63,7 +63,26 @@ class my_edit(Command):
 
 
 import os
+import platform
+import shlex
+import shutil
+import subprocess
 from ranger.api.commands import Command
+
+
+def _first_available(*commands):
+    for command in commands:
+        if shutil.which(command):
+            return command
+    return None
+
+
+def _notify_missing_dependency(fm, dependency):
+    fm.notify(f"Required dependency not found: {dependency}", bad=True)
+
+
+def _expand_path(path):
+    return os.path.expandvars(os.path.expanduser(path))
 
 
 class fzf_select(Command):
@@ -131,15 +150,131 @@ class fzf_content_search(Command):
 class spotlight(Command):
     """
     :spotlight <query>
-    Usa el motor de búsqueda de Apple para saltar a archivos.
+    Busca archivos usando el indexador disponible en el sistema.
     """
 
     def execute(self):
-        import subprocess
-
         query = self.rest(1)
-        command = f"mdfind '{query}' | fzf"
+        if not query:
+            self.fm.notify("Usage: :spotlight <query>", bad=True)
+            return
+
+        if shutil.which("mdfind"):
+            search_command = f"mdfind {shlex.quote(query)}"
+        elif shutil.which("plocate"):
+            search_command = f"plocate -i {shlex.quote(query)}"
+        elif shutil.which("locate"):
+            search_command = f"locate -i {shlex.quote(query)}"
+        elif shutil.which("fd"):
+            search_command = f"fd --hidden --no-ignore {shlex.quote(query)} {shlex.quote(_expand_path('~'))}"
+        else:
+            pattern = shlex.quote(f"*{query}*")
+            search_command = f"find {shlex.quote(_expand_path('~'))} -iname {pattern}"
+
+        command = f"{search_command} | fzf"
         fzf = self.fm.execute_command(command, stdout=subprocess.PIPE)
         stdout, _ = fzf.communicate()
         if fzf.returncode == 0:
-            self.fm.select_file(stdout.decode("utf-8").rstrip("\n"))
+            selected = stdout.decode("utf-8").rstrip("\n")
+            if os.path.isdir(selected):
+                self.fm.cd(selected)
+            elif selected:
+                self.fm.select_file(selected)
+
+
+class smart_open(Command):
+    """:smart_open
+    Abre el archivo seleccionado con el opener nativo del sistema.
+    """
+
+    def execute(self):
+        selected = self.fm.thistab.get_selection() or [self.fm.thisfile]
+        if not selected:
+            self.fm.notify("No file selected", bad=True)
+            return
+
+        opener = _first_available("open", "xdg-open")
+        if not opener:
+            _notify_missing_dependency(self.fm, "open/xdg-open")
+            return
+
+        paths = [f.path for f in selected]
+        self.fm.execute_command([opener] + paths)
+
+
+class smart_trash(Command):
+    """:smart_trash
+    Envía archivos seleccionados a la papelera con fallback multiplataforma.
+    """
+
+    def execute(self):
+        selected = self.fm.thistab.get_selection() or [self.fm.thisfile]
+        if not selected:
+            self.fm.notify("No file selected", bad=True)
+            return
+
+        paths = [f.path for f in selected]
+        if shutil.which("trash-put"):
+            command = ["trash-put"] + paths
+        elif shutil.which("gio"):
+            command = ["gio", "trash"] + paths
+        elif shutil.which("kioclient5"):
+            command = ["kioclient5", "move"] + paths + ["trash:/"]
+        elif platform.system() == "Darwin":
+            command = ["mv"] + paths + [_expand_path("~/.Trash")]
+        else:
+            _notify_missing_dependency(self.fm, "trash utility")
+            return
+
+        self.fm.execute_command(command)
+
+
+class ocr_to_clipboard(Command):
+    """:ocr_to_clipboard
+    Extrae texto con OCR y lo copia al portapapeles con fallback por plataforma.
+    """
+
+    def execute(self):
+        if not self.fm.thisfile:
+            self.fm.notify("No file selected", bad=True)
+            return
+
+        target_file = self.fm.thisfile.path
+        copy_command = _first_available("pbcopy", "wl-copy", "xclip", "xsel")
+
+        if not shutil.which("tesseract"):
+            _notify_missing_dependency(self.fm, "tesseract")
+            return
+
+        if not copy_command:
+            _notify_missing_dependency(self.fm, "clipboard utility")
+            return
+
+        copy_invocations = {
+            "pbcopy": ["pbcopy"],
+            "wl-copy": ["wl-copy"],
+            "xclip": ["xclip", "-selection", "clipboard"],
+            "xsel": ["xsel", "--clipboard", "--input"],
+        }
+
+        ocr = subprocess.Popen(
+            ["tesseract", target_file, "stdout"],
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+        )
+        copy = subprocess.Popen(
+            copy_invocations[copy_command],
+            stdin=ocr.stdout,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+        )
+        if ocr.stdout is not None:
+            ocr.stdout.close()
+        copy.communicate()
+        ocr_returncode = ocr.wait()
+
+        if ocr_returncode != 0 or copy.returncode != 0:
+            self.fm.notify("Failed to copy OCR to clipboard", bad=True)
+            return
+
+        self.fm.notify("OCR copied to clipboard")
