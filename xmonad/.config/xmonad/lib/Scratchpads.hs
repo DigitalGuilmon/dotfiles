@@ -4,6 +4,15 @@ import XMonad
 import XMonad.Util.NamedScratchpad
 import qualified XMonad.StackSet as W
 
--- Definimos el scratchpad en una sola línea para evitar errores de indentación
+-- Scratchpads: ventanas flotantes que aparecen y desaparecen con un atajo
 myScratchpads :: [NamedScratchpad]
-myScratchpads = [ NS "vscode" "code-oss --new-window --user-data-dir=~/.config/Code-OSS-Scratchpad" (className =? "code-oss") (customFloating $ W.RationalRect (1/10) (1/10) (4/5) (4/5)) ]
+myScratchpads =
+    [ NS "vscode" "code-oss --new-window --user-data-dir=~/.config/Code-OSS-Scratchpad" (className =? "code-oss") centerLarge
+    , NS "terminal" "ghostty --class=scratchpad-term" (className =? "scratchpad-term") centerMedium
+    , NS "filemanager" "thunar" (className =? "Thunar") centerLarge
+    , NS "btop" "ghostty --class=scratchpad-btop -e btop" (className =? "scratchpad-btop") centerLarge
+    , NS "notes" "ghostty --class=scratchpad-notes -e lvim ~/Notes" (className =? "scratchpad-notes") centerMedium
+    ]
+  where
+    centerLarge  = customFloating $ W.RationalRect (1/10) (1/10) (4/5) (4/5)
+    centerMedium = customFloating $ W.RationalRect (1/6) (1/6) (2/3) (2/3)

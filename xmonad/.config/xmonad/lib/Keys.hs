@@ -17,7 +17,17 @@ import Scripts.WindowControls (sinkWindow, sinkAll)
 import Scripts.Prompts (searchGoogle, searchYouTube, searchMan, runShell)
 import Scripts.PowerMenu (powerMenu)
 import Scripts.Monitors (monitorMenu)
-import Scripts.Wallpaper (changeWallpaper) -- Importamos el script de Wallpaper
+import Scripts.Wallpaper (changeWallpaper)
+
+-- Nuevos scripts de productividad
+import Scripts.QuickApps (quickApps)
+import Scripts.Clipboard (clipboardMenu, clipboardClear)
+import Scripts.ProjectManager (projectMenu)
+import Scripts.AudioControl (audioMenu)
+import Scripts.NetworkMenu (networkMenu)
+import Scripts.Bookmarks (bookmarkMenu)
+import Scripts.NotificationCenter (notificationMenu)
+import Scripts.DevTools (devMenu)
 
 myKeys :: [(String, X ())]
 myKeys = 
@@ -33,11 +43,25 @@ myKeys =
     , ("M-v",          spawn (myTerminal ++ " -e lvim"))            -- Abrir LunarVim
     , ("M-d",          spawn ("rofi -show drun -show-icons -theme " ++ myTheme)) -- Menú de aplicaciones
     , ("M-<Tab>",      spawn ("rofi -show window -show-icons -theme " ++ myTheme)) -- Selector de ventanas
-    , ("M-s",          namedScratchpadAction myScratchpads "terminal") -- Terminal flotante
+    , ("M-a",          quickApps)                                   -- Lanzador rápido de apps por categoría
+    
+    -- --- SCRATCHPADS (ventanas flotantes toggle) ---
+    , ("M-s",          namedScratchpadAction myScratchpads "terminal")    -- Terminal flotante
+    , ("M-S-s",        namedScratchpadAction myScratchpads "vscode")      -- VS Code flotante
+    , ("M-S-f",        namedScratchpadAction myScratchpads "filemanager") -- Thunar flotante
+    , ("M-S-b",        namedScratchpadAction myScratchpads "btop")        -- Monitor de sistema flotante
+    , ("M-S-n",        namedScratchpadAction myScratchpads "notes")       -- Notas rápidas flotante
     
     -- --- UTILIDADES (Haskell Scripts) ---
     , ("M-p",          screenshot)                                  -- Captura de pantalla
     , ("M-w",          changeWallpaper)                             -- Cambiar a un fondo de Anime aleatorio
+    , ("M-c",          clipboardMenu)                               -- Historial del clipboard
+    , ("M-S-c",        clipboardClear)                              -- Limpiar historial del clipboard
+    
+    -- --- PRODUCTIVIDAD ---
+    , ("M-o",          projectMenu)                                 -- Saltar a un proyecto (terminal + editor)
+    , ("M-b",          bookmarkMenu)                                -- Abrir bookmarks favoritos
+    , ("M-S-d",        devMenu)                                     -- Herramientas de desarrollo (Docker, Git, Tmux...)
     
     -- --- BÚSQUEDAS Y MENÚS EXTRA (Prompts) ---
     , ("M-g",          gridGoToWindow)             -- Lanzar Grid visual de ventanas
@@ -45,6 +69,11 @@ myKeys =
     , ("M-S-y",        searchYouTube)              -- Buscar en YouTube
     , ("M-S-h",        searchMan)                  -- Buscar manuales de terminal (Man Pages)
     , ("M-S-r",        runShell)                   -- Ejecutar comando rápido (Shell Prompt)
+    
+    -- --- SISTEMA Y CONTROL AVANZADO ---
+    , ("M-S-a",        audioMenu)                                   -- Control de audio (volumen, salida, mic)
+    , ("M-S-w",        networkMenu)                                 -- Gestión de red (WiFi, VPN)
+    , ("M-S-x",        notificationMenu)                            -- Control de notificaciones (DND, limpiar)
     
     -- --- GESTIÓN DE VENTANAS (Foco, Layout y Flotantes) ---
     , ("M-j",          windows W.focusDown)    -- Mover foco a la siguiente ventana
