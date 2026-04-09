@@ -57,6 +57,7 @@ readTasks = do
         then do
             content <- catch (readFile path) (\(_ :: IOException) -> return "")
             let tasks = filter (not . null) $ lines content
+            -- Force full file read to avoid lazy I/O conflicts with subsequent writes
             length tasks `seq` return tasks
         else return []
 

@@ -48,9 +48,10 @@ copyToClipboard text = void $ spawnCommand $ "echo -n '" ++ text ++ "' | wl-copy
 hexToRGB :: String -> (Int, Int, Int)
 hexToRGB hex =
     let clean = dropWhile (== '#') hex
-        r = readHexPair (take 2 clean)
-        g = readHexPair (take 2 (drop 2 clean))
-        b = readHexPair (take 2 (drop 4 clean))
+        padded = clean ++ replicate (max 0 (6 - length clean)) '0'
+        r = readHexPair (take 2 padded)
+        g = readHexPair (take 2 (drop 2 padded))
+        b = readHexPair (take 2 (drop 4 padded))
     in (r, g, b)
 
 readHexPair :: String -> Int
@@ -115,7 +116,9 @@ manualHex :: IO ()
 manualHex = do
     input <- rofi "Código HEX (#RRGGBB)" ""
     unless (null input) $ do
-        let clean = if head input == '#' then input else '#' : input
+        let clean = case input of
+                ('#':rest) -> '#' : rest
+                _          -> '#' : input
         showColorInfo (map toUpper clean)
     exitSuccess
 
