@@ -78,7 +78,7 @@ def _first_available(*commands):
 
 
 def _notify_missing_dependency(fm, dependency):
-    fm.notify(f"No se encontró dependencia requerida: {dependency}", bad=True)
+    fm.notify(f"No se encontro dependencia requerida: {dependency}", bad=True)
 
 
 def _expand_path(path):
@@ -223,7 +223,7 @@ class smart_trash(Command):
         elif platform.system() == "Darwin":
             command = ["mv"] + paths + [_expand_path("~/.Trash")]
         else:
-            _notify_missing_dependency(self.fm, "trash-put/gio")
+            _notify_missing_dependency(self.fm, "utilidad de papelera")
             return
 
         self.fm.execute_command(command)
@@ -247,7 +247,7 @@ class ocr_to_clipboard(Command):
             return
 
         if not copy_command:
-            _notify_missing_dependency(self.fm, "pbcopy/wl-copy/xclip/xsel")
+            _notify_missing_dependency(self.fm, "utilidad de portapapeles")
             return
 
         copy_invocations = {
