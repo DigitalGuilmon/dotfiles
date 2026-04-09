@@ -78,7 +78,7 @@ def _first_available(*commands):
 
 
 def _notify_missing_dependency(fm, dependency):
-    fm.notify(f"No se encontro dependencia requerida: {dependency}", bad=True)
+    fm.notify(f"No se encontró dependencia requerida: {dependency}", bad=True)
 
 
 def _expand_path(path):
@@ -271,9 +271,10 @@ class ocr_to_clipboard(Command):
         if ocr.stdout:
             ocr.stdout.close()
         copy.communicate()
+        copy_returncode = copy.returncode if copy.returncode is not None else copy.wait()
         ocr_returncode = ocr.wait()
 
-        if ocr_returncode != 0 or copy.returncode != 0:
+        if ocr_returncode != 0 or copy_returncode != 0:
             self.fm.notify("No se pudo copiar el OCR al portapapeles", bad=True)
             return
 
