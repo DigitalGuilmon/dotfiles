@@ -1,2 +1,4 @@
 .secrets
 .zshrc_local
+__pycache__/
+*.pyc
