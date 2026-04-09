@@ -44,7 +44,10 @@ r() {
   if [[ -r "$chooser_file" ]]; then
     IFS= read -r target_dir < "$chooser_file"
     if [[ -n "$target_dir" && -d "$target_dir" ]]; then
-      cd -- "$target_dir" || return 1
+      if ! cd -- "$target_dir"; then
+        echo "No se pudo cambiar al directorio: $target_dir"
+        return 1
+      fi
     fi
   fi
 }
