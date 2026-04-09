@@ -150,7 +150,7 @@ class fzf_content_search(Command):
 class spotlight(Command):
     """
     :spotlight <query>
-    Usa el motor de búsqueda de Apple para saltar a archivos.
+    Busca archivos usando el indexador disponible en el sistema.
     """
 
     def execute(self):
@@ -268,6 +268,8 @@ class ocr_to_clipboard(Command):
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
         )
+        if ocr.stdout is not None:
+            ocr.stdout.close()
         copy.communicate()
         ocr_returncode = ocr.wait()
 
