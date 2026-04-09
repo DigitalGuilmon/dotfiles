@@ -19,12 +19,16 @@ myLogHook xmprocTop xmprocBottom = do
     dynamicLogWithPP xmobarPP
         { ppOutput  = hPutStrLn xmprocTop
         , ppSep     = ""
-        , ppOrder   = \(_ws:l:_t:_) -> [l]
+        , ppOrder   = \fields -> case fields of
+              (_ws:l:_) -> [l]
+              _         -> []
         , ppLayout  = xmobarColor "#f1fa8c" ""
         }
     dynamicLogWithPP xmobarPP
         { ppOutput  = hPutStrLn xmprocBottom
-        , ppOrder   = \(ws:_l:_t:_) -> [ws]
+        , ppOrder   = \fields -> case fields of
+              (ws:_) -> [ws]
+              _      -> []
         , ppWsSep   = "    "
         , ppCurrent = xmobarColor "#bd93f9" "" . wrap "[ " " ]"
         , ppVisible = xmobarColor "#f8f8f2" ""
