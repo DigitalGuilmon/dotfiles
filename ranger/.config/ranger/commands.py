@@ -78,7 +78,7 @@ def _first_available(*commands):
 
 
 def _notify_missing_dependency(fm, dependency):
-    fm.notify(f"No se encontró dependencia requerida: {dependency}", bad=True)
+    fm.notify(f"Required dependency not found: {dependency}", bad=True)
 
 
 def _expand_path(path):
@@ -156,7 +156,7 @@ class spotlight(Command):
     def execute(self):
         query = self.rest(1)
         if not query:
-            self.fm.notify("Uso: :spotlight <query>", bad=True)
+            self.fm.notify("Usage: :spotlight <query>", bad=True)
             return
 
         if shutil.which("mdfind"):
@@ -190,7 +190,7 @@ class smart_open(Command):
     def execute(self):
         selected = self.fm.thistab.get_selection() or [self.fm.thisfile]
         if not selected:
-            self.fm.notify("No hay archivo seleccionado", bad=True)
+            self.fm.notify("No file selected", bad=True)
             return
 
         opener = _first_available("open", "xdg-open")
@@ -210,7 +210,7 @@ class smart_trash(Command):
     def execute(self):
         selected = self.fm.thistab.get_selection() or [self.fm.thisfile]
         if not selected:
-            self.fm.notify("No hay archivo seleccionado", bad=True)
+            self.fm.notify("No file selected", bad=True)
             return
 
         paths = [f.path for f in selected]
@@ -223,7 +223,7 @@ class smart_trash(Command):
         elif platform.system() == "Darwin":
             command = ["mv"] + paths + [_expand_path("~/.Trash")]
         else:
-            _notify_missing_dependency(self.fm, "utilidad de papelera")
+            _notify_missing_dependency(self.fm, "trash utility")
             return
 
         self.fm.execute_command(command)
@@ -236,7 +236,7 @@ class ocr_to_clipboard(Command):
 
     def execute(self):
         if not self.fm.thisfile:
-            self.fm.notify("No hay archivo seleccionado", bad=True)
+            self.fm.notify("No file selected", bad=True)
             return
 
         target_file = self.fm.thisfile.path
@@ -247,7 +247,7 @@ class ocr_to_clipboard(Command):
             return
 
         if not copy_command:
-            _notify_missing_dependency(self.fm, "utilidad de portapapeles")
+            _notify_missing_dependency(self.fm, "clipboard utility")
             return
 
         copy_invocations = {
@@ -272,7 +272,7 @@ class ocr_to_clipboard(Command):
         ocr_returncode = ocr.wait()
 
         if ocr_returncode != 0 or copy.returncode != 0:
-            self.fm.notify("No se pudo copiar el OCR al portapapeles", bad=True)
+            self.fm.notify("Failed to copy OCR to clipboard", bad=True)
             return
 
-        self.fm.notify("OCR copiado al portapapeles")
+        self.fm.notify("OCR copied to clipboard")
