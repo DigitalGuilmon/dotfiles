@@ -2,6 +2,7 @@
 -- ⌨️ KEYBINDINGS Y WHICH-KEY
 -- =================================================================
 local m = lvim.builtin.which_key.mappings
+local map = vim.keymap.set
 
 
 -- 🗺️ Mapa del Código
@@ -18,6 +19,16 @@ m["s"] = {
   g = { "<cmd>lua Snacks.picker.grep()<cr>", "Grep (Texto)" },
   b = { "<cmd>lua Snacks.picker.buffers()<cr>", "Buffers Activos" },
   n = { "<cmd>lua Snacks.picker.notifications()<cr>", "Notificaciones" },
+  h = { "<cmd>lua Snacks.picker.help()<cr>", "Help Tags" },
+  c = { "<cmd>lua Snacks.picker.commands()<cr>", "Comandos" },
+  k = { "<cmd>lua Snacks.picker.keymaps()<cr>", "Keymaps" },
+  r = { "<cmd>lua Snacks.picker.recent()<cr>", "Archivos Recientes" },
+  w = { "<cmd>lua Snacks.picker.grep_word()<cr>", "Palabra Bajo Cursor" },
+  d = { "<cmd>lua Snacks.picker.diagnostics()<cr>", "Diagnósticos" },
+  R = { "<cmd>lua Snacks.picker.resume()<cr>", "Reanudar Última Búsqueda" },
+  s = { "<cmd>lua Snacks.picker.smart()<cr>", "Smart Find" },
+  l = { "<cmd>lua Snacks.picker.lines()<cr>", "Líneas (Buffer Actual)" },
+  ["/"] = { "<cmd>lua Snacks.picker.search_history()<cr>", "Historial de Búsqueda" },
 }
 
 -- 🤖 INTELIGENCIA ARTIFICIAL
@@ -64,6 +75,15 @@ m["t"] = {
     vim.diagnostic.config({ virtual_lines = not current })
   end, "LSP Lines" },
   z = { function() Snacks.zen() end, "Modo Zen" },
+  w = { "<cmd>set wrap!<cr>", "Word Wrap" },
+  r = { "<cmd>set relativenumber!<cr>", "Números Relativos" },
+  n = { "<cmd>set number!<cr>", "Números de Línea" },
+  c = { "<cmd>ColorizerToggle<cr>", "Colorizer (Colores CSS)" },
+  t = { "<cmd>TransparentToggle<cr>", "Transparencia" },
+  s = { "<cmd>set spell!<cr>", "Corrector Ortográfico" },
+  i = { function()
+    vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled())
+  end, "Inlay Hints (LSP)" },
 }
 
 -- 🎓 ENTORNOS ESPECÍFICOS (Leetcode, LaTeX, Lean)
@@ -118,14 +138,21 @@ m["D"] = {
   a = { "<cmd>DBUIAddConnection<cr>", "Añadir Conexión" },
 }
 
--- 🔀 Git Avanzado (Diffview)
--- Lo integramos dentro del menú "g" que LunarVim ya usa por defecto para Git
+-- 🔀 Git Avanzado (Diffview + Gitsigns)
 m["g"] = vim.tbl_deep_extend("force", m["g"] or { name = "Git" }, {
   v = { "<cmd>DiffviewOpen<cr>", "Abrir Diffview (3-way merge)" },
   h = { "<cmd>DiffviewFileHistory %<cr>", "Historial del Archivo Actual" },
   x = { "<cmd>DiffviewClose<cr>", "Cerrar Diffview" },
   g = { function() Snacks.lazygit() end, "Abrir Lazygit" },
-  l = { function() Snacks.lazygit.log() end, "Git Log (Lazygit)" }
+  l = { function() Snacks.lazygit.log() end, "Git Log (Lazygit)" },
+  s = { "<cmd>Gitsigns stage_hunk<cr>", "Stage Hunk" },
+  r = { "<cmd>Gitsigns reset_hunk<cr>", "Reset Hunk" },
+  S = { "<cmd>Gitsigns stage_buffer<cr>", "Stage Buffer Completo" },
+  R = { "<cmd>Gitsigns reset_buffer<cr>", "Reset Buffer Completo" },
+  u = { "<cmd>Gitsigns undo_stage_hunk<cr>", "Deshacer Stage Hunk" },
+  p = { "<cmd>Gitsigns preview_hunk<cr>", "Preview Hunk (Flotante)" },
+  B = { "<cmd>Gitsigns blame_line<cr>", "Blame Línea Actual" },
+  D = { "<cmd>Gitsigns diffthis<cr>", "Diff Archivo Actual" },
 })
 
 -- 🚨 Trouble (Diagnósticos Avanzados)
@@ -142,8 +169,11 @@ m["x"] = {
 
 
 -- =================================================================
--- 🧩 MAPEOS FALTANTES (COMPLEMENTO)
+-- 🧩 MAPEOS COMPLEMENTARIOS DE PLUGINS
 -- =================================================================
+
+-- 📦 Undotree (Árbol de Deshacer Visual)
+m["u"] = { "<cmd>UndotreeToggle<cr>", "Árbol de Deshacer (Undotree)" }
 
 -- 1. SESIONES DE SNACKS (Requerido por tu config: persistence = { enabled = true })
 m["q"] = {
@@ -215,10 +245,107 @@ m["I"] = {
 }
 
 
+-- =================================================================
+-- 🪟 GESTIÓN DE VENTANAS (<leader>w)
+-- =================================================================
+m["w"] = {
+  name = "Ventanas",
+  s = { "<cmd>split<cr>", "Split Horizontal" },
+  v = { "<cmd>vsplit<cr>", "Split Vertical" },
+  c = { "<cmd>close<cr>", "Cerrar Ventana" },
+  o = { "<cmd>only<cr>", "Cerrar Todas Menos Ésta" },
+  ["="] = { "<C-w>=", "Igualar Tamaños" },
+  m = { "<cmd>resize | vertical resize<cr>", "Maximizar Ventana" },
+  h = { "<C-w>H", "Mover Ventana a la Izquierda" },
+  j = { "<C-w>J", "Mover Ventana Abajo" },
+  k = { "<C-w>K", "Mover Ventana Arriba" },
+  l = { "<C-w>L", "Mover Ventana a la Derecha" },
+  r = { "<C-w>r", "Rotar Ventanas" },
+  T = { "<C-w>T", "Ventana a Nueva Tab" },
+  ["+"] = { "<cmd>resize +5<cr>", "Aumentar Alto" },
+  ["-"] = { "<cmd>resize -5<cr>", "Reducir Alto" },
+  [">"] = { "<cmd>vertical resize +5<cr>", "Aumentar Ancho" },
+  ["<"] = { "<cmd>vertical resize -5<cr>", "Reducir Ancho" },
+}
+
+
+-- =================================================================
+-- 📑 GESTIÓN DE BUFFERS Y TABS (<leader>b)
+-- =================================================================
+m["b"] = vim.tbl_deep_extend("force", m["b"] or { name = "Buffers" }, {
+  n = { "<cmd>BufferLineCycleNext<cr>", "Siguiente Buffer" },
+  p = { "<cmd>BufferLineCyclePrev<cr>", "Buffer Anterior" },
+  d = { "<cmd>BufferKill<cr>", "Cerrar Buffer Actual" },
+  D = { "<cmd>BufferLineCloseOthers<cr>", "Cerrar Otros Buffers" },
+  b = { "<cmd>lua Snacks.picker.buffers()<cr>", "Buscar Buffer" },
+  e = { "<cmd>BufferLinePickClose<cr>", "Elegir Buffer a Cerrar" },
+  P = { "<cmd>BufferLinePick<cr>", "Ir a Buffer (Pick)" },
+  L = { "<cmd>BufferLineCloseRight<cr>", "Cerrar Buffers a la Derecha" },
+  H = { "<cmd>BufferLineCloseLeft<cr>", "Cerrar Buffers a la Izquierda" },
+  s = { "<cmd>BufferLineSortByDirectory<cr>", "Ordenar por Directorio" },
+  l = { "<cmd>BufferLineSortByExtension<cr>", "Ordenar por Extensión" },
+  ["1"] = { "<cmd>BufferLineGoToBuffer 1<cr>", "Ir a Buffer 1" },
+  ["2"] = { "<cmd>BufferLineGoToBuffer 2<cr>", "Ir a Buffer 2" },
+  ["3"] = { "<cmd>BufferLineGoToBuffer 3<cr>", "Ir a Buffer 3" },
+  ["4"] = { "<cmd>BufferLineGoToBuffer 4<cr>", "Ir a Buffer 4" },
+  ["5"] = { "<cmd>BufferLineGoToBuffer 5<cr>", "Ir a Buffer 5" },
+})
+
+
+-- =================================================================
+-- ⚡ KEYMAPS DIRECTOS DE PRODUCTIVIDAD (Sin <leader>)
+-- =================================================================
+
+-- 🔄 Navegación Rápida entre Buffers
+map("n", "<S-h>", "<cmd>BufferLineCyclePrev<cr>", { desc = "Buffer Anterior" })
+map("n", "<S-l>", "<cmd>BufferLineCycleNext<cr>", { desc = "Siguiente Buffer" })
+
+-- 🪟 Redimensionar Ventanas con Ctrl+Flechas
+map("n", "<C-Up>", "<cmd>resize +2<cr>", { desc = "Aumentar Alto Ventana" })
+map("n", "<C-Down>", "<cmd>resize -2<cr>", { desc = "Reducir Alto Ventana" })
+map("n", "<C-Left>", "<cmd>vertical resize -2<cr>", { desc = "Reducir Ancho Ventana" })
+map("n", "<C-Right>", "<cmd>vertical resize +2<cr>", { desc = "Aumentar Ancho Ventana" })
+
+-- 📐 Mover Líneas con Alt+j/k (Normal e Insert)
+map("n", "<A-j>", "<cmd>m .+1<cr>==", { desc = "Mover Línea Abajo" })
+map("n", "<A-k>", "<cmd>m .-2<cr>==", { desc = "Mover Línea Arriba" })
+map("i", "<A-j>", "<Esc><cmd>m .+1<cr>==gi", { desc = "Mover Línea Abajo" })
+map("i", "<A-k>", "<Esc><cmd>m .-2<cr>==gi", { desc = "Mover Línea Arriba" })
+
+-- 💾 Guardado Rápido
+map("n", "<C-s>", "<cmd>w<cr>", { desc = "Guardar Archivo" })
+map("i", "<C-s>", "<Esc><cmd>w<cr>a", { desc = "Guardar Archivo" })
+
+-- 🎯 Flash.nvim: Treesitter Select (complementa el 's' ya mapeado)
+map("n", "S", function() require("flash").treesitter() end, { desc = "Flash Treesitter" })
+map("x", "S", function() require("flash").treesitter() end, { desc = "Flash Treesitter" })
+map("o", "r", function() require("flash").remote() end, { desc = "Flash Remote" })
+
 -- 🩺 LINTERS Y DIAGNÓSTICOS (Navegación Rápida Estilo 2026)
-vim.keymap.set("n", "]d", function() vim.diagnostic.jump({ count = 1 }) end, { desc = "Siguiente Diagnóstico" })
-vim.keymap.set("n", "[d", function() vim.diagnostic.jump({ count = -1 }) end, { desc = "Diagnóstico Anterior" })
-vim.keymap.set("n", "gl", vim.diagnostic.open_float, { desc = "Ver Diagnóstico Flotante" })
+map("n", "]d", function() vim.diagnostic.jump({ count = 1 }) end, { desc = "Siguiente Diagnóstico" })
+map("n", "[d", function() vim.diagnostic.jump({ count = -1 }) end, { desc = "Diagnóstico Anterior" })
+map("n", "gl", vim.diagnostic.open_float, { desc = "Ver Diagnóstico Flotante" })
+
+-- 🔀 Navegación de Hunks Git con ] y [
+map("n", "]h", "<cmd>Gitsigns next_hunk<cr>", { desc = "Siguiente Hunk Git" })
+map("n", "[h", "<cmd>Gitsigns prev_hunk<cr>", { desc = "Hunk Git Anterior" })
+
+-- 📋 Mejor Manejo del Portapapeles
+map("x", "p", '"_dP', { desc = "Pegar sin Perder Registro" })
+
+-- 🔲 Mantener Selección al Indentar
+map("v", "<", "<gv", { desc = "Desindentar y Mantener Selección" })
+map("v", ">", ">gv", { desc = "Indentar y Mantener Selección" })
+
+-- 📐 Mover Selección Visual con Alt+j/k
+map("v", "<A-j>", ":m '>+1<cr>gv=gv", { desc = "Mover Selección Abajo" })
+map("v", "<A-k>", ":m '<-2<cr>gv=gv", { desc = "Mover Selección Arriba" })
+
+-- 🧭 Centrar al Navegar (Productividad)
+map("n", "<C-d>", "<C-d>zz", { desc = "Media Página Abajo (Centrado)" })
+map("n", "<C-u>", "<C-u>zz", { desc = "Media Página Arriba (Centrado)" })
+map("n", "n", "nzzzv", { desc = "Siguiente Búsqueda (Centrado)" })
+map("n", "N", "Nzzzv", { desc = "Búsqueda Anterior (Centrado)" })
 
 
 -- =================================================================
@@ -239,6 +366,12 @@ vm["s"] = {
   g = { function() Snacks.picker.grep_word() end, "Buscar Selección (Grep)" },
 }
 
+-- Git Hunk en Modo Visual (Seleccionar rango de líneas y operar)
+vm["g"] = {
+  name = "Git (Selección)",
+  s = { "<cmd>Gitsigns stage_hunk<cr>", "Stage Hunk Seleccionado" },
+  r = { "<cmd>Gitsigns reset_hunk<cr>", "Reset Hunk Seleccionado" },
+}
 
 -- Molten en Modo Visual (Evaluar selección exacta)
 vm["M"] = {
