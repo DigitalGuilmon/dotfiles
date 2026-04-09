@@ -45,8 +45,14 @@ addTodo = do
     case res of
         "" -> return ()
         _  -> spawn $ "mkdir -p $(dirname " ++ todoFile ++ ") && "
-                   ++ "echo '- [ ] " ++ res ++ "' >> " ++ todoFile ++ " && "
-                   ++ "notify-send '✅ TODO' 'Tarea agregada: " ++ res ++ "'"
+                   ++ "printf '- [ ] %s\\n' " ++ shellEscape res ++ " >> " ++ todoFile ++ " && "
+                   ++ "notify-send '✅ TODO' 'Tarea agregada'"
+
+-- Escapa una cadena para uso seguro en shell
+shellEscape :: String -> String
+shellEscape s = "'" ++ concatMap esc s ++ "'"
+  where esc '\'' = "'\\''"
+        esc c    = [c]
 
 -- Marca una tarea como completada: muestra pendientes, el usuario elige una
 completeTodo :: X ()

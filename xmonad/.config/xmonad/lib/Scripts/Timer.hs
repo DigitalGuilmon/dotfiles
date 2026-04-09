@@ -38,7 +38,8 @@ startTimer minutes label = do
     let secs = show (minutes * 60)
     spawn $ "notify-send '⏱️ " ++ label ++ "' '" ++ show minutes ++ " minutos iniciados' && "
          ++ "(sleep " ++ secs ++ " && notify-send -u critical '🔔 " ++ label ++ "' '¡Tiempo terminado! (" ++ show minutes ++ " min)' "
-         ++ "&& paplay /usr/share/sounds/freedesktop/stereo/alarm-clock-elapsed.oga 2>/dev/null) &"
+         ++ "&& paplay /usr/share/sounds/freedesktop/stereo/alarm-clock-elapsed.oga 2>/dev/null "
+         ++ "|| notify-send '🔇 Timer' 'No se pudo reproducir sonido de alarma') &"
 
 -- Pide al usuario un número de minutos personalizado via rofi
 customTimer :: X ()

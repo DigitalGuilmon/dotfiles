@@ -70,4 +70,11 @@ emojiPicker = do
         _  -> do
             -- Extraer solo el emoji (primer carácter/cluster antes del espacio)
             let emoji = takeWhile (/= ' ') res
-            spawn $ "printf '%s' '" ++ emoji ++ "' | xclip -selection clipboard && notify-send '📋 Emoji' 'Copiado: " ++ emoji ++ "'"
+            -- Usar xdotool para escribir directamente o xclip para copiar (seguro contra inyección)
+            spawn $ "printf '%s' " ++ shellEscape emoji ++ " | xclip -selection clipboard && notify-send '📋 Emoji' 'Copiado al clipboard'"
+
+-- Escapa una cadena para uso seguro en shell
+shellEscape :: String -> String
+shellEscape s = "'" ++ concatMap esc s ++ "'"
+  where esc '\'' = "'\\''"
+        esc c    = [c]
