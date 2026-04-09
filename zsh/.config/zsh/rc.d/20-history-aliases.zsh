@@ -30,7 +30,7 @@ fi
 has_cmd bat && alias cat='bat --style=plain'
 has_cmd btop && alias top='btop'
 
-r() {
+function r() {
   if ! has_cmd ranger; then
     echo 'ranger no está instalado.'
     return 1
