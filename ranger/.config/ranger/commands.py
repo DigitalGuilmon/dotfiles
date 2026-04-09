@@ -268,11 +268,7 @@ class ocr_to_clipboard(Command):
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
         )
-        if ocr.stdout:
-            ocr.stdout.close()
         copy.communicate()
-        if copy.returncode is None:
-            copy.wait()
         ocr_returncode = ocr.wait()
 
         if ocr_returncode != 0 or copy.returncode != 0:
