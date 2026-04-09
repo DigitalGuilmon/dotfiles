@@ -36,9 +36,11 @@ r() {
     return 1
   fi
 
-  local chooser_file="$HOME/.rangerdir"
+  local chooser_dir="${XDG_CACHE_HOME:-$HOME/.cache}/ranger"
+  local chooser_file="$chooser_dir/choosedir"
   local target_dir
 
+  mkdir -p "$chooser_dir" 2>/dev/null
   ranger --choosedir="$chooser_file" "$@"
 
   if [[ -r "$chooser_file" ]]; then
