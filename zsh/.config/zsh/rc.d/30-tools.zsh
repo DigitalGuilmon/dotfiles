@@ -53,11 +53,11 @@ if [[ -o interactive ]]; then
     zle reset-prompt
   }
 
-  zle -N open-lvim-widget _open_lvim_widget
-  zle -N open-lazygit-widget _open_lazygit_widget
-  zle -N open-lazydocker-widget _open_lazydocker_widget
+  zle -N open-lvim _open_lvim_widget
+  zle -N open-lazygit _open_lazygit_widget
+  zle -N open-lazydocker _open_lazydocker_widget
 
-  bindkey '^[v' open-lvim-widget
-  bindkey '^[g' open-lazygit-widget
-  bindkey '^[d' open-lazydocker-widget
+  bindkey '^[v' open-lvim
+  bindkey '^[g' open-lazygit
+  bindkey '^[d' open-lazydocker
 fi
