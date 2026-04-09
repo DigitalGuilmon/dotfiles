@@ -7,11 +7,11 @@ has_cmd() {
 }
 
 path_prepend_if_dir() {
-  [[ -d "$1" ]] && path=("$1" $path)
+  [[ -d "$1" ]] && path=("$1" "${path[@]}")
 }
 
 path_append_if_dir() {
-  [[ -d "$1" ]] && path=($path "$1")
+  [[ -d "$1" ]] && path+=("$1")
 }
 
 export ZSH="${ZSH:-$HOME/.oh-my-zsh}"
