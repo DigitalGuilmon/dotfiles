@@ -23,7 +23,7 @@ ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE='fg=#808080'
 # Alt+v -> lvim | Alt+g -> lazygit | Alt+d -> lazydocker
 # ===============================================================
 if [[ -o interactive ]]; then
-  _open_lvim_widget() {
+  _open_lvim() {
     zle -I
     if has_cmd lvim; then
       lvim
@@ -33,7 +33,7 @@ if [[ -o interactive ]]; then
     zle reset-prompt
   }
 
-  _open_lazygit_widget() {
+  _open_lazygit() {
     zle -I
     if has_cmd lazygit; then
       lazygit
@@ -43,7 +43,7 @@ if [[ -o interactive ]]; then
     zle reset-prompt
   }
 
-  _open_lazydocker_widget() {
+  _open_lazydocker() {
     zle -I
     if has_cmd lazydocker; then
       lazydocker
@@ -53,9 +53,9 @@ if [[ -o interactive ]]; then
     zle reset-prompt
   }
 
-  zle -N open-lvim _open_lvim_widget
-  zle -N open-lazygit _open_lazygit_widget
-  zle -N open-lazydocker _open_lazydocker_widget
+  zle -N open-lvim _open_lvim
+  zle -N open-lazygit _open_lazygit
+  zle -N open-lazydocker _open_lazydocker
 
   bindkey '^[v' open-lvim
   bindkey '^[g' open-lazygit
