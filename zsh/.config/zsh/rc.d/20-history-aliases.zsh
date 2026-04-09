@@ -37,8 +37,14 @@ r() {
   fi
 
   local chooser_file="$HOME/.rangerdir"
+  local target_dir
+
   ranger --choosedir="$chooser_file" "$@"
-  [[ -f "$chooser_file" ]] && cd -- "$(cat "$chooser_file")"
+
+  if [[ -r "$chooser_file" ]]; then
+    IFS= read -r target_dir < "$chooser_file"
+    [[ -d "$target_dir" ]] && cd -- "$target_dir"
+  fi
 }
 
 # Truco: Cerrar terminal al salir de tmux (evita el "doble exit")
