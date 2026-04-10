@@ -1,7 +1,7 @@
 -- =================================================================
 -- ⚡ KEYMAPS DIRECTOS DE PRODUCTIVIDAD (Sin <leader>)
 -- =================================================================
-local map = vim.keymap.set
+local map = require("config.utils").map
 
 
 -- 🔄 Navegación Rápida entre Buffers

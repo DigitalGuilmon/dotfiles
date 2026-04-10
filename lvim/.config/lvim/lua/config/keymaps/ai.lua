@@ -1,7 +1,7 @@
 -- =================================================================
 -- 🤖 INTELIGENCIA ARTIFICIAL
 -- =================================================================
-local m = lvim.builtin.which_key.mappings
+local m = require("config.utils").m
 
 
 m["G"] = {

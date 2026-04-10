@@ -2,40 +2,38 @@
 -- =================================================================
 -- 🚀 LUNARVIM 2026 - M4 ULTRA-OPTIMIZED (FULL STACK + AI + OBSIDIAN)
 -- =================================================================
--- Silenciar avisos de funciones obsoletas (Deprecation warnings)
--- Esto evitará que los popups de advertencia aparezcan al iniciar
-
--- Opcional: También puedes silenciar avisos específicos de la API si los anteriores persisten
-vim.g.deprecation_warnings = false
 
 -- 0. OPTIMIZACIÓN DE ARRANQUE
+vim.g.deprecation_warnings = false
 if vim.loader then vim.loader.enable() end
 
 -- 1. CONFIGURACIÓN DEL CORE
 -- -----------------------------------------------------------------
-vim.opt.relativenumber = true
-vim.opt.cursorline = true
-vim.opt.clipboard = "unnamedplus"
-vim.opt.termguicolors = true
-vim.opt.conceallevel = 2 -- Oculta sintaxis Markdown para look Obsidian
-vim.opt.laststatus = 3   -- Barra de estado global única
 vim.g.material_style = "deep ocean"
-vim.list_extend(lvim.builtin.treesitter.ensure_installed, {
-  "html", "css", "javascript", "typescript", "tsx", "python", "lua",
-  "markdown", "markdown_inline", "yaml", "json", "bash"
-})
-
 
 local undodir = vim.fn.expand("~/.local/state/nvim/undo")
 if vim.fn.isdirectory(undodir) == 0 then
   vim.fn.mkdir(undodir, "p")
 end
 
--- Directorio para que no ensucie tus carpetas de proyecto
-vim.opt.undodir = undodir
-vim.opt.undofile = true
-vim.opt.undolevels = 10000
+-- Opciones de Vim (declarativo)
+local vim_opts = {
+  relativenumber = true,
+  cursorline     = true,
+  clipboard      = "unnamedplus",
+  termguicolors  = true,
+  conceallevel   = 2,     -- Oculta sintaxis Markdown para look Obsidian
+  laststatus     = 3,     -- Barra de estado global única
+  undodir        = undodir,
+  undofile       = true,
+  undolevels     = 10000,
+}
+for k, v in pairs(vim_opts) do vim.opt[k] = v end
 
+vim.list_extend(lvim.builtin.treesitter.ensure_installed, {
+  "html", "css", "javascript", "typescript", "tsx", "python", "lua",
+  "markdown", "markdown_inline", "yaml", "json", "bash"
+})
 
 lvim.builtin.dap.active = true
 lvim.format_on_save.enabled = true
@@ -64,9 +62,9 @@ lvim.builtin.breadcrumbs.active = true
 -- 3. DIAGNÓSTICOS (Optimizado para lsp_lines)
 -- -----------------------------------------------------------------
 vim.diagnostic.config({
-  virtual_text = false,
+  virtual_text  = false,
   virtual_lines = { only_current_line = true },
-  underline = true,
+  underline     = true,
   severity_sort = true,
-  float = { border = "rounded", source = "if_many" },
+  float         = { border = "rounded", source = "if_many" },
 })

@@ -1,7 +1,7 @@
 -- =================================================================
 -- 🗺️📁🔍 NAVEGACIÓN, ARCHIVOS Y BÚSQUEDA
 -- =================================================================
-local m = lvim.builtin.which_key.mappings
+local m = require("config.utils").m
 
 
 -- 🗺️ Mapa del Código

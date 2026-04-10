@@ -1,7 +1,7 @@
 -- =================================================================
 -- 🔬 EJECUCIÓN CIENTÍFICA (Molten / Jupyter, Iron REPL)
 -- =================================================================
-local m = lvim.builtin.which_key.mappings
+local m = require("config.utils").m
 
 
 -- 🔬 Molten / Jupyter

@@ -1,7 +1,7 @@
 -- =================================================================
 -- 📄 ACCIONES RÁPIDAS DE ARCHIVO (<leader>v)
 -- =================================================================
-local m = lvim.builtin.which_key.mappings
+local m = require("config.utils").m
 
 
 m["v"] = {
