@@ -1,7 +1,7 @@
 -- =================================================================
 -- 👁️ MODO VISUAL (CRÍTICO PARA CODECOMPANION Y SNACKS)
 -- =================================================================
-local vm = lvim.builtin.which_key.vmappings
+local vm = require("config.utils").vm
 
 
 -- IA en Modo Visual: Seleccionas código y lo mandas directo a Gemini

@@ -1,7 +1,7 @@
 -- =================================================================
 -- 🪟 GESTIÓN DE VENTANAS (<leader>w)
 -- =================================================================
-local m = lvim.builtin.which_key.mappings
+local m = require("config.utils").m
 
 
 m["w"] = {

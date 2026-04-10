@@ -1,7 +1,7 @@
 -- =================================================================
 -- 🧩 MAPEOS COMPLEMENTARIOS DE PLUGINS
 -- =================================================================
-local m = lvim.builtin.which_key.mappings
+local m = require("config.utils").m
 
 
 -- 📦 Undotree (Árbol de Deshacer Visual)
@@ -26,25 +26,25 @@ m["n"] = {
 -- 🐞 DEBUGGING (DAP)
 m["d"] = {
   name = "Debug (DAP)",
-  t = { "<cmd>lua require'dap'.toggle_breakpoint()<cr>", "Toggle Breakpoint" },
-  b = { "<cmd>lua require'dap'.step_back()<cr>", "Step Back" },
-  c = { "<cmd>lua require'dap'.continue()<cr>", "Continue" },
-  C = { "<cmd>lua require'dap'.run_to_cursor()<cr>", "Run To Cursor" },
-  d = { "<cmd>lua require'dap'.disconnect()<cr>", "Disconnect" },
-  g = { "<cmd>lua require'dap'.session()<cr>", "Get Session" },
-  i = { "<cmd>lua require'dap'.step_into()<cr>", "Step Into" },
-  o = { "<cmd>lua require'dap'.step_over()<cr>", "Step Over" },
-  u = { "<cmd>lua require'dap'.step_out()<cr>", "Step Out" },
-  p = { "<cmd>lua require'dap'.pause()<cr>", "Pause" },
-  r = { "<cmd>lua require'dap'.repl.toggle()<cr>", "Toggle Repl" },
-  s = { "<cmd>lua require'dap'.continue()<cr>", "Start" },
-  q = { "<cmd>lua require'dap'.close()<cr>", "Quit" },
-  U = { "<cmd>lua require'dapui'.toggle({reset = true})<cr>", "Toggle UI DAP" },
+  t = { function() require("dap").toggle_breakpoint() end,  "Toggle Breakpoint" },
+  b = { function() require("dap").step_back() end,          "Step Back" },
+  c = { function() require("dap").continue() end,           "Continue" },
+  C = { function() require("dap").run_to_cursor() end,      "Run To Cursor" },
+  d = { function() require("dap").disconnect() end,         "Disconnect" },
+  g = { function() require("dap").session() end,            "Get Session" },
+  i = { function() require("dap").step_into() end,          "Step Into" },
+  o = { function() require("dap").step_over() end,          "Step Over" },
+  u = { function() require("dap").step_out() end,           "Step Out" },
+  p = { function() require("dap").pause() end,              "Pause" },
+  r = { function() require("dap").repl.toggle() end,        "Toggle Repl" },
+  s = { function() require("dap").continue() end,           "Start" },
+  q = { function() require("dap").close() end,              "Quit" },
+  U = { function() require("dapui").toggle({ reset = true }) end, "Toggle UI DAP" },
 }
 
 
 -- 🧹 FORMATEO MANUAL
-m["F"] = { "<cmd>lua require('lvim.core.formatters').format()<cr>", "Formatear Archivo" }
+m["F"] = { function() require("lvim.core.formatters").format() end, "Formatear Archivo" }
 
 
 -- 🍿 SNACKS (Terminal y Scratchpads)

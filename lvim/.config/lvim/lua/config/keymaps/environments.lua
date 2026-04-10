@@ -1,7 +1,7 @@
 -- =================================================================
 -- 🎓 ENTORNOS ESPECÍFICOS (Leetcode, LaTeX, Lean)
 -- =================================================================
-local m = lvim.builtin.which_key.mappings
+local m = require("config.utils").m
 
 
 -- LeetCode

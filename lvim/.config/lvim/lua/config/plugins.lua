@@ -6,14 +6,9 @@ lvim.plugins = {
   -- --- [ ESTÉTICA Y UI PREMIUM ] ---
   {
     "zbirenbaum/copilot.lua",
-    cmd = "Copilot",
+    cmd   = "Copilot",
     event = "InsertEnter",
-    config = function()
-      require("copilot").setup({
-        suggestion = { enabled = false },
-        panel = { enabled = false },
-      })
-    end,
+    opts  = { suggestion = { enabled = false }, panel = { enabled = false } },
   },
   { "giuxtaposition/blink-cmp-copilot" },
   {
@@ -203,17 +198,15 @@ lvim.plugins = {
   -- --- [ LENGUAJES Y PORTABILIDAD ] ---
   {
     "WhoIsSethDaniel/mason-tool-installer.nvim",
-    config = function()
-      require("mason-tool-installer").setup({
-        ensure_installed = {
-          "prettier", "stylua", "eslint_d", "black", "ruff",
-          "pyright", "typescript-language-server", "lua-language-server",
-        },
-      })
-    end,
+    opts = {
+      ensure_installed = {
+        "prettier", "stylua", "eslint_d", "black", "ruff",
+        "pyright", "typescript-language-server", "lua-language-server",
+      },
+    },
   },
   { "Julian/lean.nvim",      event = { "BufReadPre *.lean" },                                                       opts = { lsp = {}, mappings = true } },
-  { "kelly-lin/ranger.nvim", config = function() require("ranger-nvim").setup({ replace_netrw = true }) end },
+  { "kelly-lin/ranger.nvim", main = "ranger-nvim", opts = { replace_netrw = true } },
   { "kawre/leetcode.nvim",   dependencies = { "nvim-treesitter/nvim-treesitter", "nvim-telescope/telescope.nvim" }, opts = { lang = "cpp" } },
   {
     "lervag/vimtex",
@@ -265,15 +258,11 @@ lvim.plugins = {
   },
 
   -- --- [ INGENIERÍA Y EDICIÓN TÁCTICA ] ---
-  {
-    "echasnovski/mini.ai",
-    version = false,
-    config = function() require("mini.ai").setup() end,
-  },
+  { "echasnovski/mini.ai",    version = false, opts = {} },
   {
     "nvim-neotest/neotest",
     dependencies = { "nvim-neotest/nvim-nio", "nvim-lua/plenary.nvim", "antoinemadec/FixCursorHold.nvim" },
-    config = function() require("neotest").setup({ adapters = {} }) end,
+    opts = { adapters = {} },
   },
   {
     "kristijanhusak/vim-dadbod-ui",
@@ -289,26 +278,18 @@ lvim.plugins = {
     opts = { modes = { char = { jump_labels = true } } },
     keys = { { "s", mode = { "n", "x", "o" }, function() require("flash").jump() end, desc = "Flash" }, },
   },
-  {
-    "kylechui/nvim-surround",
-    event = "VeryLazy",
-    config = function() require("nvim-surround").setup() end
-  },
+  { "kylechui/nvim-surround",         event = "VeryLazy", opts = {} },
   { "folke/trouble.nvim",                                 cmd = "Trouble",                                                    opts = {} },
   { "nvim-treesitter/nvim-treesitter-textobjects",        dependencies = { "nvim-treesitter/nvim-treesitter" } },
-  { "theHamsta/nvim-dap-virtual-text",                    config = function() require("nvim-dap-virtual-text").setup() end },
+  { "theHamsta/nvim-dap-virtual-text",                    opts = {} },
   { "stevearc/aerial.nvim",                               opts = { attach_mode = "global" } },
   { "lewis6991/gitsigns.nvim",                            opts = { current_line_blame = true } },
   { "folke/todo-comments.nvim",                           opts = {} },
-  { url = "https://git.sr.ht/~whynothugo/lsp_lines.nvim", config = function() require("lsp_lines").setup() end },
+  { url = "https://git.sr.ht/~whynothugo/lsp_lines.nvim", main = "lsp_lines", opts = {} },
 
   -- --- [ COMPLEMENTOS FALTANTES ] ---
   { "rcarriga/nvim-dap-ui",                               dependencies = { "mfussenegger/nvim-dap", "nvim-neotest/nvim-nio" } },
-  {
-    "echasnovski/mini.pairs",
-    version = false,
-    config = function() require("mini.pairs").setup() end
-  },
+  { "echasnovski/mini.pairs", version = false, opts = {} },
   { "NvChad/nvim-colorizer.lua", opts = { user_default_options = { tailwind = true } } },
 }
 
