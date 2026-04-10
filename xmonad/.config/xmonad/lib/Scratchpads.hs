@@ -7,7 +7,7 @@ import qualified XMonad.StackSet as W
 -- Scratchpads: ventanas flotantes que aparecen y desaparecen con un atajo
 myScratchpads :: [NamedScratchpad]
 myScratchpads =
-    [ NS "vscode" "code-oss --new-window --user-data-dir=~/.config/Code-OSS-Scratchpad" (className =? "code-oss") centerLarge
+    [ NS "vscode" "code --new-window --class=scratchpad-vscode" (className =? "scratchpad-vscode") centerLarge
     , NS "terminal" "ghostty --class=scratchpad-term" (className =? "scratchpad-term") centerMedium
     , NS "filemanager" "thunar" (className =? "Thunar") centerLarge
     , NS "btop" "ghostty --class=scratchpad-btop -e btop" (className =? "scratchpad-btop") centerLarge

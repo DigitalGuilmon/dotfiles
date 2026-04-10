@@ -5,6 +5,7 @@ import XMonad.Util.NamedScratchpad (namedScratchpadAction)
 import qualified XMonad.StackSet as W
 import XMonad.Layout.MultiToggle (Toggle(..))
 import XMonad.Layout.MultiToggle.Instances (StdTransformers(NBFULL))
+import XMonad.Actions.CycleWS (nextWS, prevWS, shiftToNext, shiftToPrev)
 
 -- Importación de tus variables y módulos locales
 import Variables (myTerminal, myTheme, myWorkspaces)
@@ -92,14 +93,28 @@ myKeys =
     -- --- GESTIÓN DE VENTANAS (Foco, Layout y Flotantes) ---
     , ("M-j",          windows W.focusDown)    -- Mover foco a la siguiente ventana
     , ("M-k",          windows W.focusUp)      -- Mover foco a la ventana anterior
+    , ("M-m",          windows W.focusMaster)  -- Mover foco a la ventana maestra
     , ("M-S-j",        windows W.swapDown)     -- Intercambiar posición con la ventana siguiente
     , ("M-S-k",        windows W.swapUp)       -- Intercambiar posición con la ventana anterior
+    , ("M-S-<Return>", windows W.swapMaster)   -- Intercambiar ventana enfocada con la maestra
     , ("M-f",          sendMessage $ Toggle NBFULL) -- Alternar pantalla completa
     , ("M-h",          sendMessage Shrink)     -- Encoger área maestra
     , ("M-l",          sendMessage Expand)     -- Expandir área maestra
+    , ("M-,",          sendMessage (IncMasterN 1))    -- Incrementar ventanas en área maestra
+    , ("M-.",          sendMessage (IncMasterN (-1)))  -- Decrementar ventanas en área maestra
     , ("M-n",          refresh)                -- Corregir tamaño de ventanas
     , ("M-t",          sinkWindow)             -- Hundir ventana enfocada (quitar float)
     , ("M-S-t",        sinkAll)                -- Hundir todas las ventanas flotantes
+
+    -- --- NAVEGACIÓN DE LAYOUTS ---
+    , ("M-<Space>",    sendMessage NextLayout)   -- Siguiente layout
+    , ("M-S-<Space>",  sendMessage FirstLayout)  -- Resetear al primer layout
+
+    -- --- NAVEGACIÓN DE WORKSPACES ---
+    , ("M-<Right>",    nextWS)                        -- Siguiente workspace
+    , ("M-<Left>",     prevWS)                        -- Anterior workspace
+    , ("M-S-<Right>",  shiftToNext >> nextWS)         -- Mover ventana al siguiente workspace y seguir
+    , ("M-S-<Left>",   shiftToPrev >> prevWS)         -- Mover ventana al anterior workspace y seguir
     
     -- --- TECLAS MULTIMEDIA Y BRILLO ---
     , ("<XF86AudioRaiseVolume>", spawn "wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%+")
