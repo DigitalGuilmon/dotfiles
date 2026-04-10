@@ -1,4 +1,4 @@
-module Scripts.ProjectManager (projectMenu) where
+module Scripts.Productivity.ProjectManager (projectMenu) where
 
 import XMonad
 import XMonad.Prompt

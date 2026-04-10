@@ -2,14 +2,14 @@ module Keys.Productivity where
 
 import XMonad
 
-import Scripts.ProjectManager (projectMenu)
-import Scripts.Bookmarks (bookmarkMenu)
-import Scripts.DevTools (devMenu)
-import Scripts.EmojiPicker (emojiPicker)
-import Scripts.Calculator (calculator)
-import Scripts.Timer (timerMenu)
-import Scripts.TodoList (todoMenu)
-import Scripts.SystemInfo (systemInfo)
+import Scripts.Productivity.ProjectManager (projectMenu)
+import Scripts.Network.Bookmarks (bookmarkMenu)
+import Scripts.System.DevTools (devMenu)
+import Scripts.Productivity.EmojiPicker (emojiPicker)
+import Scripts.Productivity.Calculator (calculator)
+import Scripts.Productivity.Timer (timerMenu)
+import Scripts.Productivity.TodoList (todoMenu)
+import Scripts.System.SystemInfo (systemInfo)
 
 productivityKeys :: [(String, X ())]
 productivityKeys =

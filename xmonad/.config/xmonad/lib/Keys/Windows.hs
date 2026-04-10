@@ -5,7 +5,7 @@ import qualified XMonad.StackSet as W
 import XMonad.Layout.MultiToggle (Toggle(..))
 import XMonad.Layout.MultiToggle.Instances (StdTransformers(NBFULL))
 
-import Scripts.WindowControls (sinkWindow, sinkAll)
+import Scripts.System.WindowControls (sinkWindow, sinkAll)
 
 windowKeys :: [(String, X ())]
 windowKeys =

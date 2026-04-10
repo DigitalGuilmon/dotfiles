@@ -1,4 +1,4 @@
-module Scripts.Wallpaper 
+module Scripts.System.Wallpaper 
     ( changeWallpaper
     , restoreWallpaper
     ) where

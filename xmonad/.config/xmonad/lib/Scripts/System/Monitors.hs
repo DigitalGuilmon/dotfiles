@@ -1,4 +1,4 @@
-module Scripts.Monitors (monitorMenu) where
+module Scripts.System.Monitors (monitorMenu) where
 
 import XMonad
 import XMonad.Prompt

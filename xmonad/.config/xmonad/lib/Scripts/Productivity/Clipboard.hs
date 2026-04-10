@@ -1,4 +1,4 @@
-module Scripts.Clipboard 
+module Scripts.Productivity.Clipboard 
     ( clipboardMenu
     , clipboardClear
     ) where

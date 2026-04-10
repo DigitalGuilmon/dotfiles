@@ -1,4 +1,4 @@
-module Scripts.WindowControls where
+module Scripts.System.WindowControls where
 
 import XMonad
 import qualified XMonad.StackSet as W

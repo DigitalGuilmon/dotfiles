@@ -3,11 +3,11 @@ module Keys.System where
 import XMonad
 import qualified XMonad.StackSet as W
 
-import Scripts.PowerMenu (powerMenu)
-import Scripts.Monitors (monitorMenu)
-import Scripts.AudioControl (audioMenu)
-import Scripts.NetworkMenu (networkMenu)
-import Scripts.NotificationCenter (notificationMenu)
+import Scripts.System.PowerMenu (powerMenu)
+import Scripts.System.Monitors (monitorMenu)
+import Scripts.Multimedia.AudioControl (audioMenu)
+import Scripts.Network.NetworkMenu (networkMenu)
+import Scripts.System.NotificationCenter (notificationMenu)
 
 systemKeys :: [(String, X ())]
 systemKeys =

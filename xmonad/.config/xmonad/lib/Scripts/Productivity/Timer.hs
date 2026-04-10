@@ -1,4 +1,4 @@
-module Scripts.Timer (timerMenu) where
+module Scripts.Productivity.Timer (timerMenu) where
 
 import XMonad
 import XMonad.Util.Run (runProcessWithInput)

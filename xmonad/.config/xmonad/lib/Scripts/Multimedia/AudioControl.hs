@@ -1,4 +1,4 @@
-module Scripts.AudioControl (audioMenu) where
+module Scripts.Multimedia.AudioControl (audioMenu) where
 
 import XMonad
 import XMonad.Prompt

@@ -2,8 +2,8 @@ module Keys.Search where
 
 import XMonad
 
-import Scripts.GridMenu (gridGoToWindow)
-import Scripts.Prompts (searchGoogle, searchYouTube, searchMan, runShell)
+import Scripts.System.GridMenu (gridGoToWindow)
+import Scripts.System.Prompts (searchGoogle, searchYouTube, searchMan, runShell)
 
 searchKeys :: [(String, X ())]
 searchKeys =

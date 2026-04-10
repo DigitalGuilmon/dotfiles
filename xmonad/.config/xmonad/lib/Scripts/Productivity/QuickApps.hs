@@ -1,4 +1,4 @@
-module Scripts.QuickApps (quickApps) where
+module Scripts.Productivity.QuickApps (quickApps) where
 
 import XMonad
 import XMonad.Prompt

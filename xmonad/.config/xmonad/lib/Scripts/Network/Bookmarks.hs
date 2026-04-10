@@ -1,4 +1,4 @@
-module Scripts.Bookmarks (bookmarkMenu) where
+module Scripts.Network.Bookmarks (bookmarkMenu) where
 
 import XMonad
 import XMonad.Prompt

@@ -1,4 +1,4 @@
-module Scripts.SystemInfo (systemInfo) where
+module Scripts.System.SystemInfo (systemInfo) where
 
 import XMonad
 import XMonad.Util.Run (runProcessWithInput)

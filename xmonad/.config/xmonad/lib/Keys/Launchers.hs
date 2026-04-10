@@ -3,7 +3,7 @@ module Keys.Launchers where
 import XMonad
 
 import Variables (myTerminal, myTheme)
-import Scripts.QuickApps (quickApps)
+import Scripts.Productivity.QuickApps (quickApps)
 
 launcherKeys :: [(String, X ())]
 launcherKeys =
