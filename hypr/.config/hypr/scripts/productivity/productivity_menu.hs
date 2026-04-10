@@ -34,7 +34,7 @@ notify urgency title message =
 getThemePath :: IO String
 getThemePath = do
     home <- getHomeDirectory
-    return $ home ++ "/dotfiles/rofi/.config/rofi/themes/modern.rasi"
+    return $ home ++ "/.config/rofi/themes/modern.rasi"
 
 -- ==========================================
 -- MOTOR CORE
