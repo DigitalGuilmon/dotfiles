@@ -3,10 +3,14 @@
 
 import System.Process (readProcess, spawnCommand)
 import System.Exit (exitSuccess)
+import System.Directory (getHomeDirectory)
 import Data.List (isInfixOf)
 
 -- Configuración estética
-theme = "~/.config/rofi/themes/modern.rasi"
+getThemePath :: IO String
+getThemePath = do
+    home <- getHomeDirectory
+    return $ home ++ "/.config/rofi/themes/modern.rasi"
 
 -- Iconos (Nerd Fonts)
 iconAudio  = "\xf04c3"
@@ -78,5 +82,6 @@ nightMenu = do
 
 rofi :: String -> String -> IO String
 rofi prompt opts = do
+    theme <- getThemePath
     res <- readProcess "rofi" ["-dmenu", "-i", "-p", prompt, "-theme", theme] opts
     return $ if null res then "" else init res
