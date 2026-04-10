@@ -1,4 +1,4 @@
-module Scripts.Prompts 
+module Scripts.System.Prompts 
     ( searchGoogle
     , searchYouTube
     , searchMan

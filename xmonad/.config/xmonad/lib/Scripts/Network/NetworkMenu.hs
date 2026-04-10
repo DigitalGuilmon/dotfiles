@@ -1,4 +1,4 @@
-module Scripts.NetworkMenu (networkMenu) where
+module Scripts.Network.NetworkMenu (networkMenu) where
 
 import XMonad
 import XMonad.Prompt

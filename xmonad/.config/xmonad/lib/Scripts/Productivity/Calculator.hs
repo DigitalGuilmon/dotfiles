@@ -1,4 +1,4 @@
-module Scripts.Calculator (calculator) where
+module Scripts.Productivity.Calculator (calculator) where
 
 import XMonad
 import XMonad.Util.Run (runProcessWithInput)

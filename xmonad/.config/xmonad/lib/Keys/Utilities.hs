@@ -2,9 +2,9 @@ module Keys.Utilities where
 
 import XMonad
 
-import Scripts.Screenshot (screenshot)
-import Scripts.Wallpaper (changeWallpaper)
-import Scripts.Clipboard (clipboardMenu, clipboardClear)
+import Scripts.Multimedia.Screenshot (screenshot)
+import Scripts.System.Wallpaper (changeWallpaper)
+import Scripts.Productivity.Clipboard (clipboardMenu, clipboardClear)
 
 utilityKeys :: [(String, X ())]
 utilityKeys =

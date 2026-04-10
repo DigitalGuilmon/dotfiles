@@ -1,4 +1,4 @@
-module Scripts.DevTools (devMenu) where
+module Scripts.System.DevTools (devMenu) where
 
 import XMonad
 import XMonad.Prompt

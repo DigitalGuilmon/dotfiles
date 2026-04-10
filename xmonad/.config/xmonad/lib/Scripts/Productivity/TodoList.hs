@@ -1,4 +1,4 @@
-module Scripts.TodoList (todoMenu) where
+module Scripts.Productivity.TodoList (todoMenu) where
 
 import XMonad
 import XMonad.Util.Run (runProcessWithInput)

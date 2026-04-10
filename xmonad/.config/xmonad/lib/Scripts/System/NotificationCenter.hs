@@ -1,4 +1,4 @@
-module Scripts.NotificationCenter (notificationMenu) where
+module Scripts.System.NotificationCenter (notificationMenu) where
 
 import XMonad
 import XMonad.Prompt

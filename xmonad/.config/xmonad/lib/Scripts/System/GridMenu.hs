@@ -1,4 +1,4 @@
-module Scripts.GridMenu where
+module Scripts.System.GridMenu where
 
 import XMonad
 import XMonad.Actions.GridSelect

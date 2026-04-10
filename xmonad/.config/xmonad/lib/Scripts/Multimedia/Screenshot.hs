@@ -1,4 +1,4 @@
-module Scripts.Screenshot (screenshot) where
+module Scripts.Multimedia.Screenshot (screenshot) where
 
 import XMonad
 import XMonad.Util.Run (runProcessWithInput)

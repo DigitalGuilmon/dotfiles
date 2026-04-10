@@ -1,4 +1,4 @@
-module Scripts.EmojiPicker (emojiPicker) where
+module Scripts.Productivity.EmojiPicker (emojiPicker) where
 
 import XMonad
 import XMonad.Util.Run (runProcessWithInput)

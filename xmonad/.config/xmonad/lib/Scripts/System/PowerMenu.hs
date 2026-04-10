@@ -1,4 +1,4 @@
-module Scripts.PowerMenu (powerMenu) where
+module Scripts.System.PowerMenu (powerMenu) where
 
 import XMonad
 import XMonad.Prompt
