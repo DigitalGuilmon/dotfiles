@@ -2,10 +2,10 @@ module Rules.Api (apiRules) where
 
 import XMonad
 
-import Variables (myWorkspaces)
+import Variables (wsApi)
 
 apiRules :: [ManageHook]
 apiRules =
-    [ className =? "Postman"            --> doShift (myWorkspaces !! 4)
-    , className =? "Insomnia"           --> doShift (myWorkspaces !! 4)
+    [ className =? "Postman"            --> doShift wsApi
+    , className =? "Insomnia"           --> doShift wsApi
     ]

@@ -23,4 +23,18 @@ myThemeAbs = liftIO $ do
     return $ home ++ "/.config/rofi/cyberpunk.rasi"
 
 myWorkspaces :: [String]
-myWorkspaces = ["1:dev", "2:web", "3:term", "4:db", "5:api", "6:chat", "7:media", "8:sys", "9:vm", "10:misc"]
+myWorkspaces = [wsDev, wsWeb, wsTerm, wsDb, wsApi, wsChat, wsMedia, wsSys, wsVm, wsMisc]
+
+-- Constantes de workspace: evitan indexación parcial con (!!) que crashea si se
+-- modifica la longitud de myWorkspaces
+wsDev, wsWeb, wsTerm, wsDb, wsApi, wsChat, wsMedia, wsSys, wsVm, wsMisc :: String
+wsDev   = "1:dev"
+wsWeb   = "2:web"
+wsTerm  = "3:term"
+wsDb    = "4:db"
+wsApi   = "5:api"
+wsChat  = "6:chat"
+wsMedia = "7:media"
+wsSys   = "8:sys"
+wsVm    = "9:vm"
+wsMisc  = "10:misc"

@@ -2,9 +2,9 @@ module Rules.Db (dbRules) where
 
 import XMonad
 
-import Variables (myWorkspaces)
+import Variables (wsDb)
 
 dbRules :: [ManageHook]
 dbRules =
-    [ className =? "DBeaver"            --> doShift (myWorkspaces !! 3)
+    [ className =? "DBeaver"            --> doShift wsDb
     ]
