@@ -29,7 +29,7 @@ devOptions =
     , ("Sys: htop/btop",               spawn "ghostty -e btop")
     , ("Sys: Uso de Disco (ncdu)",     spawn "ghostty -e ncdu /")
     , ("Sys: Logs del Sistema",        spawn "ghostty -e sh -c 'journalctl -f'")
-    , ("Sys: Procesos Zombie",         spawn "notify-send '🧟 Zombies' \"$(ps aux | awk '$8==\"Z\" {print $0}' | head -10 || echo 'Ninguno encontrado')\"")
+    , ("Sys: Procesos Zombie",         spawn "result=$(ps aux | awk '$8==\"Z\" {print $0}' | head -10); notify-send '🧟 Zombies' \"${result:-Ninguno encontrado}\"")
     ]
 
 devXPConfig :: XPConfig

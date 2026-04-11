@@ -7,7 +7,7 @@ import XMonad
 
 -- Acción para descargar un wallpaper aleatorio de waifu.im
 changeWallpaper :: X ()
-changeWallpaper = spawn "mkdir -p ~/.cache && url=$(curl -s 'https://api.waifu.im/images?IsNsfw=False&Orientation=Landscape' | jq -r '.items[0].url') && if [ \"$url\" != \"null\" ] && [ -n \"$url\" ]; then curl -sL \"$url\" -o ~/.cache/wallpaper.jpg && feh --bg-fill ~/.cache/wallpaper.jpg; fi"
+changeWallpaper = spawn "mkdir -p ~/.cache && url=$(curl -s --max-time 10 'https://api.waifu.im/images?IsNsfw=False&Orientation=Landscape' | jq -r '.items[0].url') && if [ \"$url\" != \"null\" ] && [ -n \"$url\" ]; then curl -sL --max-time 30 \"$url\" -o ~/.cache/wallpaper.jpg && feh --bg-fill ~/.cache/wallpaper.jpg; fi"
 
 -- Acción para restaurar el fondo al iniciar Xmonad
 restoreWallpaper :: X ()
