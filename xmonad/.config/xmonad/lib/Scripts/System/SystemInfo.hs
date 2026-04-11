@@ -24,7 +24,7 @@ systemInfo = do
     theme <- myThemeAbs
     selection <- runProcessWithInput "rofi"
         ["-dmenu", "-p", "SysInfo:", "-theme", theme, "-i"] infoOptions
-    let res = filter (/= '\n') selection
+    let res = takeWhile (/= '\n') selection
     case res of
         "CPU y Carga del sistema" -> spawn "notify-send '🖥️ CPU' \"$(top -bn1 | head -5 | tail -3)\""
         "Memoria RAM"             -> spawn "notify-send '🧠 RAM' \"$(free -h | head -2)\""

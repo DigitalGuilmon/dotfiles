@@ -15,7 +15,7 @@ todoActions = unlines
     ]
 
 todoFile :: String
-todoFile = "\"$HOME/.local/share/xmonad-todo.md\""
+todoFile = "$HOME/.local/share/xmonad-todo.md"
 
 -- Gestor de tareas TODO usando rofi y un archivo markdown simple
 todoMenu :: X ()
@@ -23,7 +23,7 @@ todoMenu = do
     theme <- myThemeAbs
     selection <- runProcessWithInput "rofi"
         ["-dmenu", "-p", "TODO:", "-theme", theme, "-i"] todoActions
-    let res = filter (/= '\n') selection
+    let res = takeWhile (/= '\n') selection
     case res of
         "Ver tareas pendientes" -> viewTodos
         "Agregar tarea"         -> addTodo
@@ -44,7 +44,7 @@ addTodo = do
     theme <- myThemeAbs
     task <- runProcessWithInput "rofi"
         ["-dmenu", "-p", "Nueva tarea:", "-theme", theme] ""
-    let res = filter (/= '\n') task
+    let res = takeWhile (/= '\n') task
     case res of
         "" -> return ()
         _  -> spawn $ "mkdir -p $(dirname " ++ todoFile ++ ") && "

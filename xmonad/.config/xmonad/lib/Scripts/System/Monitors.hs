@@ -4,6 +4,7 @@ import XMonad
 import XMonad.Prompt
 import XMonad.Prompt.FuzzyMatch (fuzzyMatch)
 import XMonad.Util.Run (runProcessWithInput)
+import Data.Char (isAlphaNum)
 
 data MonitorPrompt = MonitorPrompt
 
@@ -15,14 +16,17 @@ instance XPrompt MonitorPrompt where
 -- Detecta las salidas conectadas dinámicamente via xrandr
 -- Devuelve (pantalla interna, pantalla externa) si hay 2 conectadas,
 -- o solo la primera si hay 1.
+-- Sanitiza un nombre de output de xrandr para uso seguro en shell
+sanitizeOutput :: String -> String
+sanitizeOutput = filter (\c -> isAlphaNum c || c `elem` ("-_." :: String))
+
 detectOutputs :: X (String, Maybe String)
 detectOutputs = do
     out <- runProcessWithInput "sh" ["-c", "xrandr --query | grep ' connected' | awk '{print $1}'"] ""
-    let outputs = lines (filter (/= '\r') out)
+    let outputs = filter (not . null) . map sanitizeOutput $ lines (filter (/= '\r') out)
     case outputs of
         (primary:secondary:_) -> return (primary, Just secondary)
-        (primary:_)
-            | not (null primary) -> return (primary, Nothing)
+        (primary:_)           -> return (primary, Nothing)
         _                     -> return ("eDP-1", Nothing)  -- fallback si xrandr falla
 
 monitorOptions :: String -> String -> [(String, X ())]

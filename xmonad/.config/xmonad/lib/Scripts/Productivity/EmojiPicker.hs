@@ -66,7 +66,7 @@ emojiPicker = do
     theme <- myThemeAbs
     selection <- runProcessWithInput "rofi"
         ["-dmenu", "-p", "Emoji:", "-theme", theme, "-i"] emojiList
-    let res = filter (/= '\n') selection
+    let res = takeWhile (/= '\n') selection
     case res of
         "" -> return ()
         _  -> do
