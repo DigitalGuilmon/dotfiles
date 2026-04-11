@@ -26,16 +26,19 @@ main = do
         else do
             -- 4. Seleccionar un video aleatorio usando shuf
             selected <- readProcess "shuf" ["-n", "1"] (unlines videoList)
-            let videoPath = head (lines selected)
-            
-            -- 5. Limpiar procesos previos
-            -- Usamos '|| true' para que no falle si no hay procesos activos
-            _ <- callCommand "pkill mpvpaper || true"
-            
-            putStrLn $ "🚀 Iniciando mpvpaper con: " ++ videoPath
-            
-            -- 6. Ejecutar mpvpaper optimizado para AMD (VAAPI)
-            let mpvOpts = "--hwdec=vaapi --vo=libmpv --loop-playlist --no-audio --msg-level=all=no"
-            _ <- spawnProcess "mpvpaper" ["-o", mpvOpts, "*", videoPath]
-            
-            return ()
+            case lines selected of
+              (videoPath:_) -> do
+                -- 5. Limpiar procesos previos
+                -- Usamos '|| true' para que no falle si no hay procesos activos
+                _ <- callCommand "pkill mpvpaper || true"
+                
+                putStrLn $ "🚀 Iniciando mpvpaper con: " ++ videoPath
+                
+                -- 6. Ejecutar mpvpaper optimizado para AMD (VAAPI)
+                let mpvOpts = "--hwdec=vaapi --vo=libmpv --loop-playlist --no-audio --msg-level=all=no"
+                _ <- spawnProcess "mpvpaper" ["-o", mpvOpts, "*", videoPath]
+                
+                return ()
+              [] -> do
+                hPutStrLn stderr "❌ shuf no devolvió ningún resultado."
+                exitFailure

@@ -76,20 +76,22 @@ listContainersMenu = do
 handleContainerSelection :: String -> IO ()
 handleContainerSelection rawLine = do
     let parts = words rawLine
-    let cName = head parts
-    let cID   = last parts -- El ID está al final por el formato configurado arriba
+    case parts of
+      [] -> listContainersMenu
+      (cName:rest) -> do
+        let cID = if null rest then cName else last rest -- El ID está al final por el formato configurado arriba
     
-    let actions = [ (icPlay  ++ " Start",    dockerCmd "start" cID cName)
-                  , (icStop  ++ " Stop",     dockerCmd "stop"  cID cName)
-                  , (icLogs  ++ " Ver Logs", void $ spawnCommand $ "ghostty -e 'docker logs -f " ++ cID ++ "'")
-                  , (icTrash ++ " Eliminar", dockerCmd "rm -f" cID cName)
-                  , (icBack  ++ " Volver",   listContainersMenu)
-                  ]
+        let actions = [ (icPlay  ++ " Start",    dockerCmd "start" cID cName)
+                      , (icStop  ++ " Stop",     dockerCmd "stop"  cID cName)
+                      , (icLogs  ++ " Ver Logs", void $ spawnCommand $ "ghostty -e 'docker logs -f " ++ cID ++ "'")
+                      , (icTrash ++ " Eliminar", dockerCmd "rm -f" cID cName)
+                      , (icBack  ++ " Volver",   listContainersMenu)
+                      ]
     
-    selection <- rofi ("Contenedor: " ++ cName) (unlines $ map fst actions)
-    case lookup selection actions of
-        Just action -> action
-        Nothing     -> listContainersMenu
+        selection <- rofi ("Contenedor: " ++ cName) (unlines $ map fst actions)
+        case lookup selection actions of
+            Just action -> action
+            Nothing     -> listContainersMenu
 
 -- 3. EJECUTOR DE COMANDOS DOCKER
 dockerCmd :: String -> String -> String -> IO ()

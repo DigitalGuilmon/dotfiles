@@ -55,7 +55,9 @@ vpnMenu = do
     selection <- rofi "VPN" (vpnList ++ "Volver")
     if selection == "Volver" || null selection
         then mainMenu
-        else spawnCommand ("nmcli connection up " ++ head (lines selection)) >> return ()
+        else case lines selection of
+            (conn:_) -> spawnCommand ("nmcli connection up " ++ conn) >> return ()
+            _        -> return ()
 
 rofi :: String -> String -> IO String
 rofi prompt opts = do

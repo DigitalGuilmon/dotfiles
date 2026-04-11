@@ -20,10 +20,9 @@ main = do
     
     validPaths <- filterM doesDirectoryExist steamPaths
     
-    if null validPaths 
-        then putStrLn "No se encontró la carpeta de Steam."
-        else do
-            let libPath = head validPaths
+    case validPaths of
+        [] -> putStrLn "No se encontró la carpeta de Steam."
+        (libPath:_) -> do
             -- Carpeta donde Steam guarda los iconos de la biblioteca
             let iconCache = home ++ "/.local/share/Steam/appcache/librarycache/"
             
