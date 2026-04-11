@@ -17,9 +17,10 @@ calculator = do
     let expr = filter (/= '\n') expression
     case expr of
         "" -> return ()
-        _  | isSafeExpr expr -> spawn $ "result=$(python3 -c 'from math import *; print(" ++ expr ++ ")' 2>&1) && "
+        _  | isSafeExpr expr -> spawn $ "result=$(python3 -c 'from math import *; print(" ++ expr ++ ")' 2>/tmp/calc_err) && "
                     ++ "printf '%s' \"$result\" | xclip -selection clipboard && "
-                    ++ "notify-send '🔢 Calculadora' \"" ++ expr ++ " = $result (copiado)\""
+                    ++ "notify-send '🔢 Calculadora' \"" ++ expr ++ " = $result (copiado)\" || "
+                    ++ "notify-send '⚠️ Calculadora' \"Error: $(cat /tmp/calc_err)\""
            | otherwise -> spawn "notify-send '⚠️ Calculadora' 'Expresión inválida. Solo se permiten números y operaciones matemáticas.'"
 
 -- Funciones y constantes matemáticas permitidas de Python math

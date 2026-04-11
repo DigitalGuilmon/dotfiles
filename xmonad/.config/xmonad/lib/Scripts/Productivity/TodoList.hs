@@ -52,21 +52,25 @@ addTodo = do
                    ++ "notify-send '✅ TODO' 'Tarea agregada'"
 
 -- Marca una tarea como completada: muestra pendientes, el usuario elige una
+-- Usa grep -nF para obtener el número de línea exacto y sed con dirección de línea,
+-- evitando problemas con caracteres especiales y tareas duplicadas.
 completeTodo :: X ()
 completeTodo = spawn $ "touch " ++ todoFile ++ " && "
-    ++ "sel=$(grep '\\- \\[ \\]' " ++ todoFile ++ " | rofi -dmenu -p 'Completar:' -theme " ++ myTheme ++ " -i) && "
+    ++ "sel=$(grep -n '\\- \\[ \\]' " ++ todoFile ++ " | rofi -dmenu -p 'Completar:' -theme " ++ myTheme ++ " -i) && "
     ++ "[ -n \"$sel\" ] && "
-    ++ "escaped=$(printf '%s' \"$sel\" | sed 's/[][\\/.* ^$&|]/\\\\&/g') && "
-    ++ "sed -i \"s|$escaped|$(printf '%s' \"$sel\" | sed 's/- \\[ \\]/- [x]/')|\" " ++ todoFile ++ " && "
+    ++ "linenum=$(printf '%s' \"$sel\" | cut -d: -f1) && "
+    ++ "[ -n \"$linenum\" ] && "
+    ++ "sed -i \"${linenum}s/- \\[ \\]/- [x]/\" " ++ todoFile ++ " && "
     ++ "notify-send '🎉 TODO' 'Tarea completada'"
 
--- Elimina una tarea: muestra todas, el usuario elige cuál borrar
+-- Elimina una tarea: muestra todas con número de línea, el usuario elige cuál borrar
 deleteTodo :: X ()
 deleteTodo = spawn $ "touch " ++ todoFile ++ " && "
-    ++ "sel=$(cat " ++ todoFile ++ " | rofi -dmenu -p 'Eliminar:' -theme " ++ myTheme ++ " -i) && "
+    ++ "sel=$(nl -ba -s': ' " ++ todoFile ++ " | rofi -dmenu -p 'Eliminar:' -theme " ++ myTheme ++ " -i) && "
     ++ "[ -n \"$sel\" ] && "
-    ++ "escaped=$(printf '%s' \"$sel\" | sed 's/[][\\/.* ^$&|]/\\\\&/g') && "
-    ++ "sed -i \"\\|$escaped|d\" " ++ todoFile ++ " && "
+    ++ "linenum=$(printf '%s' \"$sel\" | awk '{print $1}' | tr -d ':') && "
+    ++ "[ -n \"$linenum\" ] && "
+    ++ "sed -i \"${linenum}d\" " ++ todoFile ++ " && "
     ++ "notify-send '🗑️ TODO' 'Tarea eliminada'"
 
 -- Elimina todas las tareas completadas del archivo

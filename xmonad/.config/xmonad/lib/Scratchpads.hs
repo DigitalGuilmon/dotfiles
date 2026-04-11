@@ -9,7 +9,7 @@ myScratchpads :: [NamedScratchpad]
 myScratchpads =
     [ NS "vscode" "code --new-window --class=scratchpad-vscode" (className =? "scratchpad-vscode") centerLarge
     , NS "terminal" "ghostty --class=scratchpad-term" (className =? "scratchpad-term") centerMedium
-    , NS "filemanager" "thunar" (className =? "Thunar") centerLarge
+    , NS "filemanager" "thunar --name scratchpad-thunar" (appName =? "scratchpad-thunar") centerLarge
     , NS "btop" "ghostty --class=scratchpad-btop -e btop" (className =? "scratchpad-btop") centerLarge
     , NS "notes" "ghostty --class=scratchpad-notes -e lvim ~/Notes" (className =? "scratchpad-notes") centerMedium
     ]

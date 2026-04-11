@@ -14,11 +14,14 @@ spawnBars = do
     xmprocBottom <- spawnPipe "xmobar ~/.config/xmobar/xmobar-bottom.hs"
     pure (xmprocTop, xmprocBottom)
 
+-- Usa dynamicLogString para generar el log como String y enviarlo manualmente
+-- a cada barra. Evita llamar dynamicLogWithPP dos veces (la segunda sobrescribe
+-- el estado interno de la primera, causando actualizaciones perdidas).
 myLogHook :: Handle -> Handle -> X ()
 myLogHook xmprocTop xmprocBottom = do
-    dynamicLogWithPP xmobarPP
-        { ppOutput  = hPutStrLn xmprocTop
-        , ppSep     = " <fc=#6272a4>|</fc> "
+    -- Barra superior: muestra layout y título (sin workspaces)
+    topStr <- dynamicLogString xmobarPP
+        { ppSep     = " <fc=#6272a4>|</fc> "
         , ppOrder   = \fields -> case fields of
               (_ws:l:t:_) -> [l, t]
               (_ws:l:_)   -> [l]
@@ -26,9 +29,11 @@ myLogHook xmprocTop xmprocBottom = do
         , ppLayout  = xmobarColor "#f1fa8c" ""
         , ppTitle   = xmobarColor "#8be9fd" "" . shorten 60
         }
-    dynamicLogWithPP xmobarPP
-        { ppOutput          = hPutStrLn xmprocBottom
-        , ppOrder           = \fields -> case fields of
+    io $ hPutStrLn xmprocTop topStr
+
+    -- Barra inferior: muestra solo workspaces
+    botStr <- dynamicLogString xmobarPP
+        { ppOrder           = \fields -> case fields of
               (ws:_) -> [ws]
               _      -> []
         , ppWsSep           = "    "
@@ -37,3 +42,4 @@ myLogHook xmprocTop xmprocBottom = do
         , ppHidden          = xmobarColor "#6272a4" ""
         , ppHiddenNoWindows = xmobarColor "#44475a" ""
         }
+    io $ hPutStrLn xmprocBottom botStr
