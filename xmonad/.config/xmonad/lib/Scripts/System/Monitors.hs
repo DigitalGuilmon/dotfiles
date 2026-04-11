@@ -16,6 +16,7 @@ instance XPrompt MonitorPrompt where
 -- Detecta las salidas conectadas dinámicamente via xrandr
 -- Devuelve (pantalla interna, pantalla externa) si hay 2 conectadas,
 -- o solo la primera si hay 1.
+
 -- Sanitiza un nombre de output de xrandr para uso seguro en shell
 sanitizeOutput :: String -> String
 sanitizeOutput = filter (\c -> isAlphaNum c || c `elem` ("-_." :: String))
