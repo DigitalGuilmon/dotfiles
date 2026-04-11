@@ -1,6 +1,7 @@
 module Rules (myManageHook, myHandleEventHook) where
 
 import XMonad
+import Data.Monoid (All)
 import XMonad.Util.NamedScratchpad (namedScratchpadManageHook)
 import XMonad.Hooks.OnPropertyChange (onXPropertyChange)
 

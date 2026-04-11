@@ -6,6 +6,7 @@ module Bars
 import System.IO (Handle)
 import XMonad
 import XMonad.Hooks.DynamicLog
+import XMonad.Util.NamedScratchpad (scratchpadWorkspaceTag)
 import XMonad.Util.Run (spawnPipe, hPutStrLn)
 
 spawnBars :: IO (Handle, Handle)
@@ -31,8 +32,8 @@ myLogHook xmprocTop xmprocBottom = do
         }
     catchIO $ hPutStrLn xmprocTop topStr
 
-    -- Barra inferior: muestra solo workspaces
-    botStr <- dynamicLogString xmobarPP
+    -- Barra inferior: muestra solo workspaces (filtra el workspace interno NSP de scratchpads)
+    botStr <- dynamicLogString $ filterOutWsPP [scratchpadWorkspaceTag] xmobarPP
         { ppOrder           = \fields -> case fields of
               (ws:_) -> [ws]
               _      -> []
