@@ -18,9 +18,9 @@ devOptions =
     , ("Docker: Compose Up",            spawn "ghostty -e sh -c 'docker compose up -d && echo && echo \"✅ Servicios iniciados\" ; echo \"[Enter para cerrar]\"; read'")
     , ("Docker: Compose Down",          spawn "ghostty -e sh -c 'docker compose down && echo && echo \"🛑 Servicios detenidos\" ; echo \"[Enter para cerrar]\"; read'")
     , ("Docker: Prune (Limpieza)",      spawn "ghostty -e sh -c 'docker system prune -f && echo && echo \"🧹 Limpieza completada\" ; echo \"[Enter para cerrar]\"; read'")
-    -- Git
-    , ("Git: Status",                   spawn "ghostty -e sh -c 'git status; echo; echo \"[Enter para cerrar]\"; read'")
-    , ("Git: Log (últimos 20)",         spawn "ghostty -e sh -c 'git log --oneline --graph -20; echo; echo \"[Enter para cerrar]\"; read'")
+    -- Git (verifica si el directorio actual es un repo git antes de ejecutar)
+    , ("Git: Status",                   spawn "ghostty -e sh -c 'git rev-parse --is-inside-work-tree >/dev/null 2>&1 || { echo \"No es un repositorio git. Directorio: $(pwd)\"; echo; echo \"[Enter para cerrar]\"; read; exit 1; }; git status; echo; echo \"[Enter para cerrar]\"; read'")
+    , ("Git: Log (últimos 20)",         spawn "ghostty -e sh -c 'git rev-parse --is-inside-work-tree >/dev/null 2>&1 || { echo \"No es un repositorio git. Directorio: $(pwd)\"; echo; echo \"[Enter para cerrar]\"; read; exit 1; }; git log --oneline --graph -20; echo; echo \"[Enter para cerrar]\"; read'")
     , ("Git: Lazygit",                  spawn "ghostty -e lazygit")
     -- Tmux
     , ("Tmux: Nueva Sesión Dev",        spawn "ghostty -e tmux new-session -s dev")

@@ -3,6 +3,7 @@ module Scripts.Productivity.Timer (timerMenu) where
 import XMonad
 import XMonad.Util.Run (runProcessWithInput)
 import Variables (myThemeAbs)
+import Scripts.Utils (shellEscape)
 
 timerOptions :: String
 timerOptions = unlines
@@ -34,11 +35,16 @@ timerMenu = do
         _                       -> return ()
 
 -- Inicia un timer de N minutos con notificación al finalizar
+-- Usa shellEscape para evitar inyección si label contiene caracteres especiales
 startTimer :: Int -> String -> X ()
 startTimer minutes label = do
     let secs = show (minutes * 60)
-    spawn $ "notify-send '⏱️ " ++ label ++ "' '" ++ show minutes ++ " minutos iniciados' && "
-         ++ "(sleep " ++ secs ++ " && notify-send -u critical '🔔 " ++ label ++ "' '¡Tiempo terminado! (" ++ show minutes ++ " min)' "
+        safeLabel = shellEscape ("⏱️ " ++ label)
+        safeMsg   = shellEscape (show minutes ++ " minutos iniciados")
+        safeDone  = shellEscape ("🔔 " ++ label)
+        safeDoneMsg = shellEscape ("¡Tiempo terminado! (" ++ show minutes ++ " min)")
+    spawn $ "notify-send " ++ safeLabel ++ " " ++ safeMsg ++ " && "
+         ++ "(sleep " ++ secs ++ " && notify-send -u critical " ++ safeDone ++ " " ++ safeDoneMsg ++ " "
          ++ "&& (paplay /usr/share/sounds/freedesktop/stereo/alarm-clock-elapsed.oga 2>/dev/null "
          ++ "|| notify-send '🔇 Timer' 'No se pudo reproducir sonido de alarma')) &"
 
