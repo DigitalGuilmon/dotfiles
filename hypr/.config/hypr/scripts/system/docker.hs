@@ -79,7 +79,9 @@ handleContainerSelection rawLine = do
     case parts of
       [] -> listContainersMenu
       (cName:rest) -> do
-        let cID = if null rest then cName else last rest -- El ID está al final por el formato configurado arriba
+        let cID = case reverse rest of   -- El ID está al final por el formato configurado arriba
+                    (x:_) -> x
+                    []    -> cName
     
         let actions = [ (icPlay  ++ " Start",    dockerCmd "start" cID cName)
                       , (icStop  ++ " Stop",     dockerCmd "stop"  cID cName)
