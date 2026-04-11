@@ -3,7 +3,7 @@ module Keys.System where
 import XMonad
 import qualified XMonad.StackSet as W
 import XMonad.Util.Run (runProcessWithInput)
-import Variables (myThemeAbs)
+import System.Directory (getHomeDirectory)
 
 import Scripts.System.PowerMenu (powerMenu)
 import Scripts.System.Monitors (monitorMenu)
@@ -27,7 +27,8 @@ systemKeys =
 -- Pide confirmación antes de cerrar todas las ventanas
 confirmKillAll :: X ()
 confirmKillAll = do
-    theme <- myThemeAbs
+    home <- liftIO getHomeDirectory
+    let theme = home ++ "/.config/rofi/cyberpunk.rasi"
     response <- runProcessWithInput "rofi"
         ["-dmenu", "-p", "¿Cerrar TODAS las ventanas?", "-theme", theme, "-i"] "Sí\nNo"
     let res = takeWhile (/= '\n') response

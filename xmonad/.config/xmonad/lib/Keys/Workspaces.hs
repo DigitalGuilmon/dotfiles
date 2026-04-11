@@ -4,8 +4,6 @@ import XMonad
 import qualified XMonad.StackSet as W
 import XMonad.Actions.CycleWS (nextWS, prevWS, shiftToNext, shiftToPrev)
 
-import Variables (myWorkspaces)
-
 workspaceKeys :: [(String, X ())]
 workspaceKeys =
     [ ("M-<Right>",    nextWS)                -- Siguiente workspace
@@ -16,6 +14,7 @@ workspaceKeys =
     ++
     -- M-[1..9, 0]: Cambiar al espacio | M-S-[1..9, 0]: Mover ventana al espacio
     [ ("M-" ++ m ++ k, windows $ f w) 
-    | (k, w) <- zip (map show ([1..9] :: [Int]) ++ ["0"]) myWorkspaces
+    | (k, w) <- zip (map show ([1..9] :: [Int]) ++ ["0"])
+                     ["1:dev", "2:web", "3:term", "4:db", "5:api", "6:chat", "7:media", "8:sys", "9:vm", "10:misc"]
     , (m, f) <- [("", W.greedyView), ("S-", W.shift)]
     ]
