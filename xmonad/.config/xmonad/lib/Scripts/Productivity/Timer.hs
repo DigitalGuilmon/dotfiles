@@ -50,5 +50,5 @@ customTimer = do
         ["-dmenu", "-p", "Minutos:", "-theme", theme] ""
     let res = filter (/= '\n') input
     case reads res :: [(Int, String)] of
-        [(mins, "")] -> startTimer mins "Timer personalizado"
-        _            -> spawn "notify-send '⚠️ Timer' 'Entrada inválida. Usa un número entero.'"
+        [(mins, "")] | mins > 0 -> startTimer mins "Timer personalizado"
+        _            -> spawn "notify-send '⚠️ Timer' 'Entrada inválida. Usa un número entero positivo.'"
