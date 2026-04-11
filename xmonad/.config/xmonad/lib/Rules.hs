@@ -1,7 +1,6 @@
 module Rules (myManageHook) where
 
 import XMonad
-import XMonad.Hooks.ManageDocks (manageDocks)
 import XMonad.Util.NamedScratchpad (namedScratchpadManageHook)
 
 import Scratchpads (myScratchpads)
@@ -28,4 +27,4 @@ myManageHook = composeAll (concat
     , sysRules
     , vmRules
     , miscRules
-    ]) <+> manageDocks <+> namedScratchpadManageHook myScratchpads
+    ]) <+> namedScratchpadManageHook myScratchpads

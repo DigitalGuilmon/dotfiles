@@ -4,6 +4,8 @@ import XMonad
 import XMonad.Util.Run (runProcessWithInput)
 import Variables (myTheme)
 
+import Data.Char (isAlpha, isDigit)
+
 -- Calculadora rápida usando rofi y python3 para evaluar expresiones
 -- El resultado se muestra con notify-send y se copia al clipboard
 calculator :: X ()
@@ -19,9 +21,23 @@ calculator = do
                     ++ "notify-send '🔢 Calculadora' \"" ++ expr ++ " = $result (copiado)\""
            | otherwise -> spawn "notify-send '⚠️ Calculadora' 'Expresión inválida. Solo se permiten números y operaciones matemáticas.'"
 
+-- Funciones matemáticas permitidas de Python math
+safeMathFunctions :: [String]
+safeMathFunctions =
+    [ "sqrt", "sin", "cos", "tan", "asin", "acos", "atan", "atan2"
+    , "log", "log2", "log10", "exp", "pow", "abs", "round", "ceil", "floor"
+    , "pi", "e", "tau", "inf", "degrees", "radians", "factorial"
+    , "hypot", "gcd", "lcm", "trunc", "fmod", "fsum"
+    ]
+
 -- Valida que la expresión solo contenga caracteres seguros para evaluar
+-- y que las palabras sean funciones matemáticas conocidas
 isSafeExpr :: String -> Bool
-isSafeExpr = all isSafeChar
+isSafeExpr s = all isSafeChar s && all (`elem` safeMathFunctions) (extractWords s)
   where
-    isSafeChar c = c `elem` ("0123456789.+-*/() ,eE" :: String)
-                || c `elem` ("abcdefghijklmnopqrstuvwxyz" :: String)
+    isSafeChar c = isDigit c || c `elem` (".+-*/() ,eE**" :: String) || isAlpha c
+    extractWords [] = []
+    extractWords (c:cs)
+        | isAlpha c = let (word, rest) = span isAlpha (c:cs)
+                      in word : extractWords rest
+        | otherwise = extractWords cs
