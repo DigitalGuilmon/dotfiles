@@ -2,10 +2,10 @@ module Rules.Chat (chatRules) where
 
 import XMonad
 
-import Variables (myWorkspaces)
+import Variables (wsChat)
 
 chatRules :: [ManageHook]
 chatRules =
-    [ className =? "discord"            --> doShift (myWorkspaces !! 5)
-    , className =? "TelegramDesktop"    --> doShift (myWorkspaces !! 5)
+    [ className =? "discord"            --> doShift wsChat
+    , className =? "TelegramDesktop"    --> doShift wsChat
     ]

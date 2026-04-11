@@ -2,10 +2,10 @@ module Rules.Web (webRules) where
 
 import XMonad
 
-import Variables (myWorkspaces)
+import Variables (wsWeb)
 
 webRules :: [ManageHook]
 webRules =
-    [ className =? "Brave-browser"      --> doShift (myWorkspaces !! 1)
-    , className =? "firefox"            --> doShift (myWorkspaces !! 1)
+    [ className =? "Brave-browser"      --> doShift wsWeb
+    , className =? "firefox"            --> doShift wsWeb
     ]

@@ -2,7 +2,7 @@ module Rules (myManageHook, myHandleEventHook) where
 
 import XMonad
 import XMonad.Util.NamedScratchpad (namedScratchpadManageHook)
-import XMonad.Hooks.DynamicProperty (dynamicPropertyChange)
+import XMonad.Hooks.OnPropertyChange (onXPropertyChange)
 
 import Scratchpads (myScratchpads)
 import Rules.Dev (devRules)
@@ -33,4 +33,4 @@ myManageHook = composeAll (concat
 -- Aplica reglas cuando WM_CLASS cambia después de mapear la ventana
 -- Necesario para apps Electron como Spotify que establecen WM_CLASS tarde
 myHandleEventHook :: Event -> X All
-myHandleEventHook = dynamicPropertyChange "WM_CLASS" mediaSpotifyHook
+myHandleEventHook = onXPropertyChange "WM_CLASS" mediaSpotifyHook

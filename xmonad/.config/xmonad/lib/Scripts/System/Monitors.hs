@@ -17,7 +17,7 @@ instance XPrompt MonitorPrompt where
 -- o solo la primera si hay 1.
 detectOutputs :: X (String, Maybe String)
 detectOutputs = do
-    out <- liftIO $ runProcessWithInput "sh" ["-c", "xrandr --query | grep ' connected' | awk '{print $1}'"] ""
+    out <- runProcessWithInput "sh" ["-c", "xrandr --query | grep ' connected' | awk '{print $1}'"] ""
     let outputs = lines (filter (/= '\r') out)
     case outputs of
         (primary:secondary:_) -> return (primary, Just secondary)
