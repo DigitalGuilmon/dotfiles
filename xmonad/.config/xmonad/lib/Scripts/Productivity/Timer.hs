@@ -22,7 +22,7 @@ timerMenu = do
     theme <- myThemeAbs
     selection <- runProcessWithInput "rofi"
         ["-dmenu", "-p", "Timer:", "-theme", theme, "-i"] timerOptions
-    let res = filter (/= '\n') selection
+    let res = takeWhile (/= '\n') selection
     case res of
         "Pomodoro (25 min)"     -> startTimer 25 "Pomodoro"
         "Descanso corto (5 min)"-> startTimer 5  "Descanso corto"
@@ -48,7 +48,7 @@ customTimer = do
     theme <- myThemeAbs
     input <- runProcessWithInput "rofi"
         ["-dmenu", "-p", "Minutos:", "-theme", theme] ""
-    let res = filter (/= '\n') input
+    let res = takeWhile (/= '\n') input
     case reads res :: [(Int, String)] of
         [(mins, "")] | mins > 0 -> startTimer mins "Timer personalizado"
         _            -> spawn "notify-send '⚠️ Timer' 'Entrada inválida. Usa un número entero positivo.'"

@@ -14,7 +14,7 @@ calculator = do
     expression <- runProcessWithInput "rofi"
         ["-dmenu", "-p", "Calc:", "-theme", theme, "-i",
          "-mesg", "Ejemplos: 2+2 | sqrt(144) | 100*0.15 | 2**10"] ""
-    let expr = filter (/= '\n') expression
+    let expr = takeWhile (/= '\n') expression
     case expr of
         "" -> return ()
         _  | isSafeExpr expr -> spawn $ "errfile=$(mktemp /tmp/calc_err.XXXXXX) && trap 'rm -f \"$errfile\"' EXIT && "

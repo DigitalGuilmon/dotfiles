@@ -30,7 +30,7 @@ confirmKillAll = do
     theme <- myThemeAbs
     response <- runProcessWithInput "rofi"
         ["-dmenu", "-p", "¿Cerrar TODAS las ventanas?", "-theme", theme, "-i"] "Sí\nNo"
-    let res = filter (/= '\n') response
+    let res = takeWhile (/= '\n') response
     case res of
         "Sí" -> withWindowSet $ \s -> mapM_ killWindow (W.allWindows s)
         _    -> return ()

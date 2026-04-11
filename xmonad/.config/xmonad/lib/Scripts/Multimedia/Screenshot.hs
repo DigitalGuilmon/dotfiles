@@ -16,7 +16,7 @@ screenshot = do
     selection <- runProcessWithInput rofiCmd rofiArgs options
     
     -- Limpiamos posibles saltos de línea
-    let res = filter (/= '\n') selection
+    let res = takeWhile (/= '\n') selection
     
     -- Ejecutamos el comando correspondiente según la opción
     case res of
