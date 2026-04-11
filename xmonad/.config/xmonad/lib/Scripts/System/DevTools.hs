@@ -14,17 +14,17 @@ instance XPrompt DevPrompt where
 devOptions :: [(String, X ())]
 devOptions =
     -- Docker
-    [ ("Docker: Listar Contenedores",   spawn "ghostty -e sh -c 'docker ps -a; echo \"\\n[Enter para cerrar]\"; read'")
-    , ("Docker: Compose Up",            spawn "ghostty -e sh -c 'docker compose up -d && echo \"\\n✅ Servicios iniciados\" ; echo \"[Enter para cerrar]\"; read'")
-    , ("Docker: Compose Down",          spawn "ghostty -e sh -c 'docker compose down && echo \"\\n🛑 Servicios detenidos\" ; echo \"[Enter para cerrar]\"; read'")
-    , ("Docker: Prune (Limpieza)",      spawn "ghostty -e sh -c 'docker system prune -f && echo \"\\n🧹 Limpieza completada\" ; echo \"[Enter para cerrar]\"; read'")
+    [ ("Docker: Listar Contenedores",   spawn "ghostty -e sh -c 'docker ps -a; echo; echo \"[Enter para cerrar]\"; read'")
+    , ("Docker: Compose Up",            spawn "ghostty -e sh -c 'docker compose up -d && echo && echo \"✅ Servicios iniciados\" ; echo \"[Enter para cerrar]\"; read'")
+    , ("Docker: Compose Down",          spawn "ghostty -e sh -c 'docker compose down && echo && echo \"🛑 Servicios detenidos\" ; echo \"[Enter para cerrar]\"; read'")
+    , ("Docker: Prune (Limpieza)",      spawn "ghostty -e sh -c 'docker system prune -f && echo && echo \"🧹 Limpieza completada\" ; echo \"[Enter para cerrar]\"; read'")
     -- Git
-    , ("Git: Status",                   spawn "ghostty -e sh -c 'git status; echo \"\\n[Enter para cerrar]\"; read'")
-    , ("Git: Log (últimos 20)",         spawn "ghostty -e sh -c 'git log --oneline --graph -20; echo \"\\n[Enter para cerrar]\"; read'")
+    , ("Git: Status",                   spawn "ghostty -e sh -c 'git status; echo; echo \"[Enter para cerrar]\"; read'")
+    , ("Git: Log (últimos 20)",         spawn "ghostty -e sh -c 'git log --oneline --graph -20; echo; echo \"[Enter para cerrar]\"; read'")
     , ("Git: Lazygit",                  spawn "ghostty -e lazygit")
     -- Tmux
     , ("Tmux: Nueva Sesión Dev",        spawn "ghostty -e tmux new-session -s dev")
-    , ("Tmux: Attach Sesión",          spawn "ghostty -e sh -c 'tmux ls 2>/dev/null && tmux attach || echo \"No hay sesiones activas\"; echo \"[Enter para cerrar]\"; read'")
+    , ("Tmux: Attach Sesión",          spawn "ghostty -e sh -c 'tmux ls 2>/dev/null && tmux attach || echo \"No hay sesiones activas\"; echo; echo \"[Enter para cerrar]\"; read'")
     -- Sistema
     , ("Sys: htop/btop",               spawn "ghostty -e btop")
     , ("Sys: Uso de Disco (ncdu)",     spawn "ghostty -e ncdu /")

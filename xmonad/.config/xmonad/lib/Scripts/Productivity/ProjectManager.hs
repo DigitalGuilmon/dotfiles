@@ -15,13 +15,13 @@ instance XPrompt ProjectPrompt where
 -- Personaliza esta lista con tus propios proyectos.
 projectList :: [(String, String)]
 projectList =
-    [ ("Dotfiles",       "~/dotfiles")
-    , ("XMonad Config",  "~/.config/xmonad")
-    , ("Xmobar Config",  "~/.config/xmobar")
-    , ("LunarVim Config","~/.config/lvim")
-    , ("Proyecto 1",     "~/Projects/project1")
-    , ("Proyecto 2",     "~/Projects/project2")
-    , ("Trabajo",        "~/Work")
+    [ ("Dotfiles",       "$HOME/dotfiles")
+    , ("XMonad Config",  "$HOME/.config/xmonad")
+    , ("Xmobar Config",  "$HOME/.config/xmobar")
+    , ("LunarVim Config","$HOME/.config/lvim")
+    , ("Proyecto 1",     "$HOME/Projects/project1")
+    , ("Proyecto 2",     "$HOME/Projects/project2")
+    , ("Trabajo",        "$HOME/Work")
     ]
 
 projectXPConfig :: XPConfig
@@ -44,6 +44,6 @@ projectMenu :: X ()
 projectMenu = mkXPrompt ProjectPrompt projectXPConfig
     (mkComplFunFromList' projectXPConfig (map fst projectList))
     (\selection -> case lookup selection projectList of
-        Just path -> spawn $ "ghostty --working-directory=" ++ path ++ " -e lvim " ++ path
+        Just path -> spawn $ "ghostty --working-directory=\"" ++ path ++ "\" -e lvim \"" ++ path ++ "\""
         Nothing   -> return ()
     )
