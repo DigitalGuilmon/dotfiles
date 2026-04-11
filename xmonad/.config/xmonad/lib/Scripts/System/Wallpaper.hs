@@ -10,7 +10,7 @@ import XMonad
 changeWallpaper :: X ()
 changeWallpaper = spawn $ unwords
     [ "mkdir -p ~/.cache &&"
-    , "url=$(curl -s --max-time 10 'https://api.waifu.im/images?IsNsfw=False&Orientation=Landscape' | jq -r '.items[0].url') &&"
+    , "url=$(curl -s --max-time 10 'https://api.waifu.im/images?IsNsfw=False&Orientation=Landscape' | jq -r '.items[0].url');"
     , "if [ \"$url\" != \"null\" ] && [ -n \"$url\" ]; then"
     , "  { curl -sL --max-time 30 \"$url\" -o ~/.cache/wallpaper.jpg ||"
     , "    { notify-send '⚠️ Wallpaper' 'Error al descargar la imagen'; exit 1; }; } &&"

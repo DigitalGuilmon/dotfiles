@@ -56,7 +56,7 @@ addTodo = do
 -- evitando problemas con caracteres especiales y tareas duplicadas.
 completeTodo :: X ()
 completeTodo = spawn $ "touch " ++ todoFile ++ " && "
-    ++ "sel=$(grep -n '\\- \\[ \\]' " ++ todoFile ++ " | rofi -dmenu -p 'Completar:' -theme " ++ myTheme ++ " -i) && "
+    ++ "sel=$(grep -nF '- [ ]' " ++ todoFile ++ " | rofi -dmenu -p 'Completar:' -theme " ++ myTheme ++ " -i) && "
     ++ "[ -n \"$sel\" ] && "
     ++ "linenum=$(printf '%s' \"$sel\" | cut -d: -f1) && "
     ++ "[ -n \"$linenum\" ] && "
