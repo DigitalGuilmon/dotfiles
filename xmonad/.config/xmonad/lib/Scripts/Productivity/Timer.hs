@@ -43,7 +43,7 @@ startTimer minutes label = do
         safeMsg   = shellEscape (show minutes ++ " minutos iniciados")
         safeDone  = shellEscape ("🔔 " ++ label)
         safeDoneMsg = shellEscape ("¡Tiempo terminado! (" ++ show minutes ++ " min)")
-    spawn $ "notify-send " ++ safeLabel ++ " " ++ safeMsg ++ " && "
+    spawn $ "notify-send " ++ safeLabel ++ " " ++ safeMsg ++ "; "
          ++ "(sleep " ++ secs ++ " && notify-send -u critical " ++ safeDone ++ " " ++ safeDoneMsg ++ " "
          ++ "&& (paplay /usr/share/sounds/freedesktop/stereo/alarm-clock-elapsed.oga 2>/dev/null "
          ++ "|| notify-send '🔇 Timer' 'No se pudo reproducir sonido de alarma')) &"
