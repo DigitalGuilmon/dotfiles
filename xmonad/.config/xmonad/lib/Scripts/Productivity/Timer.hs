@@ -2,7 +2,7 @@ module Scripts.Productivity.Timer (timerMenu) where
 
 import XMonad
 import XMonad.Util.Run (runProcessWithInput)
-import Variables (myTheme)
+import Variables (myThemeAbs)
 
 timerOptions :: String
 timerOptions = unlines
@@ -19,8 +19,9 @@ timerOptions = unlines
 -- Usa notify-send al terminar y un sonido de alerta con paplay
 timerMenu :: X ()
 timerMenu = do
+    theme <- myThemeAbs
     selection <- runProcessWithInput "rofi"
-        ["-dmenu", "-p", "Timer:", "-theme", myTheme, "-i"] timerOptions
+        ["-dmenu", "-p", "Timer:", "-theme", theme, "-i"] timerOptions
     let res = filter (/= '\n') selection
     case res of
         "Pomodoro (25 min)"     -> startTimer 25 "Pomodoro"
@@ -44,8 +45,9 @@ startTimer minutes label = do
 -- Pide al usuario un número de minutos personalizado via rofi
 customTimer :: X ()
 customTimer = do
+    theme <- myThemeAbs
     input <- runProcessWithInput "rofi"
-        ["-dmenu", "-p", "Minutos:", "-theme", myTheme] ""
+        ["-dmenu", "-p", "Minutos:", "-theme", theme] ""
     let res = filter (/= '\n') input
     case reads res :: [(Int, String)] of
         [(mins, "")] -> startTimer mins "Timer personalizado"

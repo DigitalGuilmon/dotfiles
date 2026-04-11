@@ -11,4 +11,4 @@ changeWallpaper = spawn "mkdir -p ~/.cache && url=$(curl -s 'https://api.waifu.i
 
 -- Acción para restaurar el fondo al iniciar Xmonad
 restoreWallpaper :: X ()
-restoreWallpaper = spawn "feh --bg-fill ~/.cache/wallpaper.jpg || feh --bg-fill ~/Downloads/a.jpg"
+restoreWallpaper = spawn "[ -f ~/.cache/wallpaper.jpg ] && feh --bg-fill ~/.cache/wallpaper.jpg || notify-send '🖼️ Wallpaper' 'No se encontró wallpaper en cache. Usa Super+W para descargar uno.'"
