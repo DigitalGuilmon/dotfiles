@@ -9,4 +9,4 @@ sinkWindow = withFocused $ windows . W.sink
 
 -- Hunde TODAS las ventanas del espacio de trabajo actual en una sola operación
 sinkAll :: X ()
-sinkAll = withWindowSet $ \s -> windows $ \ws -> foldl (\w' win -> W.sink win w') ws (W.index s)
+sinkAll = windows $ \ws -> foldl (\w' win -> W.sink win w') ws (W.index ws)

@@ -18,9 +18,9 @@ calculator = do
     case expr of
         "" -> return ()
         _  | isSafeExpr expr -> spawn $ "errfile=$(mktemp /tmp/calc_err.XXXXXX) && "
-                    ++ "result=$(python3 -c 'from math import *; print(" ++ expr ++ ")' 2>\"$errfile\") && "
+                    ++ "{ result=$(python3 -c 'from math import *; print(" ++ expr ++ ")' 2>\"$errfile\") && "
                     ++ "printf '%s' \"$result\" | xclip -selection clipboard && "
-                    ++ "notify-send '🔢 Calculadora' \"" ++ expr ++ " = $result (copiado)\" && rm -f \"$errfile\" || "
+                    ++ "notify-send '🔢 Calculadora' \"" ++ expr ++ " = $result (copiado)\" && rm -f \"$errfile\"; } || "
                     ++ "{ notify-send '⚠️ Calculadora' \"Error: $(cat \"$errfile\")\"; rm -f \"$errfile\"; }"
            | otherwise -> spawn "notify-send '⚠️ Calculadora' 'Expresión inválida. Solo se permiten números y operaciones matemáticas.'"
 

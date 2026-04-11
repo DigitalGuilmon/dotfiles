@@ -27,11 +27,11 @@ detectOutputs = do
 
 monitorOptions :: String -> String -> [(String, X ())]
 monitorOptions laptop external =
-    [ ("1. Solo Laptop",           spawn $ "xrandr --output " ++ laptop ++ " --auto --output " ++ external ++ " --off")
-    , ("2. Extender (Derecha)",    spawn $ "xrandr --output " ++ laptop ++ " --auto --output " ++ external ++ " --auto --right-of " ++ laptop)
-    , ("3. Extender (Izquierda)",  spawn $ "xrandr --output " ++ laptop ++ " --auto --output " ++ external ++ " --auto --left-of " ++ laptop)
-    , ("4. Duplicar (Mirror)",     spawn $ "xrandr --output " ++ laptop ++ " --auto --output " ++ external ++ " --auto --same-as " ++ laptop)
-    , ("5. Solo Monitor Externo",  spawn $ "xrandr --output " ++ laptop ++ " --off --output " ++ external ++ " --auto")
+    [ ("1. Solo Laptop",           spawn $ "xrandr --output '" ++ laptop ++ "' --auto --output '" ++ external ++ "' --off")
+    , ("2. Extender (Derecha)",    spawn $ "xrandr --output '" ++ laptop ++ "' --auto --output '" ++ external ++ "' --auto --right-of '" ++ laptop ++ "'")
+    , ("3. Extender (Izquierda)",  spawn $ "xrandr --output '" ++ laptop ++ "' --auto --output '" ++ external ++ "' --auto --left-of '" ++ laptop ++ "'")
+    , ("4. Duplicar (Mirror)",     spawn $ "xrandr --output '" ++ laptop ++ "' --auto --output '" ++ external ++ "' --auto --same-as '" ++ laptop ++ "'")
+    , ("5. Solo Monitor Externo",  spawn $ "xrandr --output '" ++ laptop ++ "' --off --output '" ++ external ++ "' --auto")
     ]
 
 monitorXPConfig :: XPConfig
