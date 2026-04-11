@@ -5,7 +5,7 @@ module Layouts where
 
 import XMonad
 import XMonad.Hooks.ManageDocks (avoidStruts)
-import XMonad.Layout.NoBorders (smartBorders, noBorders)
+import XMonad.Layout.NoBorders (smartBorders)
 import XMonad.Layout.Spacing (smartSpacing)
 import XMonad.Layout.MultiToggle
 import XMonad.Layout.MultiToggle.Instances
@@ -21,7 +21,7 @@ myLayout = mkToggle (NBFULL ?? EOT) $ smartBorders $ avoidStruts $
            (renamed [Replace "Col3"]   $ mySpacing threeCol) ||| 
            (renamed [Replace "Grid"]   $ mySpacing grid) ||| 
            (renamed [Replace "Mirror"] $ Mirror $ mySpacing tiled) ||| 
-           noBorders Full
+           Full
   where 
         tiled    = Tall 1 (3/100) (1/2)
         threeCol = ThreeColMid 1 (3/100) (1/2)
