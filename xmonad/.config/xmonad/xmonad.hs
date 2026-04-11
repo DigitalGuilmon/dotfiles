@@ -27,4 +27,5 @@ main = do
         , normalBorderColor  = "#282c34"
         , focusedBorderColor = "#c678dd"
         , logHook            = myLogHook xmprocTop xmprocBottom
+        , handleEventHook    = myHandleEventHook
         } `additionalKeysP` myKeys
