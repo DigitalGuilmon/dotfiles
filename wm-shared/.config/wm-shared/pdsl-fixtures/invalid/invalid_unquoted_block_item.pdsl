@@ -1,0 +1,20 @@
+prompt invalid_unquoted_block_item {
+  kind subprompt
+  language es
+  depth detailed
+  deprecated false
+  role "Role suficientemente descriptivo."
+  task "Task suficientemente descriptiva."
+  instructions {
+    bare-token-without-quotes
+  }
+  deliverables {
+    "Deliverable valido."
+  }
+  quality_bar {
+    "Criterio valido."
+  }
+  response_rules {
+    "Regla valida."
+  }
+}

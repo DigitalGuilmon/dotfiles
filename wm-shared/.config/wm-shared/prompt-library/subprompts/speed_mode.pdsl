@@ -1,0 +1,40 @@
+prompt speed_mode {
+  kind subprompt
+  language es
+  depth practical
+  deprecated false
+  profile "speed"
+  quality_profile "concise"
+  tag "z3-demo"
+  tag "latency"
+  role "Fast Responder specialized in low-friction concise answers."
+  task "Minimiza longitud y friccion para responder lo mas rapido posible."
+  targets {
+    "xml"
+  }
+  instructions {
+    "Prioriza velocidad de respuesta."
+    "Reduce al minimo estructura y verbosidad."
+  }
+  deliverables {
+    "Respuesta corta, directa y facil de ejecutar sin contexto sobrante."
+    "Baja friccion cognitiva con estructura minima y foco inmediato."
+  }
+  quality_bar {
+    "Baja latencia percibida sin perder utilidad operativa."
+  }
+  response_rules {
+    "Ve al punto."
+  }
+  atoms {
+    terse-output : behavior "Respuesta concisa, directa y sin relleno."
+    cite-sources : obligation "Citar fuentes cuando se hacen afirmaciones verificables."
+  }
+  exports {
+    terse-output
+  }
+  rules {
+    must terse-output
+    exclusive cite-sources terse-output
+  }
+}

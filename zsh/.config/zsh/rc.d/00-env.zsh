@@ -17,8 +17,14 @@ path_append_if_dir() {
 export ZSH="${ZSH:-$HOME/.oh-my-zsh}"
 typeset -gU path PATH
 
+export GOPATH="${GOPATH:-$HOME/go}"
+export GOROOT="${GOROOT:-$HOME/.local/opt/go}"
+
 path_prepend_if_dir "$HOME/.local/bin"
 path_prepend_if_dir "$HOME/.npm-global/bin"
+path_prepend_if_dir "$HOME/.local/share/lvim/mason/bin"
+path_prepend_if_dir "$GOROOT/bin"
+path_prepend_if_dir "$GOPATH/bin"
 path_append_if_dir "$HOME/.antigravity/antigravity/bin"
 
 if [[ "$OSTYPE" == darwin* ]]; then

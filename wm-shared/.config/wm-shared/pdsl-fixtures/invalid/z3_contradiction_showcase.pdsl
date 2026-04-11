@@ -1,0 +1,48 @@
+import strict_evidence
+import speed_mode
+
+prompt z3_contradiction_showcase {
+  kind final
+  language es
+  depth detailed
+  deprecated false
+  profile "demo"
+  quality_profile "research"
+  tag "showcase"
+  tag "contradiction"
+  role "Prompt Composition Researcher."
+  task "Demuestra como una composicion aparentemente razonable puede volverse inconsistente."
+  objective """
+    Mostrar que el sistema detecta contradicciones semanticas indirectas entre subprompts importados.
+  """
+  targets {
+    "xml"
+    "markdown"
+  }
+  instructions {
+    "Compone ambos subprompts sin eliminar sus restricciones."
+    "Explica la contradiccion encontrada por el sistema."
+    "Mantiene visible el conflicto para el linter y el LSP."
+  }
+  deliverables {
+    "Diagnostico de contradiccion formal."
+    "Explicacion del camino logico que lleva a UNSAT."
+  }
+  quality_bar {
+    "La demostracion debe dejar claro que el conflicto no es superficial."
+    "Debe resaltar la procedencia de las reglas incompatibles."
+  }
+  response_rules {
+    "Mantener la contradiccion visible para el linter y el LSP."
+  }
+  assumptions {
+    "Cada import aporta restricciones consistentes por separado."
+  }
+  questions_if_missing {
+    "Que combinacion de restricciones vuelve al sistema inconsistente?"
+  }
+  rules {
+    must audited-output
+    must terse-output
+  }
+}

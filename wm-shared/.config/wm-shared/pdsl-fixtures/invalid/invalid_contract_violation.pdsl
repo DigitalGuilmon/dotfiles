@@ -1,0 +1,47 @@
+prompt invalid_contract_violation {
+  kind final
+  language es
+  depth detailed
+  deprecated false
+  quality_profile "engineering"
+
+  role "Fixture para violacion de contrato de modulo."
+  task "Comprueba que el sistema detecta cuando un contrato requiere un atomo que las reglas must no cubren."
+
+  objective """
+    Verificar que el bloque contract detecta atomos requeridos no cubiertos.
+  """
+
+  instructions {
+    "El contrato declara requires explicit-contract pero no hay regla must que lo active."
+  }
+
+  deliverables {
+    "Error de contrato violado."
+    "Diagnostico verificable del sistema."
+  }
+
+  quality_bar {
+    "El fixture debe producir un error de validacion de contrato."
+  }
+
+  response_rules {
+    "Solo emitir diagnosticos concretos y reproducibles."
+  }
+
+  acceptance_criteria {
+    "El lint debe fallar con error sobre clausula contract requires no satisfecha."
+  }
+
+  verification_plan {
+    "Ejecutar pdsl_lint y comprobar que el error de contrato aparece."
+  }
+
+  contract {
+    requires explicit-contract
+  }
+
+  rules {
+    must no-hidden-assumptions
+  }
+}

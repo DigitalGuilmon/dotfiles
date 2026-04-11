@@ -326,6 +326,9 @@ handle_mime() {
 
         ## Image
         image/*)
+            if command -v chafa >/dev/null 2>&1; then
+                chafa --animate=off --size="${PV_WIDTH}x${PV_HEIGHT}" --clear --symbols=vhalf -- "${FILE_PATH}" && exit 4
+            fi
             ## Preview as text conversion
             # img2txt --gamma=0.6 --width="${PV_WIDTH}" -- "${FILE_PATH}" && exit 4
             exiftool "${FILE_PATH}" && exit 5

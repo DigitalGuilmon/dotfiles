@@ -4,7 +4,7 @@ Config {
     bgColor = "#282a36",
     fgColor = "#f8f8f2",
     position = TopSize L 100 36,
-    lowerOnStart = True,
+    lowerOnStart = False,
     hideOnStart = False,
     allDesktops = True,
     persistent = True,

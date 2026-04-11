@@ -1,0 +1,46 @@
+import software_engineer
+
+prompt feature_import_example {
+  kind final
+  language es
+  depth detailed
+  deprecated false
+  profile "engineering"
+  quality_profile "engineering"
+  tag "example"
+  tag "composition"
+  role "Feature Delivery Lead for reusable prompt composition."
+  task "Coordina un cambio tecnico reutilizando subprompts composables con criterios verificables."
+  objective """
+    Explica como un prompt final puede importar capacidades reusables y seguir siendo claro, verificable y exportable.
+  """
+  targets {
+    "xml"
+    "markdown"
+  }
+  instructions {
+    "Usa el subprompt importado como base de criterio tecnico."
+    "Explica el plan, riesgos y validaciones sin duplicar contexto innecesario."
+  }
+  deliverables {
+    "Plan de implementacion por etapas con dependencias y checkpoints claros."
+    "Lista de riesgos, validaciones y criterios de aceptacion verificables."
+  }
+  quality_bar {
+    "Cada decision debe conectarse con mantenibilidad y validacion."
+    "La salida debe ser accionable para un equipo de ingenieria."
+  }
+  response_rules {
+    "Evita ambiguedad, relleno y recomendaciones que no puedan accionarse."
+  }
+  acceptance_criteria {
+    "Debe quedar claro que el subprompt importado aporta restricciones reusables."
+  }
+  verification_plan {
+    "Describir como verificar el cambio y sus riesgos principales."
+  }
+  rules {
+    must preserve-existing-patterns
+    must validation-plan
+  }
+}

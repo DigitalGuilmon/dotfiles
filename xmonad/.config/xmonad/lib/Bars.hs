@@ -3,16 +3,40 @@ module Bars
     , myLogHook
     ) where
 
+import Control.Monad (filterM)
+import Data.Maybe (listToMaybe)
+import System.Directory (doesFileExist, getHomeDirectory)
 import System.IO (Handle)
 import XMonad
 import XMonad.Hooks.DynamicLog
 import XMonad.Util.NamedScratchpad (scratchpadWorkspaceTag)
 import XMonad.Util.Run (spawnPipe, hPutStrLn)
 
+import Variables (resolveHomePath)
+
+quoteArg :: String -> String
+quoteArg = show
+
+resolveXmobarPath :: IO FilePath
+resolveXmobarPath = do
+    home <- getHomeDirectory
+    let candidates =
+            [ home ++ "/.local/bin/xmobar"
+            , "/usr/bin/xmobar"
+            , "/bin/xmobar"
+            ]
+    existing <- filterM doesFileExist candidates
+    pure $ maybe "xmobar" id (listToMaybe existing)
+
+spawnXmobar :: FilePath -> IO Handle
+spawnXmobar configPath = do
+    xmobarPath <- resolveXmobarPath
+    spawnPipe $ unwords [quoteArg xmobarPath, quoteArg configPath]
+
 spawnBars :: IO (Handle, Handle)
 spawnBars = do
-    xmprocTop    <- spawnPipe "xmobar ~/.config/xmobar/xmobar-top.hs"
-    xmprocBottom <- spawnPipe "xmobar ~/.config/xmobar/xmobar-bottom.hs"
+    xmprocTop <- spawnXmobar =<< resolveHomePath ".config/xmobar/xmobar-top.hs"
+    xmprocBottom <- spawnXmobar =<< resolveHomePath ".config/xmobar/xmobar-bottom.hs"
     pure (xmprocTop, xmprocBottom)
 
 -- Usa dynamicLogString para generar el log como String y enviarlo manualmente

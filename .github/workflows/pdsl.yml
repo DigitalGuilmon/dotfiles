@@ -1,0 +1,48 @@
+name: pdsl
+
+on:
+  pull_request:
+  push:
+    paths:
+      - ".github/workflows/pdsl.yml"
+      - "scripts/pdsl-check-library.sh"
+      - "wm-shared/.config/wm-shared/prompt-library/**/*.pdsl"
+      - "wm-shared/.config/wm-shared/pdsl-fixtures/**/*.pdsl"
+      - "wm-shared/.config/wm-shared/scripts/bin/system/pdsl_*.hs"
+      - "wm-shared/.config/wm-shared/scripts/bin/system/pdsl_ls.py"
+      - "wm-shared/.config/wm-shared/scripts/lib/Common/PromptDSL*.hs"
+
+jobs:
+  validate-pdsl:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.x"
+
+      - uses: haskell-actions/setup@v2
+        with:
+          ghc-version: "9.4.8"
+
+      - name: Install z3
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y z3
+
+      - name: Typecheck PDSL tooling
+        run: |
+          ghc -XCPP -fno-code \
+            -iwm-shared/.config/wm-shared/scripts/lib \
+            wm-shared/.config/wm-shared/scripts/lib/Common/PromptDSL.hs \
+            wm-shared/.config/wm-shared/scripts/lib/Common/PromptDSLTooling.hs \
+            wm-shared/.config/wm-shared/scripts/bin/system/pdsl_lint.hs \
+            wm-shared/.config/wm-shared/scripts/bin/system/pdsl_format.hs \
+            wm-shared/.config/wm-shared/scripts/bin/system/pdsl_explain.hs
+
+      - name: Check Python LSP
+        run: python3 -m py_compile wm-shared/.config/wm-shared/scripts/bin/system/pdsl_ls.py
+
+      - name: Validate prompt library
+        run: ./scripts/pdsl-check-library.sh

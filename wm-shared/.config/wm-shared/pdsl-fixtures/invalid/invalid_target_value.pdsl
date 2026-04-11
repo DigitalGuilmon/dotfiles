@@ -1,0 +1,23 @@
+prompt invalid_target_value {
+  kind subprompt
+  language es
+  depth detailed
+  deprecated false
+  role "Role suficientemente descriptivo."
+  task "Task suficientemente descriptiva."
+  targets {
+    "yaml"
+  }
+  instructions {
+    "Instruccion valida."
+  }
+  deliverables {
+    "Deliverable valido."
+  }
+  quality_bar {
+    "Criterio valido."
+  }
+  response_rules {
+    "Regla valida."
+  }
+}

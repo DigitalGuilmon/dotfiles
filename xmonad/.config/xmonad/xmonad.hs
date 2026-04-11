@@ -1,3 +1,4 @@
+{-# OPTIONS_GHC -i./lib -i/home/elsadeveloper/dotfiles/wm-shared/.config/wm-shared/scripts/lib #-}
 -- Archivo: xmonad/.config/xmonad/xmonad.hs
 
 import XMonad
@@ -9,11 +10,12 @@ import Variables
 import Layouts
 import Rules
 import Startup
-import Keys
+import Keybinds (loadMyKeys)
 import Bars
 
 main :: IO ()
 main = do
+    myKeys <- loadMyKeys
     (xmprocTop, xmprocBottom) <- spawnBars
     
     xmonad $ ewmhFullscreen $ ewmh $ docks $ def

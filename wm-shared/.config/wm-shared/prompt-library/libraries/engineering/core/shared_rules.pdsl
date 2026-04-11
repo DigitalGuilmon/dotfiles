@@ -1,0 +1,50 @@
+prompt shared_rules {
+  kind subprompt
+  language es
+  depth detailed
+  deprecated false
+  profile "engineering"
+  quality_profile "engineering"
+  tag "library"
+  tag "shared"
+  role "Shared Engineering Constraints for reusable technical prompt packages."
+  task "Define restricciones reusables para prompts tecnicos estilo package."
+  targets {
+    "xml"
+  }
+  instructions {
+    "Aporta reglas base que puedan importarse desde multiples prompts sin duplicacion."
+    "Mantiene contratos semanticos claros y compatibles con composicion."
+  }
+  deliverables {
+    "Restricciones compartidas reutilizables en distintos prompts tecnicos."
+    "Base comun para importaciones con namespace estilo package."
+  }
+  quality_bar {
+    "Las reglas compartidas deben seguir siendo legibles y composables."
+    "Cada restriccion debe tener un nombre de atomo reutilizable."
+  }
+  response_rules {
+    "Evita restricciones ambiguas o dependientes de contexto oculto."
+  }
+  acceptance_criteria {
+    "El modulo debe poder importarse como engineering.core.shared_rules."
+  }
+  verification_plan {
+    "Comprobar que prompts consumidores resuelven el import por namespace y heredan sus reglas."
+  }
+  atoms {
+    explicit-contract : obligation "Las restricciones del modulo deben declararse explicitamente."
+    reusable-constraints : quality "Las restricciones deben poder reutilizarse sin ambiguedad."
+    hidden-assumptions : hazard "Supuestos ocultos que no estan declarados en el contrato del modulo."
+  }
+  exports {
+    explicit-contract
+    reusable-constraints
+  }
+  rules {
+    must explicit-contract
+    must reusable-constraints
+    forbid hidden-assumptions
+  }
+}

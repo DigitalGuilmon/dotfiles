@@ -1,0 +1,35 @@
+prompt invalid_undeclared_atom {
+  kind subprompt
+  language es
+  depth detailed
+  deprecated false
+  quality_profile "engineering"
+
+  role "Fixture para validacion de atomos no declarados."
+  task "Comprueba que el sistema detecta atomos en rules no declarados en atoms."
+
+  instructions {
+    "Verifica que el lint detecta el atomo no declarado."
+  }
+
+  deliverables {
+    "Diagnostico de atomo no declarado."
+  }
+
+  quality_bar {
+    "El fixture debe fallar con error de atomo no declarado."
+  }
+
+  response_rules {
+    "Solo emitir diagnosticos concretos."
+  }
+
+  atoms {
+    known-atom : behavior "Atomo correctamente declarado."
+  }
+
+  rules {
+    must known-atom
+    must undeclared-atom
+  }
+}

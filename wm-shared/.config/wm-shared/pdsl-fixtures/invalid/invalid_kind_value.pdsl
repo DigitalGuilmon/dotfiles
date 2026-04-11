@@ -1,0 +1,20 @@
+prompt invalid_kind_value {
+  kind weird
+  language es
+  depth detailed
+  deprecated false
+  role "Role suficientemente descriptivo."
+  task "Task suficientemente descriptiva."
+  instructions {
+    "Instruccion valida."
+  }
+  deliverables {
+    "Deliverable valido."
+  }
+  quality_bar {
+    "Criterio valido."
+  }
+  response_rules {
+    "Regla valida."
+  }
+}

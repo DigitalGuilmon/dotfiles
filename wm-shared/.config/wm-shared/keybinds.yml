@@ -1,0 +1,1742 @@
+meta:
+  wm_section_order:
+    - launchers
+    - menus
+    - contextual
+    - system
+    - search
+    - windows
+    - workspaces
+    - scratchpads
+    - multimedia
+    - mouse
+
+wm:
+  launchers:
+    - key: win+enter
+      action: terminal
+      description: Terminal
+    - key: win+space
+      action: launcher-menu
+      description: Menú global
+    - key: win+shift+b
+      action: browser
+      description: Navegador
+    - key: win+v
+      action: editor
+      description: Editor
+    - key: win+y
+      action: youtube
+      description: YouTube
+    - key: win+ctrl+space
+      action: rofi-window-picker
+      description: Selector de ventanas
+
+  menus:
+    - key: win+a
+      action: ai-menu
+      description: AI
+    - key: win+s
+      action: system-menu
+      description: Sistema / energía
+    - key: win+m
+      action: multimedia-menu
+      description: Multimedia
+    - key: win+n
+      action: network-menu
+      description: Red
+    - key: win+p
+      action: screenshot
+      description: Captura
+    - key: win+shift+s
+      action: screenshot
+      description: Captura (tecla Logitech MX)
+    - key: win+i
+      action: todo-menu
+      description: TODO
+    - key: win+d
+      action: window-list
+      description: Mostrar ventanas
+    - key: win+w
+      action: window-menu
+      description: Gestión de ventanas
+    - key: win+escape
+      action: close-all-windows
+      description: Cerrar todas las ventanas
+    - key: win+o
+      action: notifications
+      description: Centro de notificaciones
+
+  contextual:
+    - key: win+u
+      action: wallpaper
+      description: Wallpaper
+    - key: win+r
+      action: layout-menu
+      description: Layout / tiling
+    - key: win+alt+v
+      action: volume-menu
+      description: Menú volumen
+    - key: win+g
+      action: steam-menu
+      description: Steam
+    - key: win+alt+d
+      action: docker-menu
+      description: Docker
+    - key: win+alt+c
+      action: calculator
+      description: Calculadora
+    - key: win+e
+      action: english-menu
+      description: Inglés
+    - key: win+alt+p
+      action: productivity-menu
+      description: Menú productividad
+    - key: win+alt+o
+      action: color-picker
+      description: Color picker
+    - key: win+alt+k
+      action: keybind-cheatsheet
+      description: Cheatsheet keybinds
+    - key: win+b
+      action: web-bookmarks
+      description: Bookmarks web
+    - key: win+alt+y
+      action: yt-dlp-menu
+      description: YT-DLP
+    - key: win+q
+      action: shell-prompt
+      description: Prompt shell / IA
+    - key: win+alt+f
+      action: downloads-menu
+      description: Descargas
+    - key: win+shift+o
+      action: projects-menu
+      description: Proyectos
+    - key: win+shift+d
+      action: dev-tools
+      description: Dev tools
+    - key: win+shift+e
+      action: emoji-picker
+      description: Emoji picker
+    - key: win+shift+y
+      action: timer-menu
+      description: Timer
+    - key: win+shift+i
+      action: system-info
+      description: System info
+    - key: win+alt+x
+      action: clipboard-menu
+      description: Portapapeles
+    - key: win+alt+w
+      action: workspace-menu
+      description: Menú workspaces
+    - key: win+alt+s
+      action: scratchpad-menu
+      description: Menú scratchpads
+    - key: win+alt+q
+      action: session-menu
+      description: Menú sesión
+    - key: win+alt+r
+      action: files-menu
+      description: Menú archivos
+    - key: win+alt+b
+      action: bluetooth-menu
+      description: Menú bluetooth
+    - key: win+alt+u
+      action: appearance-menu
+      description: Menú apariencia
+
+  system:
+    - key: win+shift+r
+      action: reload-wm
+      description: Recompilar / recargar WM
+    - key: win+shift+w
+      action: restart-bars-or-wm
+      description: Reiniciar barras / WM
+    - key: win+shift+q
+      action: logout
+      description: Logout
+    - key: win+ctrl+shift+q
+      action: force-exit
+      description: Salida forzosa
+    - key: win+shift+m
+      action: monitor-menu
+      description: Menú monitores
+    - key: win+shift+p
+      action: disable-default-gmrun
+      description: Anular gmrun por defecto
+
+  search:
+    - key: win+ctrl+g
+      action: search-google
+      description: Buscar en Google
+    - key: win+ctrl+y
+      action: search-youtube
+      description: Buscar en YouTube
+    - key: win+ctrl+h
+      action: search-man
+      description: Buscar en manuales
+    - key: win+ctrl+r
+      action: search-shell
+      description: Shell rápida
+    - key: win+shift+g
+      action: search-window-grid
+      description: Grid selector extra
+
+  windows:
+    - key: win+x
+      action: window-close
+      description: Cerrar ventana
+    - key: win+f
+      action: window-fullscreen
+      description: Fullscreen
+    - key: win+t
+      action: window-toggle-floating
+      description: Toggle floating
+    - key: win+c
+      action: window-center
+      description: Centrar ventana
+    - key: win+j
+      action: window-focus-down
+      description: Foco abajo
+    - key: win+k
+      action: window-focus-up
+      description: Foco arriba
+    - key: win+h
+      action: window-focus-left
+      description: Foco izquierda
+    - key: win+l
+      action: window-focus-right
+      description: Foco derecha
+    - key: win+ctrl+m
+      action: window-focus-master
+      description: Foco master
+    - key: win+shift+j
+      action: window-move-down
+      description: Mover ventana abajo
+    - key: win+shift+k
+      action: window-move-up
+      description: Mover ventana arriba
+    - key: win+shift+h
+      action: window-move-left
+      description: Mover ventana izquierda
+    - key: win+shift+l
+      action: window-move-right
+      description: Mover ventana derecha
+    - key: win+shift+enter
+      action: window-swap-master
+      description: Swap master
+    - key: win+comma
+      action: window-inc-masters
+      description: Incrementar masters
+    - key: win+period
+      action: window-dec-masters
+      description: Reducir masters
+    - key: win+ctrl+n
+      action: window-refresh
+      description: Refresh
+    - key: win+down
+      action: window-send-to-scratchpad
+      description: Enviar a scratchpad
+    - key: win+up
+      action: window-toggle-scratchpad
+      description: Mostrar scratchpad
+    - key: win+shift+down
+      action: window-sink-all
+      description: Sink all
+    - key: win+shift+space
+      action: window-first-layout
+      description: Primer layout
+    - key: win+ctrl+tab
+      action: window-next-layout
+      description: Siguiente layout
+    - key: win+ctrl+l
+      action: window-resize-right
+      description: Resize derecha
+    - key: win+ctrl+h
+      action: window-resize-left
+      description: Resize izquierda
+    - key: win+ctrl+k
+      action: window-resize-up
+      description: Resize arriba
+    - key: win+ctrl+j
+      action: window-resize-down
+      description: Resize abajo
+
+  workspaces:
+    - key: win+tab
+      action: workspace-next
+      description: Siguiente workspace
+    - key: win+shift+tab
+      action: workspace-prev
+      description: Workspace anterior
+    - key: win+right
+      action: workspace-next-arrow
+      description: Workspace siguiente con flecha
+    - key: win+left
+      action: workspace-prev-arrow
+      description: Workspace anterior con flecha
+    - key: win+shift+right
+      action: workspace-shift-next
+      description: Mover al siguiente workspace
+    - key: win+shift+left
+      action: workspace-shift-prev
+      description: Mover al workspace anterior
+    - key: win+1
+      action: workspace-focus
+      workspace: 1
+      description: Workspace 1
+    - key: win+2
+      action: workspace-focus
+      workspace: 2
+      description: Workspace 2
+    - key: win+3
+      action: workspace-focus
+      workspace: 3
+      description: Workspace 3
+    - key: win+4
+      action: workspace-focus
+      workspace: 4
+      description: Workspace 4
+    - key: win+5
+      action: workspace-focus
+      workspace: 5
+      description: Workspace 5
+    - key: win+6
+      action: workspace-focus
+      workspace: 6
+      description: Workspace 6
+    - key: win+7
+      action: workspace-focus
+      workspace: 7
+      description: Workspace 7
+    - key: win+8
+      action: workspace-focus
+      workspace: 8
+      description: Workspace 8
+    - key: win+9
+      action: workspace-focus
+      workspace: 9
+      description: Workspace 9
+    - key: win+0
+      action: workspace-focus
+      workspace: 0
+      description: Workspace 10
+    - key: win+shift+1
+      action: workspace-move
+      workspace: 1
+      description: Mover a workspace 1
+    - key: win+shift+2
+      action: workspace-move
+      workspace: 2
+      description: Mover a workspace 2
+    - key: win+shift+3
+      action: workspace-move
+      workspace: 3
+      description: Mover a workspace 3
+    - key: win+shift+4
+      action: workspace-move
+      workspace: 4
+      description: Mover a workspace 4
+    - key: win+shift+5
+      action: workspace-move
+      workspace: 5
+      description: Mover a workspace 5
+    - key: win+shift+6
+      action: workspace-move
+      workspace: 6
+      description: Mover a workspace 6
+    - key: win+shift+7
+      action: workspace-move
+      workspace: 7
+      description: Mover a workspace 7
+    - key: win+shift+8
+      action: workspace-move
+      workspace: 8
+      description: Mover a workspace 8
+    - key: win+shift+9
+      action: workspace-move
+      workspace: 9
+      description: Mover a workspace 9
+    - key: win+shift+0
+      action: workspace-move
+      workspace: 0
+      description: Mover a workspace 10
+
+  scratchpads:
+    - key: win+shift+up
+      action: scratchpad-vscode
+      description: Scratchpad VS Code
+    - key: win+shift+f
+      action: scratchpad-filemanager
+      description: Scratchpad file manager
+    - key: win+shift+t
+      action: scratchpad-btop
+      description: Scratchpad btop
+    - key: win+shift+n
+      action: scratchpad-notes
+      description: Scratchpad notas
+
+  multimedia:
+    - key: print
+      action: screenshot
+      description: Captura rápida (tecla especial)
+    - key: xf86-calculator
+      action: calculator
+      description: Calculadora (tecla especial)
+    - key: xf86-audio-raise-volume
+      action: volume-up
+      description: Subir volumen
+    - key: xf86-audio-lower-volume
+      action: volume-down
+      description: Bajar volumen
+    - key: xf86-audio-mute
+      action: volume-mute
+      description: Mute
+    - key: xf86-audio-mic-mute
+      action: mic-mute
+      description: Micrófono mute
+    - key: xf86-audio-prev
+      action: media-prev
+      description: Pista anterior
+    - key: xf86-audio-play
+      action: media-play-pause
+      description: Reproducir / pausar
+    - key: xf86-audio-next
+      action: media-next
+      description: Pista siguiente
+    - key: xf86-brightness-up
+      action: brightness-up
+      description: Brillo arriba
+    - key: xf86-brightness-down
+      action: brightness-down
+      description: Brillo abajo
+
+  mouse:
+    - key: win+mouse:left
+      action: mouse-move-window
+      description: Mover ventana con mouse
+    - key: win+mouse:right
+      action: mouse-resize-window
+      description: Redimensionar ventana con mouse
+
+lvim:
+  # Flujo de mantenimiento:
+  # 1) declara/edita aquí los keymaps de LVim;
+  # 2) usa aliases de plugin y acciones semánticas cuando existan;
+  # 3) regenera con ~/.config/wm-shared/scripts/bin/system/sync_keybinds.sh --target lvim.
+  # Alias declarativos para evitar repetir nombres de plugins en cada binding.
+  plugin_aliases:
+    aerial: aerial.nvim
+    blink: blink.cmp
+    coverage: nvim-coverage
+    dapui: nvim-dap-ui
+    dbui: vim-dadbod-ui
+    flash: flash.nvim
+    iron: iron.nvim
+    kulala: kulala.nvim
+    lean: lean.nvim
+    molten: molten-nvim
+    neotest: neotest
+    noice: noice.nvim
+    obsidian: obsidian.nvim
+    persistence: "folke/persistence.nvim"
+    rainbowcsv: rainbow_csv
+    todocomments: todo-comments.nvim
+    trouble: trouble.nvim
+  items:
+    - kind: section
+      title: "🤖 INTELIGENCIA ARTIFICIAL"
+    - kind: group
+      writer: assign
+      target: m
+      key: G
+      name: IA / LLM
+      entries:
+        - key: c
+          command: "<cmd>CodeCompanionChat Toggle<cr>"
+          description: Chat IA
+        - key: a
+          command: "<cmd>CodeCompanionActions<cr>"
+          description: Acciones IA
+        - key: i
+          command: "<cmd>CodeCompanion<cr>"
+          description: Prompt Inline
+        - key: s
+          command: "<cmd>LvimAIStatus<cr>"
+          description: Estado IA
+        - key: h
+          command: "<cmd>LvimSetupInfo<cr>"
+          description: Setup y Health
+        - key: p
+          command: "<cmd>LvimAIProviders<cr>"
+          description: Ver Providers IA
+        - key: P
+          command: "<cmd>LvimAISelectProvider<cr>"
+          description: Seleccionar Provider IA
+        - key: m
+          command: "<cmd>LvimAISelectModel<cr>"
+          description: Seleccionar Modelo IA
+        - key: r
+          command: "<cmd>LvimAIReset<cr>"
+          description: Reset Overrides IA
+    - kind: section
+      title: "📑 GESTIÓN DE BUFFERS Y TABS"
+    - kind: group
+      writer: wk_extend
+      key: b
+      name: Buffers
+      entries:
+        - key: n
+          command: "<cmd>BufferLineCycleNext<cr>"
+          description: Siguiente Buffer
+        - key: p
+          command: "<cmd>BufferLineCyclePrev<cr>"
+          description: Buffer Anterior
+        - key: d
+          command: "<cmd>BufferKill<cr>"
+          description: Cerrar Buffer Actual
+        - key: D
+          command: "<cmd>BufferLineCloseOthers<cr>"
+          description: Cerrar Otros Buffers
+        - key: b
+          lua: "function() Snacks.picker.buffers() end"
+          description: Buscar Buffer
+        - key: e
+          command: "<cmd>BufferLinePickClose<cr>"
+          description: Elegir Buffer a Cerrar
+        - key: P
+          command: "<cmd>BufferLinePick<cr>"
+          description: Ir a Buffer (Pick)
+        - key: L
+          command: "<cmd>BufferLineCloseRight<cr>"
+          description: Cerrar Buffers a la Derecha
+        - key: H
+          command: "<cmd>BufferLineCloseLeft<cr>"
+          description: Cerrar Buffers a la Izquierda
+        - key: s
+          command: "<cmd>BufferLineSortByDirectory<cr>"
+          description: Ordenar por Directorio
+        - key: l
+          command: "<cmd>BufferLineSortByExtension<cr>"
+          description: Ordenar por Extensión
+        - key: "1"
+          command: "<cmd>BufferLineGoToBuffer 1<cr>"
+          description: Ir a Buffer 1
+        - key: "2"
+          command: "<cmd>BufferLineGoToBuffer 2<cr>"
+          description: Ir a Buffer 2
+        - key: "3"
+          command: "<cmd>BufferLineGoToBuffer 3<cr>"
+          description: Ir a Buffer 3
+        - key: "4"
+          command: "<cmd>BufferLineGoToBuffer 4<cr>"
+          description: Ir a Buffer 4
+        - key: "5"
+          command: "<cmd>BufferLineGoToBuffer 5<cr>"
+          description: Ir a Buffer 5
+    - kind: section
+      title: "💻 HERRAMIENTAS DE INGENIERÍA"
+    - kind: binding
+      target: m
+      key: j
+      command: "<cmd>TSJToggle<cr>"
+      description: Join/Split Código (TreeSJ)
+    - kind: binding
+      target: m
+      key: R
+      action: http-run
+      description: Ejecutar Request HTTP
+    - kind: group
+      writer: assign
+      target: m
+      key: T
+      name: Testing
+      plugins:
+        - neotest
+      entries:
+        - key: t
+          lua: 'function() require("neotest").run.run() end'
+          description: Ejecutar Test Cercano
+        - key: f
+          lua: 'function() require("neotest").run.run(vim.fn.expand("%")) end'
+          description: Ejecutar Archivo Actual
+        - key: s
+          lua: 'function() require("neotest").summary.toggle() end'
+          description: Panel de Resultados
+        - key: o
+          lua: 'function() require("neotest").output.open({ enter = true }) end'
+          description: Ver Output de Test
+        - key: x
+          lua: 'function() require("neotest").run.stop() end'
+          description: Detener Test
+        - key: d
+          lua: 'function() require("neotest").run.run({ strategy = "dap" }) end'
+          description: Ejecutar Test con DAP
+        - key: c
+          command: "<cmd>CoverageSummary<cr>"
+          description: Resumen de Coverage
+        - key: v
+          command: "<cmd>Coverage<cr>"
+          description: Mostrar Coverage
+        - key: h
+          command: "<cmd>CoverageHide<cr>"
+          description: Ocultar Coverage
+        - key: R
+          command: "<cmd>LvimCoverageRefresh<cr>"
+          description: Recargar Coverage
+    - kind: group
+      writer: assign
+      target: m
+      key: D
+      name: Database
+      plugins:
+        - dbui
+      entries:
+        - key: u
+          action: dbui-toggle
+          description: Abrir/Cerrar Panel DB
+        - key: f
+          action: dbui-find-buffer
+          description: Buscar Buffer DB
+        - key: a
+          action: dbui-add-connection
+          description: Añadir Conexión
+    - kind: group
+      writer: wk_extend
+      key: g
+      name: Git
+      entries:
+        - key: v
+          command: "<cmd>DiffviewOpen<cr>"
+          description: Abrir Diffview (3-way merge)
+        - key: h
+          command: "<cmd>DiffviewFileHistory %<cr>"
+          description: Historial del Archivo Actual
+        - key: x
+          command: "<cmd>DiffviewClose<cr>"
+          description: Cerrar Diffview
+        - key: g
+          lua: 'function() Snacks.lazygit() end'
+          description: Abrir Lazygit
+        - key: l
+          lua: 'function() Snacks.lazygit.log() end'
+          description: Git Log (Lazygit)
+        - key: s
+          command: "<cmd>Gitsigns stage_hunk<cr>"
+          description: Stage Hunk
+        - key: r
+          command: "<cmd>Gitsigns reset_hunk<cr>"
+          description: Reset Hunk
+        - key: S
+          command: "<cmd>Gitsigns stage_buffer<cr>"
+          description: Stage Buffer Completo
+        - key: R
+          command: "<cmd>Gitsigns reset_buffer<cr>"
+          description: Reset Buffer Completo
+        - key: u
+          command: "<cmd>Gitsigns undo_stage_hunk<cr>"
+          description: Deshacer Stage Hunk
+        - key: p
+          command: "<cmd>Gitsigns preview_hunk<cr>"
+          description: Preview Hunk (Flotante)
+        - key: B
+          command: "<cmd>Gitsigns blame_line<cr>"
+          description: Blame Línea Actual
+        - key: D
+          command: "<cmd>Gitsigns diffthis<cr>"
+          description: Diff Archivo Actual
+    - kind: group
+      writer: assign
+      target: m
+      key: x
+      name: "Trouble (Diagnósticos)"
+      entries:
+        - key: x
+          action: trouble-diagnostics
+          description: Diagnósticos del Proyecto
+        - key: X
+          action: trouble-diagnostics-buffer
+          description: Diagnósticos (Buffer Actual)
+        - key: q
+          action: trouble-qflist
+          description: Quickfix List
+        - key: l
+          action: trouble-loclist
+          description: Location List
+        - key: r
+          action: trouble-lsp
+          description: Referencias LSP
+        - key: t
+          action: trouble-todo
+          description: Ver TODOs del Proyecto
+        - key: T
+          action: trouble-todo-buffer
+          description: Ver TODOs (Buffer Actual)
+    - kind: section
+      title: "🎓 ENTORNOS ESPECÍFICOS"
+    - kind: group
+      writer: assign
+      target: m
+      key: C
+      name: LeetCode
+      plugins:
+        - "kawre/leetcode.nvim"
+      entries:
+        - key: c
+          command: "<cmd>Leet<cr>"
+          description: Abrir Dashboard
+        - key: r
+          command: "<cmd>Leet run<cr>"
+          description: Ejecutar Código (Run)
+        - key: s
+          command: "<cmd>Leet submit<cr>"
+          description: Enviar Solución (Submit)
+        - key: l
+          command: "<cmd>Leet list<cr>"
+          description: Lista de Problemas
+        - key: i
+          command: "<cmd>Leet info<cr>"
+          description: Info del Problema
+    - kind: group
+      writer: assign
+      target: m
+      key: L
+      name: LaTeX
+      plugins:
+        - "lervag/vimtex"
+      entries:
+        - key: c
+          command: "<cmd>VimtexCompile<cr>"
+          description: Compilar (Start/Stop)
+        - key: v
+          command: "<cmd>VimtexView<cr>"
+          description: Ver PDF
+        - key: e
+          command: "<cmd>VimtexErrors<cr>"
+          description: Mostrar Errores
+        - key: t
+          command: "<cmd>VimtexTocOpen<cr>"
+          description: Tabla de Contenidos
+        - key: x
+          command: "<cmd>VimtexClean<cr>"
+          description: Limpiar Archivos Auxiliares
+    - kind: binding
+      target: m
+      key: i
+      action: lean-infoview
+      description: Lean Infoview
+    - kind: section
+      title: "🧠 ATAJOS LSP"
+    - kind: group
+      writer: assign
+      target: m
+      key: l
+      name: LSP
+      entries:
+        - key: a
+          ref: vim.lsp.buf.code_action
+          description: Code Actions
+        - key: d
+          ref: vim.lsp.buf.definition
+          description: Ir a Definición
+        - key: D
+          ref: vim.lsp.buf.declaration
+          description: Ir a Declaración
+        - key: h
+          ref: vim.lsp.buf.hover
+          description: Hover / Documentación
+        - key: i
+          ref: vim.lsp.buf.implementation
+          description: Ir a Implementación
+        - key: r
+          ref: vim.lsp.buf.rename
+          description: Renombrar Símbolo
+        - key: R
+          ref: vim.lsp.buf.references
+          description: Referencias
+        - key: s
+          ref: vim.lsp.buf.signature_help
+          description: Ayuda de Firma
+        - key: t
+          ref: vim.lsp.buf.type_definition
+          description: Ir a Definición de Tipo
+    - kind: group
+      writer: wk_extend_v
+      key: l
+      name: LSP
+      entries:
+        - key: a
+          ref: vim.lsp.buf.code_action
+          description: Code Actions
+    - kind: section
+      title: "🗺️ NAVEGACIÓN, ARCHIVOS Y BÚSQUEDA"
+    - kind: group
+      writer: assign
+      target: m
+      key: a
+      name: Aerial
+      entries:
+        - key: t
+          action: aerial-toggle
+          description: Toggle Outline
+        - key: n
+          action: aerial-nav-toggle
+          description: Toggle Nav
+        - key: j
+          action: aerial-next
+          description: Siguiente Símbolo
+        - key: k
+          action: aerial-prev
+          description: Símbolo Anterior
+    - kind: binding
+      target: m
+      key: e
+      lua: 'function() require("ranger-nvim").open(true) end'
+      plugins:
+        - "kelly-lin/ranger.nvim"
+      description: Explorador (Ranger)
+    - kind: binding
+      target: m
+      key: f
+      command: "<cmd>lua Snacks.picker.smart()<cr>"
+      description: Smart Find
+    - kind: group
+      writer: assign
+      target: m
+      key: s
+      name: "Search (Snacks)"
+      entries:
+        - key: f
+          command: "<cmd>lua Snacks.picker.files()<cr>"
+          description: Archivos
+        - key: g
+          command: "<cmd>lua Snacks.picker.grep()<cr>"
+          description: Grep (Texto)
+        - key: b
+          command: "<cmd>lua Snacks.picker.buffers()<cr>"
+          description: Buffers Activos
+        - key: n
+          action: notifications
+          description: Notificaciones
+        - key: h
+          command: "<cmd>lua Snacks.picker.help()<cr>"
+          description: Help Tags
+        - key: c
+          command: "<cmd>lua Snacks.picker.commands()<cr>"
+          description: Comandos
+        - key: k
+          command: "<cmd>lua Snacks.picker.keymaps()<cr>"
+          description: Keymaps
+        - key: r
+          command: "<cmd>lua Snacks.picker.recent()<cr>"
+          description: Archivos Recientes
+        - key: w
+          command: "<cmd>lua Snacks.picker.grep_word()<cr>"
+          description: Palabra Bajo Cursor
+        - key: d
+          command: "<cmd>lua Snacks.picker.diagnostics()<cr>"
+          description: Diagnósticos
+        - key: R
+          command: "<cmd>lua Snacks.picker.resume()<cr>"
+          description: Reanudar Última Búsqueda
+        - key: s
+          command: "<cmd>lua Snacks.picker.smart()<cr>"
+          description: Smart Find
+        - key: l
+          command: "<cmd>lua Snacks.picker.lines()<cr>"
+          description: Líneas (Buffer Actual)
+        - key: "/"
+          command: "<cmd>lua Snacks.picker.search_history()<cr>"
+          description: Historial de Búsqueda
+        - key: j
+          action: flash-jump
+          description: Flash Jump
+        - key: t
+          action: flash-treesitter
+          description: Flash Treesitter
+        - key: T
+          action: flash-treesitter-search
+          description: Flash Treesitter Search
+        - key: m
+          action: flash-remote
+          description: Flash Remote
+    - kind: section
+      title: "📝 OBSIDIAN"
+    - kind: group
+      writer: assign
+      target: m
+      key: o
+      name: Obsidian
+      plugins:
+        - obsidian
+      entries:
+        - key: n
+          action: obsidian-new
+          description: Nueva Nota
+        - key: q
+          action: obsidian-quick-switch
+          description: Quick Switch
+        - key: S
+          action: obsidian-search
+          description: Buscar Nota en Vault
+        - key: O
+          action: obsidian-open
+          description: Abrir en App Obsidian
+        - key: w
+          action: obsidian-workspace
+          description: Cambiar Workspace
+        - key: t
+          action: obsidian-template-picker
+          description: Insertar Plantilla
+        - key: s
+          action: obsidian-vault-search
+          description: Buscar en Vault
+        - key: l
+          action: obsidian-link
+          description: Linkear Selección
+        - key: L
+          action: obsidian-links
+          description: Ver Links del Documento
+        - key: d
+          action: obsidian-today
+          description: Nota Diaria (Hoy)
+        - key: D
+          action: obsidian-dailies
+          description: Explorar Diarias
+        - key: y
+          action: obsidian-yesterday
+          description: Nota Diaria (Ayer)
+        - key: T
+          action: obsidian-tomorrow
+          description: Nota Diaria (Mañana)
+        - key: G
+          action: obsidian-tags
+          description: Explorar Tags
+        - key: b
+          action: obsidian-backlinks
+          description: Ver Backlinks
+        - key: f
+          action: obsidian-follow-link
+          description: Seguir Enlace Bajo el Cursor
+        - key: c
+          action: obsidian-toc
+          description: Tabla de Contenidos
+        - key: p
+          action: obsidian-paste-img
+          description: Pegar Imagen
+        - key: r
+          action: obsidian-rename
+          description: Renombrar Nota
+    - kind: section
+      title: "🧩 PLUGINS Y SESIONES"
+    - kind: binding
+      target: m
+      key: u
+      command: "<cmd>UndotreeToggle<cr>"
+      description: Árbol de Deshacer (Undotree)
+    - kind: group
+      writer: assign
+      target: m
+      key: q
+      name: "Sesiones"
+      entries:
+        - key: s
+          action: session-save
+          description: Guardar Sesión
+        - key: c
+          action: session-load-current
+          description: Restaurar Sesión Actual
+        - key: l
+          action: session-load-last
+          description: Restaurar Última Sesión
+        - key: p
+          action: session-select
+          description: Seleccionar Sesión
+        - key: d
+          action: session-delete-current
+          description: Borrar Sesión Actual
+        - key: x
+          action: session-stop
+          description: Detener Persistencia
+    - kind: group
+      writer: assign
+      target: m
+      key: P
+      name: "Workspace / tmux"
+      entries:
+        - key: i
+          action: workspace-ide-focus
+          description: Layout IDE Completo
+        - key: w
+          action: workspace-focus
+          description: Outline + Problemas
+        - key: t
+          action: workspace-testing-focus
+          description: Paneles de Tests
+        - key: d
+          action: workspace-debug-focus
+          description: Paneles de Debug
+        - key: x
+          action: workspace-close
+          description: Cerrar Paneles
+        - key: s
+          action: tmux-shell-bottom
+          description: Shell de Proyecto Abajo
+        - key: v
+          action: tmux-shell-right
+          description: Shell de Proyecto Derecha
+    - kind: group
+      writer: assign
+      target: m
+      key: n
+      name: "Noice UI"
+      plugins:
+        - noice
+      entries:
+        - key: d
+          action: noice-dismiss
+          description: Ocultar Notificaciones
+        - key: h
+          action: noice-history
+          description: Historial de Mensajes
+        - key: l
+          action: noice-last
+          description: Último Mensaje
+        - key: e
+          action: noice-errors
+          description: Solo Errores
+        - key: a
+          action: noice-all
+          description: Todos los Mensajes
+    - kind: group
+      writer: assign
+      target: m
+      key: d
+      name: "Debug (DAP)"
+      entries:
+        - key: t
+          lua: 'function() require("dap").toggle_breakpoint() end'
+          description: Toggle Breakpoint
+        - key: b
+          lua: 'function() require("dap").step_back() end'
+          description: Step Back
+        - key: c
+          lua: 'function() require("dap").continue() end'
+          description: Continue
+        - key: C
+          lua: 'function() require("dap").run_to_cursor() end'
+          description: Run To Cursor
+        - key: d
+          lua: 'function() require("dap").disconnect() end'
+          description: Disconnect
+        - key: g
+          lua: 'function() require("dap").session() end'
+          description: Get Session
+        - key: i
+          lua: 'function() require("dap").step_into() end'
+          description: Step Into
+        - key: o
+          lua: 'function() require("dap").step_over() end'
+          description: Step Over
+        - key: u
+          lua: 'function() require("dap").step_out() end'
+          description: Step Out
+        - key: p
+          lua: 'function() require("dap").pause() end'
+          description: Pause
+        - key: r
+          lua: 'function() require("dap").repl.toggle() end'
+          description: Toggle Repl
+        - key: s
+          lua: 'function() require("dap").continue() end'
+          description: Start
+        - key: q
+          lua: 'function() require("dap").close() end'
+          description: Quit
+        - key: l
+          action: dap-select-config
+          description: Elegir Configuración
+        - key: R
+          action: dap-restart
+          description: Reiniciar Última Sesión
+        - key: U
+          action: dapui-toggle
+          description: Toggle UI DAP
+        - key: e
+          lua: 'function() require("dapui").eval() end'
+          description: Evaluar Expresión
+        - key: w
+          lua: 'function() require("dapui").float_element("scopes", { enter = true }) end'
+          description: Scopes Flotantes
+    - kind: binding
+      target: m
+      key: F
+      lua: 'function() require("lvim.core.formatters").format() end'
+      description: Formatear Archivo
+    - kind: binding
+      target: m
+      key: K
+      action: lint-run
+      description: Lint Buffer Actual
+    - kind: group
+      writer: assign
+      target: m
+      key: S
+      name: Snacks Extras
+      entries:
+        - key: s
+          lua: "function() Snacks.scratch() end"
+          description: Toggle Scratchpad
+        - key: S
+          lua: "function() Snacks.scratch.select() end"
+          description: Seleccionar Scratchpad
+        - key: t
+          lua: "function() Snacks.terminal() end"
+          description: Terminal Flotante
+    - kind: section
+      title: "📄 ACCIONES RÁPIDAS DE ARCHIVO"
+    - kind: group
+      writer: assign
+      target: m
+      key: v
+      name: Archivo Rápido
+      entries:
+        - key: w
+          command: "<cmd>w<cr>"
+          description: Guardar
+        - key: W
+          command: "<cmd>wa<cr>"
+          description: Guardar Todo
+        - key: q
+          command: "<cmd>confirm q<cr>"
+          description: Cerrar (Confirmar)
+        - key: Q
+          command: "<cmd>qa!<cr>"
+          description: Forzar Salir de Todo
+        - key: x
+          command: "<cmd>x<cr>"
+          description: Guardar y Cerrar
+        - key: a
+          command: "<cmd>%y+<cr>"
+          description: Copiar Todo al Portapapeles
+        - key: n
+          command: "<cmd>enew<cr>"
+          description: Nuevo Buffer Vacío
+    - kind: section
+      title: "🔬 EJECUCIÓN CIENTÍFICA"
+    - kind: group
+      writer: assign
+      target: m
+      key: M
+      name: "Math & Jupyter (Molten)"
+      plugins:
+        - molten
+      entries:
+        - key: i
+          command: "<cmd>MoltenInit<cr>"
+          description: Iniciar Kernel (Python/R/Julia)
+        - key: e
+          command: "<cmd>MoltenEvaluateOperator<cr>"
+          description: Evaluar Bloque/Operador
+        - key: l
+          command: "<cmd>MoltenEvaluateLine<cr>"
+          description: Evaluar Línea
+        - key: r
+          command: "<cmd>MoltenReevaluateCell<cr>"
+          description: Re-evaluar Celda
+        - key: d
+          command: "<cmd>MoltenDelete<cr>"
+          description: Borrar Celda Visual
+        - key: h
+          command: "<cmd>MoltenHideOutput<cr>"
+          description: Ocultar Output/Gráfico
+    - kind: group
+      writer: assign
+      target: m
+      key: I
+      name: "Interactive REPL (Iron)"
+      plugins:
+        - iron
+      entries:
+        - key: r
+          command: "<cmd>IronRepl<cr>"
+          description: Abrir REPL
+        - key: s
+          command: "<cmd>IronRestart<cr>"
+          description: Reiniciar REPL
+        - key: f
+          command: "<cmd>IronFocus<cr>"
+          description: Enfocar Ventana REPL
+        - key: h
+          command: "<cmd>IronHide<cr>"
+          description: Ocultar REPL
+    - kind: section
+      title: "📊 TABLAS Y CSV"
+    - kind: group
+      writer: assign
+      target: m
+      key: Y
+      name: "CSV / RBQL"
+      plugins:
+        - rainbowcsv
+      entries:
+        - key: d
+          action: csv-delim
+          description: Detectar Delimitador
+        - key: a
+          action: csv-align
+          description: Alinear Columnas
+        - key: s
+          action: csv-shrink
+          description: Limpiar Espaciado
+        - key: q
+          action: csv-query
+          description: Consulta RBQL
+        - key: l
+          action: csv-lint
+          description: Validar CSV
+        - key: x
+          action: csv-disable
+          description: Desactivar Rainbow
+        - key: H
+          action: csv-cell-left
+          description: Celda Izquierda
+        - key: J
+          action: csv-cell-down
+          description: Celda Abajo
+        - key: K
+          action: csv-cell-up
+          description: Celda Arriba
+        - key: L
+          action: csv-cell-right
+          description: Celda Derecha
+    - kind: section
+      title: "⚙️ TOGGLES Y UI"
+    - kind: group
+      writer: assign
+      target: m
+      key: t
+      name: Toggles
+      entries:
+        - key: l
+          lua: |
+            function()
+              local current = vim.diagnostic.config().virtual_lines
+              vim.diagnostic.config({ virtual_lines = not current })
+            end
+          description: LSP Lines
+        - key: b
+          lua: |
+            function()
+              require("gitsigns").toggle_current_line_blame()
+            end
+          plugins:
+            - "gitsigns.nvim"
+          description: Git Blame Actual
+        - key: m
+          command: "<cmd>RenderMarkdown toggle<cr>"
+          plugins:
+            - "MeanderingProgrammer/render-markdown.nvim"
+          description: Render Markdown
+        - key: M
+          lua: |
+            function()
+              local enabled = vim.b.lvim_render_markdown_enabled
+              if enabled == nil then
+                enabled = true
+              end
+              enabled = not enabled
+              vim.b.lvim_render_markdown_enabled = enabled
+              vim.cmd("RenderMarkdown set_buf " .. tostring(enabled))
+              local status = enabled and "activado" or "desactivado"
+              vim.notify("Render Markdown del buffer " .. status, vim.log.levels.INFO)
+            end
+          plugins:
+            - "MeanderingProgrammer/render-markdown.nvim"
+          description: Render Markdown Buffer
+        - key: a
+          lua: |
+            function()
+              vim.g.lvim_notes_autosave_enabled = not vim.g.lvim_notes_autosave_enabled
+              local status = vim.g.lvim_notes_autosave_enabled and "activado" or "desactivado"
+              vim.notify("Autoguardado de notas " .. status, vim.log.levels.INFO)
+            end
+          description: Autoguardado Notas
+        - key: A
+          lua: |
+            function()
+              vim.b.lvim_disable_notes_autosave = not vim.b.lvim_disable_notes_autosave
+              local status = vim.b.lvim_disable_notes_autosave and "desactivado" or "activado"
+              vim.notify("Autoguardado en este buffer " .. status, vim.log.levels.INFO)
+            end
+          description: Autoguardado Buffer
+        - key: f
+          lua: |
+            function()
+              lvim.format_on_save.enabled = not lvim.format_on_save.enabled
+              local status = lvim.format_on_save.enabled and "activado" or "desactivado"
+              vim.notify("Format on save " .. status, vim.log.levels.INFO)
+            end
+          description: Format on Save
+        - key: d
+          lua: |
+            function()
+              local config = vim.diagnostic.config()
+              vim.diagnostic.config({ virtual_text = not config.virtual_text })
+            end
+          description: Diagnostic Text
+        - key: D
+          lua: |
+            function()
+              local current = vim.diagnostic.config()
+              local mode
+              if current.virtual_lines and not current.virtual_text then
+                vim.diagnostic.config({ virtual_lines = false, virtual_text = true })
+                mode = "texto"
+              elseif current.virtual_text then
+                vim.diagnostic.config({ virtual_lines = false, virtual_text = false })
+                mode = "minimal"
+              else
+                vim.diagnostic.config({ virtual_lines = { only_current_line = true }, virtual_text = false })
+                mode = "lineas"
+              end
+              vim.notify("Diagnosticos en modo " .. mode, vim.log.levels.INFO)
+            end
+          description: Preset Diagnósticos
+        - key: z
+          command: "<cmd>LvimModeToggle<cr>"
+          description: Alternar IDE / Zen
+        - key: I
+          command: "<cmd>LvimModeIDE<cr>"
+          description: Activar Modo IDE
+        - key: Z
+          command: "<cmd>LvimModeZen<cr>"
+          description: Activar Modo Zen
+        - key: w
+          command: "<cmd>set wrap!<cr>"
+          description: Word Wrap
+        - key: r
+          command: "<cmd>set relativenumber!<cr>"
+          description: Números Relativos
+        - key: n
+          command: "<cmd>set number!<cr>"
+          description: Números de Línea
+        - key: c
+          command: "<cmd>ColorizerToggle<cr>"
+          plugins:
+            - "NvChad/nvim-colorizer.lua"
+          description: Colorizer (Colores CSS)
+        - key: t
+          command: "<cmd>TransparentToggle<cr>"
+          description: Transparencia
+        - key: s
+          command: "<cmd>set spell!<cr>"
+          description: Corrector Ortográfico
+        - key: i
+          lua: |
+            function()
+              vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled())
+            end
+          description: Inlay Hints (LSP)
+    - kind: section
+      title: "🪟 GESTIÓN DE VENTANAS"
+    - kind: group
+      writer: assign
+      target: m
+      key: w
+      name: Ventanas
+      entries:
+        - key: s
+          command: "<cmd>split<cr>"
+          description: Split Horizontal
+        - key: v
+          command: "<cmd>vsplit<cr>"
+          description: Split Vertical
+        - key: c
+          command: "<cmd>close<cr>"
+          description: Cerrar Ventana
+        - key: o
+          command: "<cmd>only<cr>"
+          description: Cerrar Todas Menos Ésta
+        - key: "="
+          command: "<C-w>="
+          description: Igualar Tamaños
+        - key: m
+          command: "<C-w>_<C-w>|"
+          description: Maximizar Ventana
+        - key: h
+          command: "<C-w>H"
+          description: Mover Ventana a la Izquierda
+        - key: j
+          command: "<C-w>J"
+          description: Mover Ventana Abajo
+        - key: k
+          command: "<C-w>K"
+          description: Mover Ventana Arriba
+        - key: l
+          command: "<C-w>L"
+          description: Mover Ventana a la Derecha
+        - key: r
+          command: "<C-w>r"
+          description: Rotar Ventanas
+        - key: T
+          command: "<C-w>T"
+          description: Ventana a Nueva Tab
+        - key: "+"
+          command: "<cmd>resize +5<cr>"
+          description: Aumentar Alto
+        - key: "-"
+          command: "<cmd>resize -5<cr>"
+          description: Reducir Alto
+        - key: ">"
+          command: "<cmd>vertical resize +5<cr>"
+          description: Aumentar Ancho
+        - key: "<"
+          command: "<cmd>vertical resize -5<cr>"
+          description: Reducir Ancho
+    - kind: section
+      title: "👁️ MODO VISUAL"
+    - kind: group
+      writer: assign
+      target: vm
+      key: G
+      name: "IA / LLM (Selección)"
+      entries:
+        - key: a
+          command: "<cmd>CodeCompanionChat Add<cr>"
+          description: Añadir Código al Chat
+        - key: i
+          command: "<cmd>CodeCompanion<cr>"
+          description: Modificar Selección (Inline)
+    - kind: group
+      writer: assign
+      target: vm
+      key: s
+      name: Search
+      entries:
+        - key: g
+          lua: 'function() Snacks.picker.grep_word() end'
+          description: Buscar Selección (Grep)
+    - kind: group
+      writer: assign
+      target: vm
+      key: g
+      name: "Git (Selección)"
+      entries:
+        - key: s
+          command: "<cmd>Gitsigns stage_hunk<cr>"
+          description: Stage Hunk Seleccionado
+        - key: r
+          command: "<cmd>Gitsigns reset_hunk<cr>"
+          description: Reset Hunk Seleccionado
+    - kind: group
+      writer: assign
+      target: vm
+      key: M
+      name: "Math & Jupyter (Molten)"
+      plugins:
+        - molten
+      entries:
+        - key: e
+          command: ":<C-u>MoltenEvaluateVisual<CR>gv"
+          description: Evaluar Selección
+    - kind: section
+      title: "⚡ KEYMAPS DIRECTOS"
+    - kind: direct_map
+      mode: n
+      lhs: "<S-h>"
+      command: "<cmd>BufferLineCyclePrev<cr>"
+      description: Buffer Anterior
+    - kind: direct_map
+      mode: n
+      lhs: "<S-l>"
+      command: "<cmd>BufferLineCycleNext<cr>"
+      description: Siguiente Buffer
+    - kind: direct_map
+      mode: n
+      lhs: "<C-Up>"
+      command: "<cmd>resize +2<cr>"
+      description: Aumentar Alto Ventana
+    - kind: direct_map
+      mode: n
+      lhs: "<C-Down>"
+      command: "<cmd>resize -2<cr>"
+      description: Reducir Alto Ventana
+    - kind: direct_map
+      mode: n
+      lhs: "<C-Left>"
+      command: "<cmd>vertical resize -2<cr>"
+      description: Reducir Ancho Ventana
+    - kind: direct_map
+      mode: n
+      lhs: "<C-Right>"
+      command: "<cmd>vertical resize +2<cr>"
+      description: Aumentar Ancho Ventana
+    - kind: direct_map
+      mode: n
+      lhs: "<A-j>"
+      command: "<cmd>m .+1<cr>=="
+      description: Mover Línea Abajo
+    - kind: direct_map
+      mode: n
+      lhs: "<A-k>"
+      command: "<cmd>m .-2<cr>=="
+      description: Mover Línea Arriba
+    - kind: direct_map
+      mode: i
+      lhs: "<A-j>"
+      command: "<Esc><cmd>m .+1<cr>==gi"
+      description: Mover Línea Abajo
+    - kind: direct_map
+      mode: i
+      lhs: "<A-k>"
+      command: "<Esc><cmd>m .-2<cr>==gi"
+      description: Mover Línea Arriba
+    - kind: direct_map
+      mode: n
+      lhs: "<C-s>"
+      command: "<cmd>w<cr>"
+      description: Guardar Archivo
+    - kind: direct_map
+      mode: n
+      lhs: "<C-h>"
+      action: tmux-nav-left
+      description: Navegar Izquierda (split/tmux)
+    - kind: direct_map
+      mode: n
+      lhs: "<C-j>"
+      action: tmux-nav-down
+      description: Navegar Abajo (split/tmux)
+    - kind: direct_map
+      mode: n
+      lhs: "<C-k>"
+      action: tmux-nav-up
+      description: Navegar Arriba (split/tmux)
+    - kind: direct_map
+      mode: n
+      lhs: "<C-l>"
+      action: tmux-nav-right
+      description: Navegar Derecha (split/tmux)
+    - kind: direct_map
+      mode: t
+      lhs: "<C-h>"
+      action: tmux-nav-left
+      description: Navegar Izquierda (split/tmux)
+    - kind: direct_map
+      mode: t
+      lhs: "<C-j>"
+      action: tmux-nav-down
+      description: Navegar Abajo (split/tmux)
+    - kind: direct_map
+      mode: t
+      lhs: "<C-k>"
+      action: tmux-nav-up
+      description: Navegar Arriba (split/tmux)
+    - kind: direct_map
+      mode: t
+      lhs: "<C-l>"
+      action: tmux-nav-right
+      description: Navegar Derecha (split/tmux)
+    - kind: direct_map
+      mode: i
+      lhs: "<C-s>"
+      command: "<Esc><cmd>w<cr>gi"
+      description: Guardar Archivo
+    - kind: direct_map
+      mode: n
+      lhs: s
+      action: flash-jump
+      description: Flash
+    - kind: direct_map
+      mode: x
+      lhs: s
+      action: flash-jump
+      description: Flash
+    - kind: direct_map
+      mode: o
+      lhs: s
+      action: flash-jump
+      description: Flash
+    - kind: direct_map
+      mode: n
+      lhs: S
+      action: flash-treesitter
+      description: Flash Treesitter
+    - kind: direct_map
+      mode: x
+      lhs: S
+      action: flash-treesitter
+      description: Flash Treesitter
+    - kind: direct_map
+      mode: o
+      lhs: r
+      action: flash-remote
+      description: Flash Remote
+    - kind: direct_map
+      mode: x
+      lhs: R
+      action: flash-treesitter-search
+      description: Flash Treesitter Search
+    - kind: direct_map
+      mode: o
+      lhs: R
+      action: flash-treesitter-search
+      description: Flash Treesitter Search
+    - kind: direct_map
+      mode: c
+      lhs: "<C-s>"
+      action: flash-toggle-search
+      description: Toggle Flash Search
+    - kind: direct_map
+      mode: n
+      lhs: "]d"
+      lua: 'function() vim.diagnostic.jump({ count = 1 }) end'
+      description: Siguiente Diagnóstico
+    - kind: direct_map
+      mode: n
+      lhs: "[d"
+      lua: 'function() vim.diagnostic.jump({ count = -1 }) end'
+      description: Diagnóstico Anterior
+    - kind: direct_map
+      mode: n
+      lhs: gl
+      ref: vim.diagnostic.open_float
+      description: Ver Diagnóstico Flotante
+    - kind: direct_map
+      mode: n
+      lhs: "]h"
+      command: "<cmd>Gitsigns next_hunk<cr>"
+      description: Siguiente Hunk Git
+    - kind: direct_map
+      mode: n
+      lhs: "[h"
+      command: "<cmd>Gitsigns prev_hunk<cr>"
+      description: Hunk Git Anterior
+    - kind: direct_map
+      mode: n
+      lhs: "]t"
+      action: todo-next
+      description: Siguiente TODO
+    - kind: direct_map
+      mode: n
+      lhs: "[t"
+      action: todo-prev
+      description: TODO Anterior
+    - kind: direct_map
+      mode: x
+      lhs: p
+      command: '"_dP'
+      description: Pegar sin Perder Registro
+    - kind: direct_map
+      mode: v
+      lhs: "<"
+      command: "<gv"
+      description: Desindentar y Mantener Selección
+    - kind: direct_map
+      mode: v
+      lhs: ">"
+      command: ">gv"
+      description: Indentar y Mantener Selección
+    - kind: direct_map
+      mode: v
+      lhs: "<A-j>"
+      command: ":m '>+1<cr>gv=gv"
+      description: Mover Selección Abajo
+    - kind: direct_map
+      mode: v
+      lhs: "<A-k>"
+      command: ":m '<-2<cr>gv=gv"
+      description: Mover Selección Arriba
+    - kind: direct_map
+      mode: n
+      lhs: "<Esc>"
+      command: "<cmd>nohlsearch<cr>"
+      description: Limpiar Resaltado de Búsqueda
+    - kind: direct_map
+      mode: n
+      lhs: "<C-a>"
+      command: "ggVG"
+      description: Seleccionar Todo
+    - kind: direct_map
+      mode: n
+      lhs: "<C-q>"
+      command: "<cmd>confirm q<cr>"
+      description: Cerrar (con confirmación)
+    - kind: direct_map
+      mode: v
+      lhs: "<C-c>"
+      command: '"+y'
+      description: Copiar al Portapapeles del Sistema
+    - kind: direct_map
+      mode: n
+      lhs: "<S-A-j>"
+      command: "<cmd>t.<cr>"
+      description: Duplicar Línea Abajo
+    - kind: direct_map
+      mode: n
+      lhs: "<S-A-k>"
+      command: "<cmd>t -1<cr>"
+      description: Duplicar Línea Arriba
+    - kind: direct_map
+      mode: i
+      lhs: "<S-A-j>"
+      command: "<Esc><cmd>t.<cr>gi"
+      description: Duplicar Línea Abajo
+    - kind: direct_map
+      mode: i
+      lhs: "<S-A-k>"
+      command: "<Esc><cmd>t -1<cr>gi"
+      description: Duplicar Línea Arriba
+    - kind: direct_map
+      mode: n
+      lhs: "<C-d>"
+      command: "<C-d>zz"
+      description: Media Página Abajo (Centrado)
+    - kind: direct_map
+      mode: n
+      lhs: "<C-u>"
+      command: "<C-u>zz"
+      description: Media Página Arriba (Centrado)
+    - kind: direct_map
+      mode: n
+      lhs: n
+      command: "nzzzv"
+      description: Siguiente Búsqueda (Centrado)
+    - kind: direct_map
+      mode: n
+      lhs: N
+      command: "Nzzzv"
+      description: Búsqueda Anterior (Centrado)
+    - kind: direct_map
+      mode: n
+      lhs: K
+      ref: vim.lsp.buf.hover
+      description: LSP Hover / Documentación
+    - kind: direct_map
+      mode: n
+      lhs: gd
+      ref: vim.lsp.buf.definition
+      description: Ir a Definición
+    - kind: direct_map
+      mode: n
+      lhs: gD
+      ref: vim.lsp.buf.declaration
+      description: Ir a Declaración
+    - kind: direct_map
+      mode: n
+      lhs: gi
+      ref: vim.lsp.buf.implementation
+      description: Ir a Implementación
+    - kind: direct_map
+      mode: n
+      lhs: gr
+      ref: vim.lsp.buf.references
+      description: Referencias LSP
+    - kind: direct_map
+      filetype: pdsl
+      mode: i
+      lhs: "<C-Space>"
+      action: pdsl-completion
+      description: PDSL completion

@@ -1,0 +1,122 @@
+name: lvim
+
+env:
+  NEOVIM_VERSION: "v0.11.5"
+  LUNARVIM_REF: "master"
+
+on:
+  pull_request:
+  push:
+    paths:
+      - ".github/workflows/lvim.yml"
+      - "scripts/lvim-bootstrap.sh"
+      - "scripts/lvim-check.sh"
+      - "scripts/lvim-prepare-spoon.sh"
+      - "scripts/lvim-refresh.sh"
+      - "lvim/README.md"
+      - "lvim/.config/lvim/lazy-lock.json"
+      - "lvim/.config/lvim/**/*.lua"
+
+jobs:
+  validate-lvim:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        scenario:
+          - name: default
+            profile: ""
+            machine_profile: ""
+          - name: stacked-java
+            profile: "personal,java"
+            machine_profile: ""
+          - name: workstation-overlay
+            profile: ""
+            machine_profile: "workstation"
+          - name: laptop-overlay
+            profile: ""
+            machine_profile: "laptop"
+          - name: mac-air-m4-overlay
+            profile: ""
+            machine_profile: "mac_air_m4"
+          - name: ryzen-9-5950x-overlay
+            profile: ""
+            machine_profile: "ryzen_9_5950x"
+    name: validate-lvim (${{ matrix.scenario.name }})
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cache/lvim
+            ~/.local/share/lvim
+            ~/.local/share/lunarvim
+          key: lvim-${{ runner.os }}-${{ env.NEOVIM_VERSION }}-${{ hashFiles('lvim/.config/lvim/lazy-lock.json', 'scripts/lvim-bootstrap.sh', 'scripts/lvim-check.sh', 'scripts/lvim-prepare-spoon.sh', 'scripts/lvim-refresh.sh', 'lvim/.config/lvim/**/*.lua') }}
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "21"
+          cache: maven
+
+      - name: Install system dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            curl \
+            git \
+            golang-go \
+            imagemagick \
+            latexmk \
+            make \
+            maven \
+            python3 \
+            python3-pip \
+            npm \
+            cargo \
+            lua5.4 \
+            ripgrep \
+            fd-find \
+            xclip
+
+      - name: Install Neovim
+        run: |
+          curl -fsSL -o /tmp/nvim.tar.gz "https://github.com/neovim/neovim/releases/download/${NEOVIM_VERSION}/nvim-linux-x86_64.tar.gz"
+          sudo rm -rf /opt/nvim-linux-x86_64
+          sudo tar -C /opt -xzf /tmp/nvim.tar.gz
+          echo "/opt/nvim-linux-x86_64/bin" >> "$GITHUB_PATH"
+
+      - name: Install LunarVim
+        env:
+          LV_BRANCH: ${{ env.LUNARVIM_REF }}
+        run: |
+          bash <(curl -fsSL https://raw.githubusercontent.com/LunarVim/LunarVim/master/utils/installer/install.sh) --no-install-dependencies --yes
+          echo "$HOME/.local/bin" >> "$GITHUB_PATH"
+
+      - name: Check Lua syntax
+        run: find lvim/.config/lvim/lua -name '*.lua' -print0 | xargs -0 -n1 luac5.4 -p
+
+      - name: Prepare Spoon JDT LSP
+        if: matrix.scenario.profile == 'personal,java'
+        run: |
+          ./scripts/lvim-prepare-spoon.sh --source-dir "$RUNNER_TEMP/lsp_base/spoon-jdt-lsp"
+          echo "SPOON_JDT_LSP_DIR=$RUNNER_TEMP/lsp_base/spoon-jdt-lsp" >> "$GITHUB_ENV"
+
+      - name: Bootstrap LVim tooling
+        env:
+          LVIM_PROFILE: ${{ matrix.scenario.profile }}
+          LVIM_MACHINE_PROFILE: ${{ matrix.scenario.machine_profile }}
+        run: ./scripts/lvim-bootstrap.sh
+
+      - name: Run LVim sanity script
+        env:
+          LVIM_PROFILE: ${{ matrix.scenario.profile }}
+          LVIM_MACHINE_PROFILE: ${{ matrix.scenario.machine_profile }}
+        run: ./scripts/lvim-check.sh
+
+      - name: Run supplemental LVim profile checks
+        run: |
+          ./scripts/lvim-check.sh --profile minimal
+          ./scripts/lvim-check.sh --profile challenge
+          ./scripts/lvim-check.sh --profile research

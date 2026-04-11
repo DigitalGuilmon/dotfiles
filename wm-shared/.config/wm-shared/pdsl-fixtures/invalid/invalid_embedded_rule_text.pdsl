@@ -1,0 +1,27 @@
+prompt invalid_embedded_rule_text {
+  kind final
+  language es
+  depth detailed
+  deprecated false
+
+  role "Lint fixture."
+  task "Verifica reglas embebidas."
+
+  instructions {
+    "Haz algo concreto."
+    "Hazlo de forma verificable."
+  }
+
+  deliverables {
+    "Entrega una salida util."
+    "Entrega una validacion breve."
+  }
+
+  quality_bar {
+    "Debe ser clara."
+  }
+
+  response_rules {
+    "must: no-fabricated-context"
+  }
+}

@@ -1,0 +1,41 @@
+prompt invalid_duplicate_effective_rules {
+  kind final
+  language es
+  depth detailed
+  deprecated false
+
+  quality_profile "engineering"
+  role "Lint fixture."
+  task "Verifica reglas duplicadas."
+
+  instructions {
+    "Haz algo concreto."
+    "Hazlo de forma verificable."
+  }
+
+  deliverables {
+    "Entrega una salida util."
+    "Entrega una validacion breve."
+  }
+
+  quality_bar {
+    "Debe ser clara."
+  }
+
+  response_rules {
+    "No inventes contexto."
+  }
+
+  acceptance_criteria {
+    "El lint debe detectar duplicados."
+  }
+
+  verification_plan {
+    "Ejecutar pdsl_lint y comprobar el warning."
+  }
+
+  rules {
+    must no-fabricated-context
+    must no-fabricated-context
+  }
+}

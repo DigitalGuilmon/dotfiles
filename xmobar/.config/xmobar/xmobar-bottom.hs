@@ -4,13 +4,13 @@ Config {
     bgColor = "#282a36",
     fgColor = "#f8f8f2",
     position = BottomSize L 100 36,
-    lowerOnStart = True,
+    lowerOnStart = False,
     hideOnStart = False,
     allDesktops = True,
     persistent = True,
     
     commands = [
-        Run CommandReader "~/.config/xmobar/scripts/cava.sh" "cava",
+        Run Com "bash" ["-lc", "$HOME/.config/xmobar/scripts/cava.sh"] "cava" 5,
         Run Date "<fc=#8be9fd></fc> %d %b - %H:%M" "date" 10,
         Run UnsafeStdinReader
     ],

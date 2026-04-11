@@ -2,7 +2,7 @@ module Startup where
 
 import XMonad
 import XMonad.Util.SpawnOnce (spawnOnce)
-import Scripts.System.Wallpaper (restoreWallpaper) -- Importamos la función de tu script
+import Actions.Menus (restoreWallpaper)
 
 myStartupHook :: X ()
 myStartupHook = do

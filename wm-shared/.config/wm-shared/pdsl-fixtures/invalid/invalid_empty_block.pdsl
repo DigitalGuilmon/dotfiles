@@ -1,0 +1,38 @@
+prompt invalid_empty_block {
+  kind final
+  language es
+  depth detailed
+  deprecated false
+  quality_profile "engineering"
+
+  role "Fixture para bloques vacios."
+  task "Comprueba que el lint detecta bloques vacios."
+
+  objective """
+    Verificar que un bloque declarado sin contenido se marca como invalido.
+  """
+
+  instructions {
+  }
+
+  deliverables {
+    "Un warning por bloque vacio."
+    "Una validacion reproducible."
+  }
+
+  quality_bar {
+    "Debe ser explicito."
+  }
+
+  response_rules {
+    "No inventes resultados."
+  }
+
+  acceptance_criteria {
+    "El fixture debe producir diagnostico por bloque vacio."
+  }
+
+  verification_plan {
+    "Ejecutar pdsl_lint y comprobar el warning."
+  }
+}

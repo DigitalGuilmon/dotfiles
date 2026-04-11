@@ -1,0 +1,42 @@
+name: lvim-keybinds
+
+on:
+  pull_request:
+  push:
+    paths:
+      - ".github/workflows/lvim-keybinds.yml"
+      - "scripts/tests/test_generate_keybinds.py"
+      - "wm-shared/.config/wm-shared/keybinds.yml"
+      - "wm-shared/.config/wm-shared/scripts/bin/system/generate_keybinds.py"
+      - "lvim/.config/lvim/lua/config/**/*.lua"
+
+jobs:
+  validate-lvim-keybinds:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.x"
+
+      - name: Install Lua compiler
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y lua5.4
+
+      - name: Run generator unit tests
+        run: |
+          python3 -m py_compile \
+            wm-shared/.config/wm-shared/scripts/bin/system/generate_keybinds.py \
+            scripts/tests/test_generate_keybinds.py
+          python3 -m unittest discover -s scripts/tests -p 'test_*.py'
+
+      - name: Regenerate LVim keymaps
+        run: python3 wm-shared/.config/wm-shared/scripts/bin/system/generate_keybinds.py --target lvim
+
+      - name: Check generated files are up to date
+        run: git diff --exit-code -- lvim/.config/lvim/lua/config/keymaps/generated.lua
+
+      - name: Check Lua syntax
+        run: find lvim/.config/lvim/lua/config -name '*.lua' -print0 | xargs -0 -n1 luac5.4 -p

@@ -1,0 +1,25 @@
+prompt invalid_param_required_bool {
+  kind subprompt
+  language es
+  depth detailed
+  deprecated false
+  param "target" {
+    type "string"
+    required maybe
+    description "Parametro con bool invalido."
+  }
+  role "Role suficientemente descriptivo."
+  task "Task suficientemente descriptiva."
+  instructions {
+    "Instruccion valida."
+  }
+  deliverables {
+    "Deliverable valido."
+  }
+  quality_bar {
+    "Criterio valido."
+  }
+  response_rules {
+    "Regla valida."
+  }
+}

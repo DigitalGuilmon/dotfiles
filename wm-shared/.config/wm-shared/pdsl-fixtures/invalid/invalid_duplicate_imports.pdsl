@@ -1,0 +1,43 @@
+import software_engineer
+import software_engineer
+
+prompt invalid_duplicate_imports {
+  kind final
+  language es
+  depth detailed
+  deprecated false
+  quality_profile "engineering"
+
+  role "Fixture para imports duplicados."
+  task "Comprueba que el lint detecta imports repetidos."
+
+  objective """
+    Verificar que imports duplicados se marcan como redundantes.
+  """
+
+  instructions {
+    "Usa el lint."
+    "Observa el warning."
+  }
+
+  deliverables {
+    "Un warning por import duplicado."
+    "Un resultado facil de validar."
+  }
+
+  quality_bar {
+    "Debe ser explicito."
+  }
+
+  response_rules {
+    "No inventes resultados."
+  }
+
+  acceptance_criteria {
+    "El archivo debe advertir sobre imports duplicados."
+  }
+
+  verification_plan {
+    "Ejecutar pdsl_lint sobre este fixture."
+  }
+}

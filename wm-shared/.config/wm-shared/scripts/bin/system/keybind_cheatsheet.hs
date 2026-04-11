@@ -1,0 +1,183 @@
+#!/usr/bin/env sh
+#if 0
+script_dir=$(CDPATH= cd -- "$(dirname "$0")" && pwd)
+script_root="$script_dir"
+while [ ! -d "$script_root/lib" ] && [ "$script_root" != "/" ]; do
+    script_root=$(dirname "$script_root")
+done
+exec runhaskell -XCPP -i"$script_root/lib" "$0" "$@"
+#endif
+{-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE ScopedTypeVariables #-}
+
+import System.Exit (exitSuccess)
+import System.Directory (getHomeDirectory)
+import Control.Exception (IOException, try)
+import Data.List (isPrefixOf, isInfixOf, intercalate)
+
+import Common.Text (splitOn)
+import StandaloneUtils (rofiLines, trim)
+
+-- ==========================================
+-- PARSER DE KEYBINDS
+-- ==========================================
+
+data Keybind = Keybind
+    { kbMods   :: String
+    , kbKey    :: String
+    , kbAction :: String
+    , kbArgs   :: String
+    } deriving (Show)
+
+parseKeybind :: String -> Maybe Keybind
+parseKeybind line
+    | any (`isPrefixOf` stripped) ["bind", "binde", "bindl", "bindle", "bindm"] =
+        let afterEq = drop 1 $ dropWhile (/= '=') stripped
+            parts = map trim $ splitOn ',' afterEq
+        in case parts of
+            (mods:key:action:rest) -> Just $ Keybind
+                { kbMods   = mods
+                , kbKey    = key
+                , kbAction = action
+                , kbArgs   = intercalate ", " rest
+                }
+            _ -> Nothing
+    | otherwise = Nothing
+  where
+    stripped = trim line
+
+-- ==========================================
+-- FORMATO PARA ROFI
+-- ==========================================
+
+formatKeybind :: Keybind -> String
+formatKeybind kb =
+    let mods = kbMods kb
+        key  = kbKey kb
+        action = kbAction kb
+        args = kbArgs kb
+        modStr = case mods of
+            ""  -> ""
+            _   -> formatMods mods ++ " + "
+        keyStr = formatKey key
+        descStr = formatAction action args
+    in "<b>" ++ modStr ++ keyStr ++ "</b>  →  " ++ descStr
+
+formatMods :: String -> String
+formatMods mods
+    | "$mainMod ALT"       `isPrefixOf` mods = "Super + Alt"
+    | "$mainMod CTRL SHIFT" `isPrefixOf` mods = "Super + Ctrl + Shift"
+    | "$mainMod CTRL"      `isPrefixOf` mods = "Super + Ctrl"
+    | "$mainMod SHIFT"     `isPrefixOf` mods = "Super + Shift"
+    | "$mainMod"           `isPrefixOf` mods = "Super"
+    | otherwise = mods
+
+formatKey :: String -> String
+formatKey "Return" = "↵ Enter"
+formatKey "Space"  = "␣ Space"
+formatKey "Tab"    = "⇥ Tab"
+formatKey "Print"  = "📸 Print"
+formatKey k
+    | "XF86Audio"  `isPrefixOf` k = "🔊 " ++ drop 5 k
+    | "XF86Mon"    `isPrefixOf` k = "🔆 " ++ drop 5 k
+    | "XF86"       `isPrefixOf` k = "⌨️ " ++ drop 4 k
+    | "mouse:"     `isPrefixOf` k = "🖱️ " ++ k
+    | otherwise = k
+
+formatAction :: String -> String -> String
+formatAction "exec" args
+    | "ai_menu"           `isInfixOf` args = "🤖 Menú AI"
+    | "system_utils"      `isInfixOf` args = "🛠️ Utilidades del Sistema"
+    | "multimedia-menu"   `isInfixOf` args = "🎵 Menú Multimedia"
+    | "multimedia_menu"   `isInfixOf` args = "🎵 Menú Multimedia"
+    | "network_menu"      `isInfixOf` args = "🌐 Menú de Red"
+    | "screenshot"        `isInfixOf` args = "📸 Captura de Pantalla"
+    | "wallpaper"         `isInfixOf` args = "🎨 Cambiar Wallpaper"
+    | "volume"            `isInfixOf` args = "🔊 Control de Volumen"
+    | "steam_menu"        `isInfixOf` args = "🎮 Menú Steam"
+    | "docker"            `isInfixOf` args = "🐳 Docker Manager"
+    | "calculator"        `isInfixOf` args = "🔢 Calculadora"
+    | "english"           `isInfixOf` args = "📖 English Tutor"
+    | "notifications"     `isInfixOf` args = "🔔 Notificaciones"
+    | "productivity-menu" `isInfixOf` args = "📋 Menú Productividad"
+    | "productivity_menu" `isInfixOf` args = "📋 Menú Productividad"
+    | "clipboard-menu"    `isInfixOf` args = "📋 Portapapeles"
+    | "projects-menu"     `isInfixOf` args = "📁 Proyectos"
+    | "color_picker"      `isInfixOf` args = "🎨 Color Picker"
+    | "emoji-picker"      `isInfixOf` args = "😊 Selector de Emojis"
+    | "emoji_picker"      `isInfixOf` args = "😊 Selector de Emojis"
+    | "timer-menu"        `isInfixOf` args = "⏱️ Temporizador"
+    | "todo"              `isInfixOf` args = "✅ Lista TODO"
+    | "keybind_cheatsheet" `isInfixOf` args = "⌨️ Cheatsheet"
+    | "window_manager"    `isInfixOf` args = "🪟 Gestor de Ventanas"
+    | "web_menu"          `isInfixOf` args = "🌍 Menú Web"
+    | "prompt"            `isInfixOf` args = "📝 Prompts IA"
+    | "download"          `isInfixOf` args = "📥 Descargas"
+    | "yt_dlp"            `isInfixOf` args = "📺 YT-DLP"
+    | "yt-dlp"            `isInfixOf` args = "📺 YT-DLP"
+    | "system-info"       `isInfixOf` args = "🖥️ Información del Sistema"
+    | "workspace-menu"    `isInfixOf` args = "🗂️ Menú de Workspaces"
+    | "scratchpad-menu"   `isInfixOf` args = "🗒️ Menú Scratchpad"
+    | "session-menu"      `isInfixOf` args = "⏻ Menú de Sesión"
+    | "files-menu"        `isInfixOf` args = "📂 Menú de Archivos"
+    | "bluetooth-menu"    `isInfixOf` args = " Menú Bluetooth"
+    | "appearance-menu"   `isInfixOf` args = "🎨 Menú de Apariencia"
+    | "ghostty"           `isInfixOf` args = "💻 Terminal"
+    | "brave"             `isInfixOf` args = "🦁 Navegador"
+    | "lvim"              `isInfixOf` args = "📝 Editor (LunarVim)"
+    | "rofi"              `isInfixOf` args = "🔍 Lanzador (Rofi)"
+    | "youtube"           `isInfixOf` args = "📺 YouTube"
+    | "hyprctl reload"    `isInfixOf` args = "🔄 Recargar Config"
+    | "waybar"            `isInfixOf` args = "📊 Reiniciar Waybar"
+    | "wlogout"           `isInfixOf` args = "🚪 Menú de Sesión"
+    | "notification_center" `isInfixOf` args = "🔔 Notificaciones"
+    | "swaync"            `isInfixOf` args = "🔔 Notificaciones"
+    | "brightnessctl"     `isInfixOf` args = "🔆 Brillo"
+    | "playerctl"         `isInfixOf` args = "⏯️ Multimedia"
+    | "wpctl"             `isInfixOf` args = "🔊 Audio"
+    | otherwise = args
+formatAction "killactive"    _ = "❌ Cerrar Ventana"
+formatAction "fullscreen"    _ = "🖥️ Pantalla Completa"
+formatAction "togglefloating" _ = "🔀 Toggle Flotante"
+formatAction "centerwindow"  _ = "🎯 Centrar Ventana"
+formatAction "workspace"     a = "📂 Workspace " ++ a
+formatAction "movetoworkspace" a = "➡️ Mover a Workspace " ++ a
+formatAction "movefocus"     a = "👁️ Foco → " ++ formatDir a
+formatAction "movewindow"    a = "🪟 Mover → " ++ formatDir a
+formatAction "resizeactive"  a = "↔️ Redimensionar " ++ a
+formatAction "pin"           _ = "📌 Anclar Ventana"
+formatAction "exit"          _ = "⚠️ Salir de Hyprland"
+formatAction action args = action ++ " " ++ args
+
+formatDir :: String -> String
+formatDir "l" = "⬅️ Izquierda"
+formatDir "r" = "➡️ Derecha"
+formatDir "u" = "⬆️ Arriba"
+formatDir "d" = "⬇️ Abajo"
+formatDir d   = d
+
+-- ==========================================
+-- LÓGICA PRINCIPAL
+-- ==========================================
+
+main :: IO ()
+main = do
+    home <- getHomeDirectory
+    let keybindsPath = home ++ "/.config/hypr/conf/keybinds.conf"
+    
+    contentResult <- try (readFile keybindsPath) :: IO (Either IOException String)
+    let content = either (const "") id contentResult
+    
+    if null content
+        then do
+            _ <- rofiLines "hypr-keybind-cheatsheet-error" "Error" ["-i", "-markup-rows"] ["No se pudo leer keybinds.conf"]
+            exitSuccess
+        else do
+            let ls = lines content
+                binds = concatMap (\l -> case parseKeybind l of
+                    Just kb -> [kb]
+                    Nothing -> []) ls
+                formatted = map formatKeybind binds
+            
+            _ <- rofiLines "hypr-keybind-cheatsheet-main" "⌨️ Keybindings Hyprland" ["-i", "-markup-rows"] formatted
+            exitSuccess

@@ -12,7 +12,7 @@ setopt HIST_IGNORE_DUPS
 # ===============================================================
 alias cls='clear'
 alias zconf='lvim ${XDG_CONFIG_HOME:-$HOME/.config}/zsh/rc.d'
-alias tconf='lvim ~/.tmux.conf.local' # Apunta al archivo de Oh My Tmux
+alias tconf='lvim ${XDG_CONFIG_HOME:-$HOME/.config}/tmux/tmux.conf.local' # Apunta al archivo local de Oh My Tmux
 alias reload='source ~/.zshrc'
 
 if has_cmd brew; then
