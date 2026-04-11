@@ -29,7 +29,7 @@ myLogHook xmprocTop xmprocBottom = do
         , ppLayout  = xmobarColor "#f1fa8c" ""
         , ppTitle   = xmobarColor "#8be9fd" "" . shorten 60
         }
-    io $ hPutStrLn xmprocTop topStr
+    catchIO $ hPutStrLn xmprocTop topStr
 
     -- Barra inferior: muestra solo workspaces
     botStr <- dynamicLogString xmobarPP
@@ -42,4 +42,4 @@ myLogHook xmprocTop xmprocBottom = do
         , ppHidden          = xmobarColor "#6272a4" ""
         , ppHiddenNoWindows = xmobarColor "#44475a" ""
         }
-    io $ hPutStrLn xmprocBottom botStr
+    catchIO $ hPutStrLn xmprocBottom botStr

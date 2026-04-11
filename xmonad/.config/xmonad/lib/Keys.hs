@@ -23,4 +23,7 @@ myKeys = concat
     , windowKeys
     , workspaceKeys
     , multimediaKeys
+    -- Desactivar keybinds por defecto de XMonad que no usamos
+    -- M-S-p lanza gmrun (no instalado), lo anulamos
+    , [("M-S-p", return ())]
     ]
