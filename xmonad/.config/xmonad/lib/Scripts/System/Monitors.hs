@@ -21,8 +21,9 @@ detectOutputs = do
     let outputs = lines (filter (/= '\r') out)
     case outputs of
         (primary:secondary:_) -> return (primary, Just secondary)
-        (primary:_)           -> return (primary, Nothing)
-        _                     -> return ("eDP-1", Nothing)  -- fallback seguro
+        (primary:_)
+            | not (null primary) -> return (primary, Nothing)
+        _                     -> return ("eDP-1", Nothing)  -- fallback si xrandr falla
 
 monitorOptions :: String -> String -> [(String, X ())]
 monitorOptions laptop external =
