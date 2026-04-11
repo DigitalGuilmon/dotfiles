@@ -56,7 +56,7 @@ completeTodo :: X ()
 completeTodo = spawn $ "touch " ++ todoFile ++ " && "
     ++ "sel=$(grep '\\- \\[ \\]' " ++ todoFile ++ " | rofi -dmenu -p 'Completar:' -theme " ++ myTheme ++ " -i) && "
     ++ "[ -n \"$sel\" ] && "
-    ++ "escaped=$(printf '%s' \"$sel\" | sed 's/[][\\/.*^$&]/\\\\&/g') && "
+    ++ "escaped=$(printf '%s' \"$sel\" | sed 's/[][\\/.* ^$&|]/\\\\&/g') && "
     ++ "sed -i \"s|$escaped|$(printf '%s' \"$sel\" | sed 's/- \\[ \\]/- [x]/')|\" " ++ todoFile ++ " && "
     ++ "notify-send '🎉 TODO' 'Tarea completada'"
 
@@ -65,7 +65,7 @@ deleteTodo :: X ()
 deleteTodo = spawn $ "touch " ++ todoFile ++ " && "
     ++ "sel=$(cat " ++ todoFile ++ " | rofi -dmenu -p 'Eliminar:' -theme " ++ myTheme ++ " -i) && "
     ++ "[ -n \"$sel\" ] && "
-    ++ "escaped=$(printf '%s' \"$sel\" | sed 's/[][\\/.*^$&]/\\\\&/g') && "
+    ++ "escaped=$(printf '%s' \"$sel\" | sed 's/[][\\/.* ^$&|]/\\\\&/g') && "
     ++ "sed -i \"\\|$escaped|d\" " ++ todoFile ++ " && "
     ++ "notify-send '🗑️ TODO' 'Tarea eliminada'"
 

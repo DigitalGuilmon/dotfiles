@@ -7,6 +7,6 @@ import qualified XMonad.StackSet as W
 sinkWindow :: X ()
 sinkWindow = withFocused $ windows . W.sink
 
--- Hunde TODAS las ventanas del espacio de trabajo actual a la vez
+-- Hunde TODAS las ventanas del espacio de trabajo actual en una sola operación
 sinkAll :: X ()
-sinkAll = gets windowset >>= mapM_ (windows . W.sink) . W.index
+sinkAll = withWindowSet $ \s -> windows $ \ws -> foldl (\w' win -> W.sink win w') ws (W.index s)
