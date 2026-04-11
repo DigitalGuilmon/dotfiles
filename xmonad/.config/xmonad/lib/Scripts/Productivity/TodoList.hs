@@ -2,7 +2,8 @@ module Scripts.Productivity.TodoList (todoMenu) where
 
 import XMonad
 import XMonad.Util.Run (runProcessWithInput)
-import Variables (myTheme)
+import Variables (myTheme, myThemeAbs)
+import Scripts.Utils (shellEscape)
 
 todoActions :: String
 todoActions = unlines
@@ -19,8 +20,9 @@ todoFile = "$HOME/.local/share/xmonad-todo.md"
 -- Gestor de tareas TODO usando rofi y un archivo markdown simple
 todoMenu :: X ()
 todoMenu = do
+    theme <- myThemeAbs
     selection <- runProcessWithInput "rofi"
-        ["-dmenu", "-p", "TODO:", "-theme", myTheme, "-i"] todoActions
+        ["-dmenu", "-p", "TODO:", "-theme", theme, "-i"] todoActions
     let res = filter (/= '\n') selection
     case res of
         "Ver tareas pendientes" -> viewTodos
@@ -39,20 +41,15 @@ viewTodos = spawn $ "touch " ++ todoFile ++ " && "
 -- Agrega una nueva tarea al archivo
 addTodo :: X ()
 addTodo = do
+    theme <- myThemeAbs
     task <- runProcessWithInput "rofi"
-        ["-dmenu", "-p", "Nueva tarea:", "-theme", myTheme] ""
+        ["-dmenu", "-p", "Nueva tarea:", "-theme", theme] ""
     let res = filter (/= '\n') task
     case res of
         "" -> return ()
         _  -> spawn $ "mkdir -p $(dirname " ++ todoFile ++ ") && "
                    ++ "printf '- [ ] %s\\n' " ++ shellEscape res ++ " >> " ++ todoFile ++ " && "
                    ++ "notify-send '✅ TODO' 'Tarea agregada'"
-
--- Escapa una cadena para uso seguro en shell
-shellEscape :: String -> String
-shellEscape s = "'" ++ concatMap esc s ++ "'"
-  where esc '\'' = "'\\''"
-        esc c    = [c]
 
 -- Marca una tarea como completada: muestra pendientes, el usuario elige una
 completeTodo :: X ()

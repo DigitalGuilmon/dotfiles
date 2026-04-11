@@ -2,7 +2,8 @@ module Scripts.Productivity.EmojiPicker (emojiPicker) where
 
 import XMonad
 import XMonad.Util.Run (runProcessWithInput)
-import Variables (myTheme)
+import Variables (myThemeAbs)
+import Scripts.Utils (shellEscape)
 
 -- Lista de emojis frecuentes con descripción para búsqueda rápida
 emojiList :: String
@@ -62,8 +63,9 @@ emojiList = unlines
 -- Selector de emojis usando rofi: copia el emoji al clipboard con xclip
 emojiPicker :: X ()
 emojiPicker = do
+    theme <- myThemeAbs
     selection <- runProcessWithInput "rofi"
-        ["-dmenu", "-p", "Emoji:", "-theme", myTheme, "-i"] emojiList
+        ["-dmenu", "-p", "Emoji:", "-theme", theme, "-i"] emojiList
     let res = filter (/= '\n') selection
     case res of
         "" -> return ()
@@ -72,9 +74,3 @@ emojiPicker = do
             let emoji = takeWhile (/= ' ') res
             -- Usar xdotool para escribir directamente o xclip para copiar (seguro contra inyección)
             spawn $ "printf '%s' " ++ shellEscape emoji ++ " | xclip -selection clipboard && notify-send '📋 Emoji' 'Copiado al clipboard'"
-
--- Escapa una cadena para uso seguro en shell
-shellEscape :: String -> String
-shellEscape s = "'" ++ concatMap esc s ++ "'"
-  where esc '\'' = "'\\''"
-        esc c    = [c]

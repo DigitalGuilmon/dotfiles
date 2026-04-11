@@ -2,7 +2,7 @@ module Scripts.Productivity.Calculator (calculator) where
 
 import XMonad
 import XMonad.Util.Run (runProcessWithInput)
-import Variables (myTheme)
+import Variables (myThemeAbs)
 
 import Data.Char (isLower, isDigit)
 
@@ -10,8 +10,9 @@ import Data.Char (isLower, isDigit)
 -- El resultado se muestra con notify-send y se copia al clipboard
 calculator :: X ()
 calculator = do
+    theme <- myThemeAbs
     expression <- runProcessWithInput "rofi"
-        ["-dmenu", "-p", "Calc:", "-theme", myTheme, "-i",
+        ["-dmenu", "-p", "Calc:", "-theme", theme, "-i",
          "-mesg", "Ejemplos: 2+2 | sqrt(144) | 100*0.15 | 2**10"] ""
     let expr = filter (/= '\n') expression
     case expr of

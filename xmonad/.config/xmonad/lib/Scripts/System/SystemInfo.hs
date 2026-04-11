@@ -2,7 +2,7 @@ module Scripts.System.SystemInfo (systemInfo) where
 
 import XMonad
 import XMonad.Util.Run (runProcessWithInput)
-import Variables (myTheme)
+import Variables (myThemeAbs)
 
 infoOptions :: String
 infoOptions = unlines
@@ -21,8 +21,9 @@ infoOptions = unlines
 -- Muestra la info seleccionada con notify-send
 systemInfo :: X ()
 systemInfo = do
+    theme <- myThemeAbs
     selection <- runProcessWithInput "rofi"
-        ["-dmenu", "-p", "SysInfo:", "-theme", myTheme, "-i"] infoOptions
+        ["-dmenu", "-p", "SysInfo:", "-theme", theme, "-i"] infoOptions
     let res = filter (/= '\n') selection
     case res of
         "CPU y Carga del sistema" -> spawn "notify-send '🖥️ CPU' \"$(top -bn1 | head -5 | tail -3)\""
