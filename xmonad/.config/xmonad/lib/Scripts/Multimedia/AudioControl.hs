@@ -18,8 +18,8 @@ audioOptions =
     , ("3. Silenciar/Desilenciar",  spawn "wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle && notify-send '🔇 Mute' 'Toggle mute'")
     , ("4. Micrófono Mute Toggle",  spawn "wpctl set-mute @DEFAULT_AUDIO_SOURCE@ toggle && notify-send '🎤 Mic' 'Toggle mic mute'")
     , ("5. Abrir Pavucontrol",      spawn "pavucontrol")
-    , ("6. Salida: Altavoces",      spawn "id=$(pw-dump | jq -r '.[] | select(.info.props[\"node.description\"] | test(\"Speaker|Altavoz\"; \"i\")) | .id' | head -1) && [ -n \"$id\" ] && wpctl set-default \"$id\" && notify-send '🔈 Audio' 'Altavoces seleccionados' || notify-send '⚠️ Audio' 'No se encontraron altavoces'")
-    , ("7. Salida: Auriculares",    spawn "id=$(pw-dump | jq -r '.[] | select(.info.props[\"node.description\"] | test(\"Headphone|Auricular\"; \"i\")) | .id' | head -1) && [ -n \"$id\" ] && wpctl set-default \"$id\" && notify-send '🎧 Audio' 'Auriculares seleccionados' || notify-send '⚠️ Audio' 'No se encontraron auriculares'")
+    , ("6. Salida: Altavoces",      spawn "id=$(pw-dump | jq -r '.[] | select(.info.props[\"node.description\"] | test(\"Speaker|Altavoz\"; \"i\")) | .id' | head -1) && ([ -n \"$id\" ] && wpctl set-default \"$id\" && notify-send '🔈 Audio' 'Altavoces seleccionados') || notify-send '⚠️ Audio' 'No se encontraron altavoces'")
+    , ("7. Salida: Auriculares",    spawn "id=$(pw-dump | jq -r '.[] | select(.info.props[\"node.description\"] | test(\"Headphone|Auricular\"; \"i\")) | .id' | head -1) && ([ -n \"$id\" ] && wpctl set-default \"$id\" && notify-send '🎧 Audio' 'Auriculares seleccionados') || notify-send '⚠️ Audio' 'No se encontraron auriculares'")
     ]
 
 audioXPConfig :: XPConfig
