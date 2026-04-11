@@ -17,7 +17,7 @@ notifOptions =
     [ ("1. Mostrar Historial",          spawn "dunstctl history-pop")
     , ("2. Cerrar Última",              spawn "dunstctl close")
     , ("3. Cerrar Todas",               spawn "dunstctl close-all")
-    , ("4. No Molestar: Activar",       spawn "notify-send -t 800 '🔕 DND' 'Modo No Molestar activado'; sleep 1; dunstctl set-paused true")
+    , ("4. No Molestar: Activar",       spawn "notify-send -t 900 '🔕 DND' 'Modo No Molestar activado'; sleep 1; dunstctl set-paused true")
     , ("5. No Molestar: Desactivar",    spawn "dunstctl set-paused false && notify-send '🔔 DND' 'Notificaciones restauradas'")
     , ("6. Toggle No Molestar",         spawn "dunstctl set-paused toggle")
     , ("7. Estado Actual",              spawn "notify-send '📊 Dunst' \"Pausado: $(dunstctl is-paused) | Esperando: $(dunstctl count waiting) | Mostradas: $(dunstctl count displayed)\"")
