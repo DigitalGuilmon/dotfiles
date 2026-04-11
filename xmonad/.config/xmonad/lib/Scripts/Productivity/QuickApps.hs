@@ -31,8 +31,8 @@ appList =
     , ("Media: Spotify",        spawn "spotify-launcher")
     , ("Media: VLC",            spawn "vlc")
     , ("Media: OBS Studio",     spawn "obs")
-    -- Sistema
-    , ("Sys: Thunar (Archivos)",  spawn "thunar")
+    -- Sistema (Thunar se gestiona exclusivamente como scratchpad vía M-S-f
+    -- porque Thunar ignora --class y todas sus ventanas son capturadas por el scratchpad)
     , ("Sys: Btop (Monitor)",     spawn "ghostty -e btop")
     , ("Sys: Pavucontrol (Audio)",spawn "pavucontrol")
     , ("Sys: Lxappearance",       spawn "lxappearance")
