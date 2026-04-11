@@ -15,7 +15,7 @@ todoActions = unlines
     ]
 
 todoFile :: String
-todoFile = "$HOME/.local/share/xmonad-todo.md"
+todoFile = "\"$HOME/.local/share/xmonad-todo.md\""
 
 -- Gestor de tareas TODO usando rofi y un archivo markdown simple
 todoMenu :: X ()

@@ -17,7 +17,7 @@ calculator = do
     let expr = filter (/= '\n') expression
     case expr of
         "" -> return ()
-        _  | isSafeExpr expr -> spawn $ "errfile=$(mktemp /tmp/calc_err.XXXXXX) && "
+        _  | isSafeExpr expr -> spawn $ "errfile=$(mktemp /tmp/calc_err.XXXXXX) && trap 'rm -f \"$errfile\"' EXIT && "
                     ++ "{ result=$(python3 -c 'from math import *; print(" ++ expr ++ ")' 2>\"$errfile\") && "
                     ++ "printf '%s' \"$result\" | xclip -selection clipboard && "
                     ++ "notify-send '🔢 Calculadora' \"" ++ expr ++ " = $result (copiado)\" && rm -f \"$errfile\"; } || "
