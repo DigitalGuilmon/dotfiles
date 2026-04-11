@@ -21,7 +21,7 @@ myLayout = mkToggle (NBFULL ?? EOT) $ smartBorders $ avoidStruts $
            (renamed [Replace "Col3"]   $ mySpacing threeCol) ||| 
            (renamed [Replace "Grid"]   $ mySpacing grid) ||| 
            (renamed [Replace "Mirror"] $ Mirror $ mySpacing tiled) ||| 
-           (renamed [Replace "Full"] Full)
+           (renamed [Replace "Max"] Full)
   where 
         tiled    = Tall 1 (3/100) (1/2)
         threeCol = ThreeColMid 1 (3/100) (1/2)
