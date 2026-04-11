@@ -7,10 +7,10 @@ import Scripts.System.Wallpaper (restoreWallpaper) -- Importamos la función de 
 myStartupHook :: X ()
 myStartupHook = do
     -- 1. Fija el cursor normal del ratón (por defecto suele ser una X)
-    spawnOnce "xsetroot -cursor_name left_ptr &"
+    spawnOnce "xsetroot -cursor_name left_ptr"
     
     -- 2. Composición y Fondo de pantalla
-    spawnOnce "picom --config ~/.config/picom/picom.conf &"
+    spawnOnce "picom --config ~/.config/picom/picom.conf"
     
     -- Eliminamos la llamada directa a feh para evitar la condición de carrera
     restoreWallpaper 

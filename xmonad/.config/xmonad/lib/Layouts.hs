@@ -13,7 +13,7 @@ import XMonad.Layout.ThreeColumns (ThreeCol(..))
 import XMonad.Layout.Grid (Grid(..))
 import XMonad.Layout.Renamed (renamed, Rename(Replace))
 
-mySpacing = smartSpacing 25 
+mySpacing = smartSpacing 5 
 
 -- Al aplicar renamed DESPUÉS de mySpacing, sobrescribimos el nombre generado automáticamente
 myLayout = mkToggle (NBFULL ?? EOT) $ smartBorders $ avoidStruts $ 
