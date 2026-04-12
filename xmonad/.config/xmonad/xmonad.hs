@@ -1,3 +1,4 @@
+{-# OPTIONS_GHC -i./lib -i../wm-shared/lib #-}
 -- Archivo: xmonad/.config/xmonad/xmonad.hs
 
 import XMonad

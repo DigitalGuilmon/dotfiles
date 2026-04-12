@@ -3,6 +3,7 @@
 -- =================================================================
 
 require("config.keymaps.navigation")
+require("config.keymaps.lsp")
 require("config.keymaps.ai")
 require("config.keymaps.obsidian")
 require("config.keymaps.toggles")
