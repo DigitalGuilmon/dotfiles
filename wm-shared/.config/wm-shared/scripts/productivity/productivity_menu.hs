@@ -1,4 +1,4 @@
-#!/usr/bin/env runhaskell
+#!/usr/bin/env -S sh -c 'script_dir=$(dirname "$1"); exec runhaskell -i"$script_dir" -i"$script_dir/.." "$1" "$@"' sh
 {-# LANGUAGE OverloadedStrings #-}
 
 import System.Process (readProcessWithExitCode, spawnCommand, spawnProcess)
@@ -8,6 +8,8 @@ import System.Directory (getHomeDirectory, doesDirectoryExist, createDirectoryIf
 import Control.Exception (catch, IOException)
 import Data.List (sort)
 import Data.Time (getCurrentTime, formatTime, defaultTimeLocale)
+
+import StandaloneUtils (notifySend, rofiHelperPath, rofiLines, rofiSelection, rofiThemePath)
 
 -- Iconos (Nerd Fonts)
 iconClip    = "\xf014c"
@@ -28,23 +30,11 @@ notify urgency title message =
     handleErr :: IOException -> IO ()
     handleErr _ = return () 
 
--- ==========================================
--- RUTAS DINÁMICAS
--- ==========================================
-getThemePath :: IO String
-getThemePath = do
-    home <- getHomeDirectory
-    return $ home ++ "/.config/rofi/themes/modern.rasi"
-
--- ==========================================
--- MOTOR CORE
--- ==========================================
 type MenuOption = (String, IO ())
 
 runMenu :: String -> String -> [MenuOption] -> IO ()
 runMenu menuId prompt options = do
-    let optsStr = unlines $ map fst options
-    selection <- rofi menuId prompt optsStr
+    selection <- rofiLines menuId prompt ["-i"] (map fst options)
     case lookup selection options of
         Just action -> action
         Nothing     -> exitSuccess 
@@ -71,14 +61,17 @@ mainMenu = runMenu "hypr-productivity-main" "Productividad"
 
 clipboardMenu :: IO ()
 clipboardMenu = do
-    theme <- getThemePath
-    safeSpawn $ "cliphist list | $HOME/.config/rofi/scripts/frequent-menu.py --menu-id 'hypr-productivity-clipboard' --prompt 'Portapapeles' --theme "
-        ++ theme ++ " -- -i | cliphist decode | wl-copy"
+    theme <- rofiThemePath
+    helper <- rofiHelperPath
+    safeSpawn $
+        "cliphist list | " ++ helper
+            ++ " --menu-id 'hypr-productivity-clipboard' --prompt 'Portapapeles' --theme "
+            ++ theme ++ " -- -i | cliphist decode | wl-copy"
     exitSuccess
 
 emojiMenu :: IO ()
 emojiMenu = do
-    theme <- getThemePath
+    theme <- rofiThemePath
     safeSpawn $ "rofi -show emoji -theme " ++ theme
     exitSuccess
 
@@ -87,7 +80,7 @@ emojiMenu = do
 -- ==========================================
 notesMenu :: IO ()
 notesMenu = do
-    input <- rofi "hypr-productivity-notes-input" "Añadir al Inbox (Vault)" ""
+    input <- rofiSelection "hypr-productivity-notes-input" "Añadir al Inbox (Vault)" ["-i"] ""
     unless (null input) $ do
         home <- getHomeDirectory
         let vaultDir = home ++ "/dev/vault/notes"
@@ -111,7 +104,7 @@ notesMenu = do
 -- ==========================================
 webSearchMenu :: IO ()
 webSearchMenu = do
-    query <- rofi "hypr-productivity-web-search" "Buscar en Web (DuckDuckGo)" ""
+    query <- rofiSelection "hypr-productivity-web-search" "Buscar en Web (DuckDuckGo)" ["-i"] ""
     unless (null query) $ do
         let urlQuery = map (\c -> if c == ' ' then '+' else c) query
         catch (void $ spawnProcess "xdg-open" ["https://duckduckgo.com/?q=" ++ urlQuery]) 
@@ -166,18 +159,6 @@ openProject :: String -> String -> IO ()
 openProject baseDir folder = do
     safeSpawn $ "ghostty --working-directory=" ++ baseDir ++ "/" ++ folder ++ " -e lvim"
     exitSuccess
-
--- ==========================================
--- WRAPPERS Rofi & Shell Seguros
--- ==========================================
-
-rofi :: String -> String -> String -> IO String
-rofi menuId prompt opts = do
-    theme <- getThemePath
-    home <- getHomeDirectory
-    let helper = home ++ "/.config/rofi/scripts/frequent-menu.py"
-    res <- safeReadProcess helper ["--menu-id", menuId, "--prompt", prompt, "--theme", theme, "--", "-i"] opts
-    return $ if null res then "" else init res
 
 safeSpawn :: String -> IO ()
 safeSpawn cmd = catch (void $ spawnCommand cmd) handler

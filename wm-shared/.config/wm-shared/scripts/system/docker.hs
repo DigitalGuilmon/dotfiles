@@ -1,13 +1,11 @@
-#!/usr/bin/env runhaskell
+#!/usr/bin/env -S sh -c 'script_dir=$(dirname "$1"); exec runhaskell -i"$script_dir" -i"$script_dir/.." "$1" "$@"' sh
 {-# LANGUAGE OverloadedStrings #-}
 
 import System.Process (readProcessWithExitCode, spawnCommand)
 import System.Exit (exitSuccess, ExitCode(..))
-import System.Directory (getHomeDirectory)
-import Control.Exception (catch, IOException)
-import Control.Monad (void, unless)
-import Data.Char (isSpace)
-import Data.List (dropWhileEnd, isPrefixOf)
+import Control.Monad (void)
+
+import StandaloneUtils (notifySend, rofiLines)
 
 -- ==========================================
 -- ICONOS (Nerd Fonts)
@@ -21,24 +19,8 @@ icLogs   = "\xf15c"  -- Logs
 icPrune  = "\xf0ad"  -- Herramienta/Limpieza
 icBack   = "\xf006e"
 
--- ==========================================
--- HELPERS
--- ==========================================
-
-trim :: String -> String
-trim = dropWhileEnd isSpace . dropWhile isSpace
-
-rofi :: String -> String -> String -> IO String
-rofi menuId prompt opts = do
-    home <- getHomeDirectory
-    let theme = home ++ "/.config/rofi/themes/modern.rasi"
-        helper = home ++ "/.config/rofi/scripts/frequent-menu.py"
-    (exitCode, out, _) <- catch (readProcessWithExitCode helper ["--menu-id", menuId, "--prompt", prompt, "--theme", theme, "--", "-i"] opts)
-                                (\(_ :: IOException) -> return (ExitFailure 1, "", ""))
-    return $ trim out
-
 notify :: String -> String -> IO ()
-notify title msg = void $ spawnCommand $ "notify-send -a 'Docker Menu' '" ++ title ++ "' '" ++ msg ++ "'"
+notify title msg = notifySend ["-a", "Docker Menu", title, msg]
 
 -- ==========================================
 -- LÓGICA PRINCIPAL
@@ -53,8 +35,7 @@ dockerMainMenu = do
                   , (icPrune ++ " Limpieza (System Prune)", confirmPrune)
                   , (icDocker ++ " Docker Compose Up (CWD)", void $ spawnCommand "ghostty -e 'docker-compose up'")
                   ]
-    let optsStr = unlines $ map fst options
-    selection <- rofi "hypr-docker-main" "Docker Manager" optsStr
+    selection <- rofiLines "hypr-docker-main" "Docker Manager" ["-i"] (map fst options)
     case lookup selection options of
         Just action -> action
         Nothing     -> exitSuccess
@@ -68,7 +49,8 @@ listContainersMenu = do
         then notify "Error" "No se pudieron listar los contenedores o Docker no está corriendo."
         else do
             let containers = lines out
-            selection <- rofi "hypr-docker-containers" "Seleccionar Contenedor" (unlines containers ++ icBack ++ " Volver")
+            let back = icBack ++ " Volver"
+            selection <- rofiLines "hypr-docker-containers" "Seleccionar Contenedor" ["-i"] (containers ++ [back])
             if selection == (icBack ++ " Volver") || null selection
                 then dockerMainMenu
                 else handleContainerSelection selection
@@ -87,7 +69,7 @@ handleContainerSelection rawLine = do
                   , (icBack  ++ " Volver",   listContainersMenu)
                   ]
     
-    selection <- rofi "hypr-docker-actions" ("Contenedor: " ++ cName) (unlines $ map fst actions)
+    selection <- rofiLines "hypr-docker-actions" ("Contenedor: " ++ cName) ["-i"] (map fst actions)
     case lookup selection actions of
         Just action -> action
         Nothing     -> listContainersMenu
@@ -104,7 +86,7 @@ dockerCmd cmd cID cName = do
 -- 4. CONFIRMACIÓN DE PRUNE
 confirmPrune :: IO ()
 confirmPrune = do
-    selection <- rofi "hypr-docker-prune-confirm" "Eliminar todo lo que no se usa (Prune)?" "No\nSí"
+    selection <- rofiLines "hypr-docker-prune-confirm" "Eliminar todo lo que no se usa (Prune)?" ["-i"] ["No", "Sí"]
     if selection == "Sí"
         then do
             void $ spawnCommand "docker system prune -f"

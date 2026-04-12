@@ -1,14 +1,14 @@
-#!/usr/bin/env runhaskell
+#!/usr/bin/env -S sh -c 'script_dir=$(dirname "$1"); exec runhaskell -i"$script_dir" -i"$script_dir/.." "$1" "$@"' sh
 {-# LANGUAGE OverloadedStrings #-}
 
-import System.Process (readProcessWithExitCode, spawnCommand)
-import System.Exit (exitSuccess, ExitCode(..))
+import System.Exit (exitSuccess)
 import System.Directory (getHomeDirectory, createDirectoryIfMissing, doesFileExist)
-import Control.Exception (catch, IOException)
-import Control.Monad (void, unless, when)
-import Data.Char (isSpace)
-import Data.List (dropWhileEnd, isPrefixOf)
+import Control.Exception (IOException, try)
+import Control.Monad (unless, when)
+import Data.List (isPrefixOf)
 import Data.Time (getCurrentTime, formatTime, defaultTimeLocale)
+
+import StandaloneUtils (notifySend, rofiLines, rofiSelection)
 
 -- ==========================================
 -- ICONOS
@@ -20,24 +20,8 @@ icDelete  = "\xf01f0"
 icBack    = "\xf006e"
 icList    = "\xf03a"
 
--- ==========================================
--- HELPERS
--- ==========================================
-
-trim :: String -> String
-trim = dropWhileEnd isSpace . dropWhile isSpace
-
-rofi :: String -> String -> String -> IO String
-rofi menuId prompt opts = do
-    home <- getHomeDirectory
-    let theme = home ++ "/.config/rofi/themes/modern.rasi"
-        helper = home ++ "/.config/rofi/scripts/frequent-menu.py"
-    (exitCode, out, _) <- catch (readProcessWithExitCode helper ["--menu-id", menuId, "--prompt", prompt, "--theme", theme, "--", "-i"] opts)
-                                (\(_ :: IOException) -> return (ExitFailure 1, "", ""))
-    return $ trim out
-
 notify :: String -> String -> IO ()
-notify title msg = void $ spawnCommand $ "notify-send -u normal -a 'TODO Manager' '" ++ title ++ "' '" ++ msg ++ "'"
+notify title msg = notifySend ["-u", "normal", "-a", "TODO Manager", title, msg]
 
 -- ==========================================
 -- ARCHIVO DE TAREAS
@@ -56,16 +40,19 @@ readTasks = do
     exists <- doesFileExist path
     if exists
         then do
-            content <- catch (readFile path) (\(_ :: IOException) -> return "")
+            contentResult <- try (readFile path) :: IO (Either IOException String)
+            let content = either (const "") id contentResult
             let tasks = filter (not . null) $ lines content
-            -- Force full file read to avoid lazy I/O conflicts with subsequent writes
             length tasks `seq` return tasks
         else return []
 
 writeTasks :: [String] -> IO ()
 writeTasks tasks = do
     path <- getTodoPath
-    catch (writeFile path (unlines tasks)) (\(_ :: IOException) -> notify "Error" "No se pudo guardar las tareas")
+    result <- try (writeFile path (unlines tasks)) :: IO (Either IOException ())
+    case result of
+        Left _ -> notify "Error" "No se pudo guardar las tareas"
+        Right _ -> return ()
 
 -- ==========================================
 -- LÓGICA PRINCIPAL
@@ -87,7 +74,7 @@ mainMenu = do
                   , icDelete ++ " Limpiar Completadas"
                   ]
 
-    selection <- rofi "hypr-todo-main" ("TODO [" ++ stats ++ "]") (unlines options)
+    selection <- rofiLines "hypr-todo-main" ("TODO [" ++ stats ++ "]") ["-i"] options
     case () of
         _ | null selection                        -> exitSuccess
           | "Agregar" `elem` words selection      -> addTask
@@ -98,7 +85,7 @@ mainMenu = do
 
 addTask :: IO ()
 addTask = do
-    input <- rofi "hypr-todo-add" "Nueva Tarea" ""
+    input <- rofiSelection "hypr-todo-add" "Nueva Tarea" ["-i"] ""
     unless (null input) $ do
         now <- getCurrentTime
         let timestamp = formatTime defaultTimeLocale "%Y-%m-%d" now
@@ -118,7 +105,7 @@ viewPending = do
             mainMenu
         else do
             let display = map formatPending (zip [1..] pending)
-            selection <- rofi "hypr-todo-pending" "Pendientes (seleccionar para completar)" (unlines display)
+            selection <- rofiLines "hypr-todo-pending" "Pendientes (seleccionar para completar)" ["-i"] display
             unless (null selection) $ do
                 let idx = parseIndex selection
                 case idx of
@@ -136,12 +123,12 @@ viewCompleted = do
             mainMenu
         else do
             let display = map formatCompleted (zip [1..] completed)
-            _ <- rofi "hypr-todo-completed" "Completadas" (unlines display)
+            _ <- rofiLines "hypr-todo-completed" "Completadas" ["-i"] display
             mainMenu
 
 cleanCompleted :: IO ()
 cleanCompleted = do
-    confirm <- rofi "hypr-todo-clean-confirm" "¿Eliminar todas las completadas?" "Sí\nNo"
+    confirm <- rofiLines "hypr-todo-clean-confirm" "¿Eliminar todas las completadas?" ["-i"] ["Sí", "No"]
     when (confirm == "Sí") $ do
         tasks <- readTasks
         let remaining = filter (not . ("[x] " `isPrefixOf`)) tasks

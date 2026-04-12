@@ -1,13 +1,12 @@
-#!/usr/bin/env runhaskell
+#!/usr/bin/env -S sh -c 'script_dir=$(dirname "$1"); exec runhaskell -i"$script_dir" -i"$script_dir/.." "$1" "$@"' sh
 {-# LANGUAGE OverloadedStrings #-}
 
-import System.Process (readProcessWithExitCode, spawnCommand)
-import System.Exit (exitSuccess, ExitCode(..))
-import System.Directory (getHomeDirectory)
-import Control.Exception (catch, IOException)
+import System.Process (spawnCommand)
+import System.Exit (exitSuccess)
 import Control.Monad (void, unless)
-import Data.Char (isSpace)
-import Data.List (dropWhileEnd, isInfixOf)
+import Data.List (isInfixOf)
+
+import StandaloneUtils (notifySend, rofiLines, rofiSelection)
 
 -- ==========================================
 -- CONFIGURACIÓN DE COLORES Y ICONOS
@@ -95,20 +94,6 @@ promptDB sql =
     \  </analysis_steps>\n\
     \</prompt>"
 
--- ==========================================
--- MOTOR DE MENÚS Y UX
--- ==========================================
-
-trim = dropWhileEnd isSpace . dropWhile isSpace
-
-rofi menuId prompt options = do
-    home <- getHomeDirectory
-    let theme = home ++ "/.config/rofi/themes/modern.rasi"
-        helper = home ++ "/.config/rofi/scripts/frequent-menu.py"
-    (exitCode, out, _) <- catch (readProcessWithExitCode helper ["--menu-id", menuId, "--prompt", prompt, "--theme", theme, "--", "-i", "-markup-rows"] (unlines options))
-                                (\(_ :: IOException) -> return (ExitFailure 1, "", ""))
-    return $ trim out
-
 notify urgency icon title msg = void $ spawnCommand $ "notify-send -u " ++ urgency ++ " -i " ++ icon ++ " '" ++ title ++ "' '" ++ msg ++ "'"
 
 -- ==========================================
@@ -122,7 +107,7 @@ mainMenu = do
                   , fmt colorWarning icReview "Code Review (Clean Code)"
                   , fmt colorDB      icDB     "SQL/DB Optimizer"
                   ]
-    selection <- rofi "hypr-prompt-main" "Software Engineering Toolbox" options
+    selection <- rofiLines "hypr-prompt-main" "Software Engineering Toolbox" ["-i", "-markup-rows"] options
     
     if null selection then exitSuccess
     else if "Architect" `isInfixOf` selection then handlePrompt promptArch "Requisitos del sistema"
@@ -133,12 +118,11 @@ mainMenu = do
 
 handlePrompt :: (String -> String) -> String -> IO ()
 handlePrompt templateFunc inputLabel = do
-    userInput <- rofi "hypr-prompt-input" inputLabel []
+    userInput <- rofiSelection "hypr-prompt-input" inputLabel ["-i"] ""
     unless (null userInput) $ do
         let finalPrompt = templateFunc userInput
-        -- Copiado seguro a portapapeles (Wayland)
         void $ spawnCommand $ "echo '" ++ escapeSingleQuotes finalPrompt ++ "' | wl-copy"
-        notify "normal" "edit-copy" "Copiado" "Prompt XML listo para pegar."
+        notifySend ["-u", "normal", "-i", "edit-copy", "Copiado", "Prompt XML listo para pegar."]
     mainMenu
 
 escapeSingleQuotes = concatMap (\c -> if c == '\'' then "'\\''" else [c])

@@ -1,12 +1,13 @@
-#!/usr/bin/env runhaskell
+#!/usr/bin/env -S sh -c 'script_dir=$(dirname "$1"); exec runhaskell -i"$script_dir" -i"$script_dir/.." "$1" "$@"' sh
 
 import Control.Monad (void, when)
-import Data.Char (isSpace)
-import Data.List (dropWhileEnd, intercalate)
+import Data.List (intercalate)
 import System.Directory (createDirectoryIfMissing, findExecutable, getHomeDirectory)
 import System.Environment (lookupEnv)
 import System.Exit (ExitCode (ExitSuccess))
 import System.Process (callCommand, callProcess, readProcessWithExitCode, spawnProcess)
+
+import StandaloneUtils (rofiLines, shellEscape, trim)
 
 main :: IO ()
 main = do
@@ -23,7 +24,7 @@ main = do
             , "Ventana Activa"
             ]
 
-    selection <- rofiSelect "wm-shared-screenshot" "Captura" options
+    selection <- rofiLines "wm-shared-screenshot" "Captura" ["-i", "-l", show (length options)] options
     when (not (null selection)) $ takeScreenshot selection filepath
 
 takeScreenshot :: String -> FilePath -> IO ()
@@ -130,20 +131,6 @@ copyImage wayland filepath
             Just _ -> runCommand "xclip" ["-selection", "clipboard", "-t", "image/png", "-i", filepath]
             Nothing -> pure False
 
-rofiSelect :: String -> String -> [String] -> IO String
-rofiSelect menuId prompt options = do
-    home <- getHomeDirectory
-    let theme = home ++ "/.config/rofi/themes/modern.rasi"
-        helper = home ++ "/.config/rofi/scripts/frequent-menu.py"
-        args =
-            [ "--menu-id", menuId
-            , "--prompt", prompt
-            , "--theme", theme
-            , "--", "-i", "-l", show (length options)
-            ]
-    (exitCode, out, _) <- readProcessWithExitCode helper args (intercalate "\n" options)
-    pure $ if exitCode == ExitSuccess then trim out else ""
-
 runCommand :: FilePath -> [String] -> IO Bool
 runCommand command args = do
     (exitCode, _, _) <- readProcessWithExitCode command args ""
@@ -164,12 +151,3 @@ currentTimestamp = do
 
 notify :: String -> String -> IO ()
 notify title msg = callProcess "notify-send" [title, msg]
-
-shellEscape :: String -> String
-shellEscape s = "'" ++ concatMap escapeChar s ++ "'"
-  where
-    escapeChar '\'' = "'\\''"
-    escapeChar c = [c]
-
-trim :: String -> String
-trim = dropWhileEnd isSpace . dropWhile isSpace

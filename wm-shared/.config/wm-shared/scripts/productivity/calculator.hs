@@ -1,10 +1,9 @@
-#!/usr/bin/env runhaskell
+#!/usr/bin/env -S sh -c 'script_dir=$(dirname "$1"); exec runhaskell -i"$script_dir" -i"$script_dir/.." "$1" "$@"' sh
 
-import Control.Exception (IOException, try)
 import Control.Monad (void)
 import Data.Char (isDigit, isLower, isSpace)
 import Data.List (dropWhileEnd)
-import System.Directory (findExecutable, getHomeDirectory)
+import System.Directory (findExecutable)
 import System.Exit (ExitCode (ExitSuccess, ExitFailure))
 import System.IO (hClose, hPutStr)
 import System.Process
@@ -13,13 +12,14 @@ import System.Process
     , createProcess
     , proc
     , readProcessWithExitCode
-    , spawnCommand
     , waitForProcess
     )
 
+import StandaloneUtils (notifySend, rofiSelection, shellEscape, trim)
+
 main :: IO ()
 main = do
-    expr <- rofiInput "wm-shared-calculator" "Calc:" ["-i", "-mesg", "Ejemplos: 2+2 | sqrt(144) | 100*0.15 | 2**10"] ""
+    expr <- rofiSelection "wm-shared-calculator" "Calc:" ["-i", "-mesg", "Ejemplos: 2+2 | sqrt(144) | 100*0.15 | 2**10"] ""
     case expr of
         "" -> return ()
         _ | not (isSafeExpr expr) ->
@@ -69,17 +69,6 @@ evalExpression expr = do
             let msg = trim err
             in Left $ if null msg then "No se pudo evaluar la expresion." else msg
 
-rofiInput :: String -> String -> [String] -> String -> IO String
-rofiInput menuId prompt extraArgs input = do
-    home <- getHomeDirectory
-    let theme = home ++ "/.config/rofi/themes/modern.rasi"
-        helper = home ++ "/.config/rofi/scripts/frequent-menu.py"
-        args = ["--menu-id", menuId, "--prompt", prompt, "--theme", theme, "--"] ++ extraArgs
-    result <- try (readProcessWithExitCode helper args input) :: IO (Either IOException (ExitCode, String, String))
-    pure $ case result of
-        Left _ -> ""
-        Right (_, out, _) -> trim out
-
 copyToClipboard :: String -> IO Bool
 copyToClipboard value = do
     wlCopy <- findExecutable "wl-copy"
@@ -103,15 +92,4 @@ runClipboard command args value = do
             pure (exitCode == ExitSuccess)
 
 notify :: String -> String -> IO ()
-notify title msg =
-    void $ spawnCommand $
-        "notify-send " ++ shellEscape title ++ " " ++ shellEscape msg
-
-shellEscape :: String -> String
-shellEscape s = "'" ++ concatMap escapeChar s ++ "'"
-  where
-    escapeChar '\'' = "'\\''"
-    escapeChar c = [c]
-
-trim :: String -> String
-trim = dropWhileEnd isSpace . dropWhile isSpace
+notify title msg = notifySend [title, msg]

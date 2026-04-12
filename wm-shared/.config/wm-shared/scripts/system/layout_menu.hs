@@ -1,10 +1,10 @@
-#!/usr/bin/env runhaskell
+#!/usr/bin/env -S sh -c 'script_dir=$(dirname "$1"); exec runhaskell -i"$script_dir" -i"$script_dir/.." "$1" "$@"' sh
 
-import Data.Char (isSpace)
-import Data.List (dropWhileEnd, find, isPrefixOf)
-import System.Directory (getHomeDirectory)
+import Data.List (find, isPrefixOf)
 import System.Exit (ExitCode (ExitSuccess), exitSuccess)
 import System.Process (readProcessWithExitCode, spawnProcess)
+
+import StandaloneUtils (rofiLines, trim)
 
 data LayoutOption = LayoutOption
     { layoutName :: String
@@ -19,27 +19,11 @@ layoutOptions =
 
 main :: IO ()
 main = do
-    home <- getHomeDirectory
     currentLayout <- getCurrentLayout
-    selection <- rofi (home ++ "/.config/rofi/themes/modern.rasi") "hypr-layout-menu" ("Tiling (" ++ currentLayout ++ ")") (unlines (map layoutLabel layoutOptions))
+    selection <- rofiLines "hypr-layout-menu" ("Tiling (" ++ currentLayout ++ ")") ["-i"] (map layoutLabel layoutOptions)
     case find ((== selection) . layoutLabel) layoutOptions of
         Just option -> setLayout option
         Nothing -> exitSuccess
-
-rofi :: String -> String -> String -> String -> IO String
-rofi theme menuId prompt options = do
-    home <- getHomeDirectory
-    let helper = home ++ "/.config/rofi/scripts/frequent-menu.py"
-    (exitCode, out, _) <- readProcessWithExitCode helper
-        [ "--menu-id", menuId
-        , "--prompt", prompt
-        , "--theme", theme
-        , "--", "-i"
-        ]
-        options
-    if exitCode == ExitSuccess
-        then return (trim out)
-        else return ""
 
 getCurrentLayout :: IO String
 getCurrentLayout = do
@@ -61,6 +45,3 @@ setLayout option = do
     _ <- spawnProcess "hyprctl" ["keyword", "general:layout", layoutName option]
     _ <- spawnProcess "notify-send" ["-a", "Hyprland", "Tiling actualizado", layoutName option]
     exitSuccess
-
-trim :: String -> String
-trim = dropWhileEnd isSpace . dropWhile isSpace

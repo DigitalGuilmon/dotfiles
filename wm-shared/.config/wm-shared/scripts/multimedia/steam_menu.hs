@@ -1,13 +1,14 @@
-#!/usr/bin/env runhaskell
+#!/usr/bin/env -S sh -c 'script_dir=$(dirname "$1"); exec runhaskell -i"$script_dir" -i"$script_dir/.." "$1" "$@"' sh
 
-import System.Process (readProcessWithExitCode, spawnProcess)
-import System.Exit (ExitCode(ExitSuccess))
+import System.Process (spawnProcess)
 import System.Directory (getHomeDirectory, listDirectory, doesDirectoryExist, doesFileExist)
 import System.FilePath ((</>), takeExtension, takeFileName)
-import Data.List (intercalate, isSuffixOf, isInfixOf, isPrefixOf, break, minimumBy)
+import Data.List (isSuffixOf, isInfixOf, isPrefixOf, break, minimumBy)
 import Data.Maybe (mapMaybe)
 import Control.Monad (filterM)
 import Data.Ord (comparing)
+
+import StandaloneUtils (rofiSelection)
 
 -- Estructura para manejar los juegos y sus iconos
 data Game = Game { name :: String, appId :: String, iconPath :: FilePath } deriving (Show)
@@ -15,7 +16,6 @@ data Game = Game { name :: String, appId :: String, iconPath :: FilePath } deriv
 main :: IO ()
 main = do
     home <- getHomeDirectory
-    let helper = home ++ "/.config/rofi/scripts/frequent-menu.py"
     -- Rutas comunes de la librería de Steam
     let steamPaths = [ home ++ "/.local/share/Steam/steamapps"
                      , home ++ "/.local/share/steam/steamapps"
@@ -37,27 +37,21 @@ main = do
             let validGames = mapMaybe id games
             
             -- Construcción de la entrada para Rofi: "Nombre\0icon\x1fRutaIcono"
-            let rofiInput = intercalate "\n" $ map (\g -> name g ++ "\0icon\x1f" ++ iconPath g) validGames
-            
-            -- Ejecución de Rofi inyectando tu estilo de Hyprland (Borde #c678dd y rounding 12)
-            (exitCode, out, _) <- readProcessWithExitCode helper
-                [ "--menu-id", "hypr-steam-menu"
-                , "--prompt", "🕹️  Steam"
-                , "--", "-i", "-show-icons"
+            let rofiInput = unlines $ map (\g -> name g ++ "\0icon\x1f" ++ iconPath g) validGames
+            selectedName <- rofiSelection
+                "hypr-steam-menu"
+                "🕹️  Steam"
+                [ "-i", "-show-icons"
                 , "-theme-str", "window { width: 35%; border: 2px; border-color: #c678dd; border-radius: 12px; background-color: #1e1e2e; }"
                 , "-theme-str", "element { padding: 8px; border-radius: 10px; }"
                 , "-theme-str", "element selected { background-color: #313244; }"
                 , "-theme-str", "element-icon { size: 48px; margin: 0 15px 0 0; }"
                 , "-theme-str", "listview { lines: 8; }"
-                ] rofiInput
-
-            if exitCode == ExitSuccess
-                then do
-                    let selectedName = filter (/= '\n') out
-                    case filter (\g -> name g == selectedName) validGames of
-                        (g:_) -> spawnProcess "steam" ["steam://run/" ++ appId g] >> return ()
-                        _     -> return ()
-                else return ()
+                ]
+                rofiInput
+            case filter (\g -> name g == selectedName) validGames of
+                (g:_) -> spawnProcess "steam" ["steam://run/" ++ appId g] >> return ()
+                _     -> return ()
 
 -- Parsea el archivo .acf y busca el icono correspondiente
 parseGame :: FilePath -> FilePath -> FilePath -> IO (Maybe Game)

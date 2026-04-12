@@ -1,13 +1,13 @@
-#!/usr/bin/env runhaskell
+#!/usr/bin/env -S sh -c 'script_dir=$(dirname "$1"); exec runhaskell -i"$script_dir" -i"$script_dir/.." "$1" "$@"' sh
 {-# LANGUAGE OverloadedStrings #-}
 
-import System.Process (readProcessWithExitCode, spawnCommand, readCreateProcess, shell)
-import System.Exit (exitSuccess, ExitCode(..))
-import System.Directory (getHomeDirectory)
-import Control.Exception (catch, IOException)
+import System.Process (spawnCommand, readCreateProcess, shell)
+import System.Exit (exitSuccess)
+import Control.Exception (IOException, try)
 import Control.Monad (void, unless)
-import Data.Char (isSpace)
-import Data.List (dropWhileEnd, isPrefixOf)
+import Data.List (isPrefixOf)
+
+import StandaloneUtils (notifySend, rofiLines, rofiSelection, trim)
 
 -- ==========================================
 -- CONFIGURACIÓN E ICONOS
@@ -20,27 +20,13 @@ icEsEn      = "\xf0525"  -- Traducir ES -> EN
 icSound     = "\xf028"   -- Sonido
 icBack      = "\xf006e"
 
--- ==========================================
--- HELPERS DE SISTEMA
--- ==========================================
-
-trim :: String -> String
-trim = dropWhileEnd isSpace . dropWhile isSpace
-
-rofi :: String -> String -> String -> IO String
-rofi menuId prompt opts = do
-    home <- getHomeDirectory
-    let theme = home ++ "/.config/rofi/themes/modern.rasi"
-        helper = home ++ "/.config/rofi/scripts/frequent-menu.py"
-    (exitCode, out, _) <- catch (readProcessWithExitCode helper ["--menu-id", menuId, "--prompt", prompt, "--theme", theme, "--", "-i"] opts)
-                                (\(_ :: IOException) -> return (ExitFailure 1, "", ""))
-    return $ trim out
-
 notify :: String -> String -> IO ()
-notify title msg = void $ spawnCommand $ "notify-send -u normal -a 'English Live' '" ++ title ++ "' '" ++ msg ++ "'"
+notify title msg = notifySend ["-u", "normal", "-a", "English Live", title, msg]
 
 queryShell :: String -> IO String
-queryShell cmd = catch (readCreateProcess (shell cmd) "") (\(_ :: IOException) -> return "")
+queryShell cmd = do
+    result <- try (readCreateProcess (shell cmd) "") :: IO (Either IOException String)
+    pure $ either (const "") id result
 
 -- ==========================================
 -- LÓGICA DE TRADUCCIÓN BIDIRECCIONAL
@@ -52,17 +38,15 @@ translationMenu = do
                   , (icEsEn ++ " Español -> Inglés", performTranslation "es|en" "Español a Inglés")
                   , (icBack ++ " Volver", mainMenu)
                   ]
-    let optsStr = unlines $ map fst options
-    selection <- rofi "hypr-english-translation-menu" "Traductor" optsStr
+    selection <- rofiLines "hypr-english-translation-menu" "Traductor" ["-i"] (map fst options)
     case lookup selection options of
         Just action -> action
         Nothing     -> mainMenu
 
 performTranslation :: String -> String -> IO ()
 performTranslation langPair promptStr = do
-    query <- rofi "hypr-english-translation-input" promptStr ""
+    query <- rofiSelection "hypr-english-translation-input" promptStr ["-i"] ""
     unless (null query) $ do
-        -- Usamos --data-urlencode para que curl maneje automáticamente espacios y símbolos
         let baseUrl = "https://api.mymemory.translated.net/get"
         let cmd = "curl -s -G \"" ++ baseUrl ++ "\" --data-urlencode \"q=" ++ query ++ "\" --data-urlencode \"langpair=" ++ langPair ++ "\" | jq -r '.responseData.translatedText'"
         
@@ -100,9 +84,8 @@ fetchDefinition word = do
 
 pronounce :: IO ()
 pronounce = do
-    word <- rofi "hypr-english-pronounce-input" "Escuchar pronunciación (EN)" ""
+    word <- rofiSelection "hypr-english-pronounce-input" "Escuchar pronunciación (EN)" ["-i"] ""
     unless (null word) $ do
-        -- Detecta automáticamente si necesitas mpv o vlc
         void $ spawnCommand $ "mpv --no-terminal \"https://translate.google.com/translate_tts?ie=UTF-8&client=tw-ob&q=" ++ word ++ "&tl=en\""
     mainMenu
 
@@ -120,13 +103,12 @@ mainMenu = do
                   , (icEnEs  ++ " Traductor Bidireccional",  translationMenu)
                   , (icSound ++ " Escuchar pronunciación", pronounce)
                   ]
-    let optsStr = unlines $ map fst options
-    selection <- rofi "hypr-english-main" "English Live Tutor" optsStr
+    selection <- rofiLines "hypr-english-main" "English Live Tutor" ["-i"] (map fst options)
     case lookup selection options of
         Just action -> action
         Nothing     -> exitSuccess
 
 interactiveSearch :: IO ()
 interactiveSearch = do
-    word <- rofi "hypr-english-dictionary-input" "Introduce palabra en Inglés" ""
+    word <- rofiSelection "hypr-english-dictionary-input" "Introduce palabra en Inglés" ["-i"] ""
     unless (null word) $ fetchDefinition (trim word)

@@ -1,29 +1,13 @@
-#!/usr/bin/env runhaskell
+#!/usr/bin/env -S sh -c 'script_dir=$(dirname "$1"); exec runhaskell -i"$script_dir" -i"$script_dir/.." "$1" "$@"' sh
 {-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE ScopedTypeVariables #-}
 
-import System.Process (readProcessWithExitCode)
-import System.Exit (exitSuccess, ExitCode(..))
+import System.Exit (exitSuccess)
 import System.Directory (getHomeDirectory)
-import Control.Exception (catch, IOException)
-import Data.Char (isSpace)
-import Data.List (dropWhileEnd, isPrefixOf, isInfixOf, intercalate)
+import Control.Exception (IOException, try)
+import Data.List (isPrefixOf, isInfixOf, intercalate)
 
--- ==========================================
--- HELPERS
--- ==========================================
-
-trim :: String -> String
-trim = dropWhileEnd isSpace . dropWhile isSpace
-
-rofi :: String -> String -> String -> IO String
-rofi menuId prompt opts = do
-    home <- getHomeDirectory
-    let theme = home ++ "/.config/rofi/themes/modern.rasi"
-        helper = home ++ "/.config/rofi/scripts/frequent-menu.py"
-    (exitCode, out, _) <- catch (readProcessWithExitCode helper
-        ["--menu-id", menuId, "--prompt", prompt, "--theme", theme, "--", "-i", "-markup-rows"] opts)
-        (\(_ :: IOException) -> return (ExitFailure 1, "", ""))
-    return $ trim out
+import StandaloneUtils (rofiLines, trim)
 
 -- ==========================================
 -- PARSER DE KEYBINDS
@@ -159,11 +143,12 @@ main = do
     home <- getHomeDirectory
     let keybindsPath = home ++ "/.config/hypr/conf/keybinds.conf"
     
-    content <- catch (readFile keybindsPath) (\(_ :: IOException) -> return "")
+    contentResult <- try (readFile keybindsPath) :: IO (Either IOException String)
+    let content = either (const "") id contentResult
     
     if null content
         then do
-            _ <- rofi "hypr-keybind-cheatsheet-error" "Error" "No se pudo leer keybinds.conf"
+            _ <- rofiLines "hypr-keybind-cheatsheet-error" "Error" ["-i", "-markup-rows"] ["No se pudo leer keybinds.conf"]
             exitSuccess
         else do
             let ls = lines content
@@ -172,5 +157,5 @@ main = do
                     Nothing -> []) ls
                 formatted = map formatKeybind binds
             
-            _ <- rofi "hypr-keybind-cheatsheet-main" "⌨️ Keybindings Hyprland" (unlines formatted)
+            _ <- rofiLines "hypr-keybind-cheatsheet-main" "⌨️ Keybindings Hyprland" ["-i", "-markup-rows"] formatted
             exitSuccess

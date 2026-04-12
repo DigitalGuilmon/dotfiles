@@ -1,16 +1,11 @@
-#!/usr/bin/env runhaskell
+#!/usr/bin/env -S sh -c 'script_dir=$(dirname "$1"); exec runhaskell -i"$script_dir" -i"$script_dir/.." "$1" "$@"' sh
 
-import System.Process (readProcessWithExitCode, spawnProcess)
-import System.Exit (ExitCode(ExitSuccess))
-import System.Directory (getHomeDirectory)
-import Data.List (intercalate)
+import System.Process (spawnProcess)
+
+import StandaloneUtils (rofiLines)
 
 main :: IO ()
 main = do
-    home <- getHomeDirectory
-    let theme = home ++ "/.config/rofi/themes/modern.rasi"
-        helper = home ++ "/.config/rofi/scripts/frequent-menu.py"
-
     let options = [ "✨ Gemini"
                   , "🧠 Claude"
                   , "✖️ Grok"
@@ -18,29 +13,15 @@ main = do
                   , "🔍 Perplexity"
                   , "🤖 GitHub Copilot"
                   ]
-        inputStr = intercalate "\n" options
-
-    (exitCode, out, _) <- readProcessWithExitCode helper
-        [ "--menu-id", "hypr-ai-menu"
-        , "--prompt", "🤖 AI"
-        , "--theme", theme
-        , "--", "-i", "-l", show (length options)
-        ]
-        inputStr
-
-    if exitCode == ExitSuccess
-        then do
-            let selection = filter (/= '\n') out
-            case selection of
-                "✨ Gemini"         -> openUrl "https://gemini.google.com"
-                "🧠 Claude"         -> openUrl "https://claude.ai"
-                "✖️ Grok"           -> openUrl "https://x.com/i/grok"
-                "💬 ChatGPT"        -> openUrl "https://chatgpt.com"
-                "🔍 Perplexity"     -> openUrl "https://www.perplexity.ai"
-                "🤖 GitHub Copilot" -> openUrl "https://github.com/copilot"
-                _                   -> return ()
-        else
-            return ()
+    selection <- rofiLines "hypr-ai-menu" "🤖 AI" ["-i", "-l", show (length options)] options
+    case selection of
+        "✨ Gemini"         -> openUrl "https://gemini.google.com"
+        "🧠 Claude"         -> openUrl "https://claude.ai"
+        "✖️ Grok"           -> openUrl "https://x.com/i/grok"
+        "💬 ChatGPT"        -> openUrl "https://chatgpt.com"
+        "🔍 Perplexity"     -> openUrl "https://www.perplexity.ai"
+        "🤖 GitHub Copilot" -> openUrl "https://github.com/copilot"
+        _                   -> return ()
 
 openUrl :: String -> IO ()
 openUrl url = do

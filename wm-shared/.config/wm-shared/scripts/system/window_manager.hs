@@ -1,10 +1,11 @@
-#!/usr/bin/env runhaskell
+#!/usr/bin/env -S sh -c 'script_dir=$(dirname "$1"); exec runhaskell -i"$script_dir" -i"$script_dir/.." "$1" "$@"' sh
 
 import System.Environment (getArgs)
 import System.Exit (ExitCode(ExitSuccess))
-import System.Directory (getHomeDirectory)
 import System.Process (readProcessWithExitCode, spawnProcess)
 import Data.List (find, intercalate)
+
+import StandaloneUtils (rofiLines)
 
 data WindowEntry = WindowEntry
     { windowAddress :: String
@@ -16,17 +17,13 @@ data WindowEntry = WindowEntry
 main :: IO ()
 main = do
     args <- getArgs
-    home <- getHomeDirectory
-    let theme = home ++ "/.config/rofi/themes/modern.rasi"
     case args of
-        ["--list"] -> pickWindow theme
+        ["--list"] -> pickWindow
         ["--close-all"] -> closeAllWindows
-        _ -> showWindowActions theme
+        _ -> showWindowActions
 
-showWindowActions :: String -> IO ()
-showWindowActions theme = do
-    home <- getHomeDirectory
-    let helper = home ++ "/.config/rofi/scripts/frequent-menu.py"
+showWindowActions :: IO ()
+showWindowActions = do
     let options = [ "🔎 Mostrar todas las ventanas"
                   , "❌ Cerrar Todo (Global)"
                   , "🧹 Cerrar Workspace Actual"
@@ -36,52 +33,28 @@ showWindowActions theme = do
                   , "📌 Anclar Ventana (Pin)"
                   , "🔀 Mover Ventana a Workspace"
                   ]
-        inputStr = intercalate "\n" options
+    selection <- rofiLines "hypr-window-actions" "🪟 Ventanas" ["-i", "-l", show (length options)] options
+    case selection of
+        "🔎 Mostrar todas las ventanas"   -> pickWindow
+        "❌ Cerrar Todo (Global)"         -> closeAllWindows
+        "🧹 Cerrar Workspace Actual"      -> runCmd "hyprctl clients -j | jq -r \".[] | select(.workspace.id == $(hyprctl activeworkspace -j | jq '.id')) | .address\" | xargs -r -I {} hyprctl dispatch closewindow address:{}"
+        "🌐 Cerrar Google Chrome"         -> runCmd "hyprctl clients -j | jq -r '.[] | select(.class == \"google-chrome\") | .address' | xargs -r -I {} hyprctl dispatch closewindow address:{}"
+        "🦁 Cerrar Brave Browser"         -> runCmd "hyprctl clients -j | jq -r '.[] | select(.class == \"brave-browser\") | .address' | xargs -r -I {} hyprctl dispatch closewindow address:{}"
+        "💻 Cerrar todas las Terminales" -> runCmd "hyprctl clients -j | jq -r '.[] | select(.class == \"com.mitchellh.ghostty\") | .address' | xargs -r -I {} hyprctl dispatch closewindow address:{}"
+        "📌 Anclar Ventana (Pin)"         -> runCmd "hyprctl dispatch pin"
+        "🔀 Mover Ventana a Workspace"    -> moveToWorkspace
+        _                                 -> return ()
 
-    (exitCode, out, _) <- readProcessWithExitCode helper
-        [ "--menu-id", "hypr-window-actions"
-        , "--prompt", "🪟 Ventanas"
-        , "--theme", theme
-        , "--", "-i", "-l", show (length options)
-        ]
-        inputStr
-
-    if exitCode == ExitSuccess
-        then do
-            let selection = filter (/= '\n') out
-            case selection of
-                "🔎 Mostrar todas las ventanas"   -> pickWindow theme
-                "❌ Cerrar Todo (Global)"         -> closeAllWindows
-                "🧹 Cerrar Workspace Actual"      -> runCmd "hyprctl clients -j | jq -r \".[] | select(.workspace.id == $(hyprctl activeworkspace -j | jq '.id')) | .address\" | xargs -r -I {} hyprctl dispatch closewindow address:{}"
-                "🌐 Cerrar Google Chrome"         -> runCmd "hyprctl clients -j | jq -r '.[] | select(.class == \"google-chrome\") | .address' | xargs -r -I {} hyprctl dispatch closewindow address:{}"
-                "🦁 Cerrar Brave Browser"         -> runCmd "hyprctl clients -j | jq -r '.[] | select(.class == \"brave-browser\") | .address' | xargs -r -I {} hyprctl dispatch closewindow address:{}"
-                "💻 Cerrar todas las Terminales" -> runCmd "hyprctl clients -j | jq -r '.[] | select(.class == \"com.mitchellh.ghostty\") | .address' | xargs -r -I {} hyprctl dispatch closewindow address:{}"
-                "📌 Anclar Ventana (Pin)"         -> runCmd "hyprctl dispatch pin"
-                "🔀 Mover Ventana a Workspace"    -> moveToWorkspace theme
-                _                                 -> return ()
-        else
-            return ()
-
-pickWindow :: String -> IO ()
-pickWindow theme = do
-    home <- getHomeDirectory
-    let helper = home ++ "/.config/rofi/scripts/frequent-menu.py"
+pickWindow :: IO ()
+pickWindow = do
     windows <- getWindows
     let labels = if null windows
             then ["No hay ventanas abiertas"]
             else map formatWindowLabel windows
 
-    (exitCode, out, _) <- readProcessWithExitCode helper
-        [ "--menu-id", "hypr-window-list"
-        , "--prompt", "Todas las ventanas"
-        , "--theme", theme
-        , "--", "-i", "-l", show (min 12 (length labels))
-        ]
-        (intercalate "\n" labels)
-
-    if exitCode == ExitSuccess && not (null windows)
+    selectedLabel <- rofiLines "hypr-window-list" "Todas las ventanas" ["-i", "-l", show (min 12 (length labels))] labels
+    if not (null windows) && not (null selectedLabel)
         then do
-            let selectedLabel = filter (/= '\n') out
             case find ((== selectedLabel) . formatWindowLabel) windows of
                 Just entry -> focusWindow (windowAddress entry)
                 Nothing    -> return ()
@@ -138,21 +111,13 @@ splitOn delimiter input =
         (chunk, []) -> [chunk]
         (chunk, _:rest) -> chunk : splitOn delimiter rest
 
-moveToWorkspace :: String -> IO ()
-moveToWorkspace theme = do
-    home <- getHomeDirectory
-    let helper = home ++ "/.config/rofi/scripts/frequent-menu.py"
-    let wsOptions = intercalate "\n" $ map (\n -> show n ++ " - Workspace " ++ show n) ([1..9] :: [Int])
-    (exitCode, out, _) <- readProcessWithExitCode helper
-        [ "--menu-id", "hypr-window-move-workspace"
-        , "--prompt", "Mover a Workspace"
-        , "--theme", theme
-        , "--", "-i"
-        ]
-        wsOptions
-    if exitCode == ExitSuccess
+moveToWorkspace :: IO ()
+moveToWorkspace = do
+    let wsOptions = map (\n -> show n ++ " - Workspace " ++ show n) ([1..9] :: [Int])
+    selected <- rofiLines "hypr-window-move-workspace" "Mover a Workspace" ["-i"] wsOptions
+    if not (null selected)
         then do
-            let ws = takeWhile (/= ' ') $ filter (/= '\n') out
+            let ws = takeWhile (/= ' ') selected
             runCmd $ "hyprctl dispatch movetoworkspace " ++ ws
         else return ()
 

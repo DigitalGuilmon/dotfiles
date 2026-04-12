@@ -1,16 +1,16 @@
-#!/usr/bin/env runhaskell
+#!/usr/bin/env -S sh -c 'script_dir=$(dirname "$1"); exec runhaskell -i"$script_dir" -i"$script_dir/.." "$1" "$@"' sh
 {-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE ScopedTypeVariables #-}
 
-import System.Process (spawnCommand, readProcessWithExitCode)
-import System.Exit (exitSuccess, ExitCode(..))
+import System.Process (spawnCommand)
 import System.Directory (getHomeDirectory, listDirectory, getModificationTime, doesFileExist)
 import System.FilePath (takeExtension, (</>), takeFileName)
-import Control.Exception (catch, IOException)
-import Control.Monad (filterM, void, unless) -- Importamos void y unless explícitamente
-import Data.List (sortBy, dropWhileEnd)
-import Data.Ord (comparing, Down(..)) -- Importamos Down para el orden descendente
-import Data.Time.Clock (UTCTime)
-import Data.Char (isSpace)
+import Control.Exception (IOException, try)
+import Control.Monad (filterM, void, unless)
+import Data.List (sortBy)
+import Data.Ord (comparing, Down(..))
+
+import StandaloneUtils (rofiLines, trim)
 
 -- ==========================================
 -- CONFIGURACIÓN VISUAL
@@ -31,62 +31,34 @@ getIcon ext = case ext of
     ".mp3"  -> "\xf001"
     _       -> "\xf016"
 
--- ==========================================
--- LÓGICA DE ARCHIVOS
--- ==========================================
-
-trim = dropWhileEnd isSpace . dropWhile isSpace
-
 main :: IO ()
 main = do
     home <- getHomeDirectory
     let downloadDir = home </> "Downloads" 
     
-    -- Obtener archivos
-    files <- catch (listDirectory downloadDir) (\(_ :: IOException) -> return [])
+    filesResult <- try (listDirectory downloadDir) :: IO (Either IOException [FilePath])
+    let files = either (const []) id filesResult
     let fullPaths = map (downloadDir </>) files
     
-    -- Filtrar solo archivos existentes
     existingFiles <- filterM doesFileExist fullPaths
     
-    -- Obtener tiempos de modificación
     fileData <- mapM (\p -> do
         modTime <- getModificationTime p
         return (p, modTime)) existingFiles
     
-    -- ORDENACIÓN CORREGIDA: De más nuevo (Down) a más viejo
     let sortedFiles = map fst $ sortBy (comparing (Down . snd)) fileData
     
-    -- Preparar líneas para Rofi
     let menuOptions = map (\p -> 
             let name = takeFileName p
                 ext  = takeExtension name
                 icon = getIcon ext
             in fmt colorFile icon name) sortedFiles
 
-    -- Ejecutar Rofi
-    selection <- rofi "hypr-downloads-main" "Descargas Recientes" menuOptions
+    selection <- rofiLines "hypr-downloads-main" "Descargas Recientes" ["-i", "-markup-rows"] menuOptions
     
     unless (null selection) $ do
         let cleanName = extractName selection
         let finalPath = downloadDir </> cleanName
-        
-        -- ABRIR CORREGIDO: void ya está en scope
         void $ spawnCommand $ "xdg-open \"" ++ finalPath ++ "\""
-
--- ==========================================
--- HELPERS DE SISTEMA
--- ==========================================
-
-rofi :: String -> String -> [String] -> IO String
-rofi menuId prompt options = do
-    home <- getHomeDirectory
-    let theme = home </> ".config/rofi/themes/modern.rasi"
-        helper = home </> ".config/rofi/scripts/frequent-menu.py"
-    (exitCode, out, _) <- catch (readProcessWithExitCode helper ["--menu-id", menuId, "--prompt", prompt, "--theme", theme, "--", "-i", "-markup-rows"] (unlines options))
-                                (\(_ :: IOException) -> return (ExitFailure 1, "", ""))
-    return $ trim out
-
--- Limpieza de Pango mejorada: buscamos el último '>' para obtener el nombre
 extractName :: String -> String
 extractName str = trim $ reverse $ takeWhile (/= ' ') $ takeWhile (/= '>') $ reverse str

@@ -1,13 +1,11 @@
-#!/usr/bin/env runhaskell
+#!/usr/bin/env -S sh -c 'script_dir=$(dirname "$1"); exec runhaskell -i"$script_dir" -i"$script_dir/.." "$1" "$@"' sh
 {-# LANGUAGE OverloadedStrings #-}
 
-import System.Process (readProcessWithExitCode, spawnCommand)
-import System.Exit (exitSuccess, ExitCode(..))
-import System.Directory (getHomeDirectory)
-import Control.Exception (catch, IOException)
+import System.Process (spawnCommand)
+import System.Exit (exitSuccess)
 import Control.Monad (void, unless)
-import Data.Char (isSpace)
-import Data.List (dropWhileEnd)
+
+import StandaloneUtils (notifySend, rofiLines, rofiSelection)
 
 -- ==========================================
 -- CONFIGURACIÓN E ICONOS
@@ -22,27 +20,11 @@ iconFolder  = "\xf007b"
 iconText    = "\xf15c"
 iconWarn    = "\xf071"
 
--- ==========================================
--- HELPERS
--- ==========================================
-
-trim :: String -> String
-trim = dropWhileEnd isSpace . dropWhile isSpace
-
-rofi :: String -> String -> String -> IO String
-rofi menuId prompt opts = do
-    home <- getHomeDirectory
-    let theme = home ++ "/.config/rofi/themes/modern.rasi"
-        helper = home ++ "/.config/rofi/scripts/frequent-menu.py"
-    (exitCode, out, _) <- catch (readProcessWithExitCode helper ["--menu-id", menuId, "--prompt", prompt, "--theme", theme, "--", "-i"] opts)
-                                (\(_ :: IOException) -> return (ExitFailure 1, "", ""))
-    return $ trim out
-
 safeSpawn :: String -> IO ()
 safeSpawn cmd = void $ spawnCommand cmd
 
 notify :: String -> String -> IO ()
-notify title msg = void $ spawnCommand $ "notify-send '" ++ title ++ "' '" ++ msg ++ "'"
+notify title msg = notifySend [title, msg]
 
 -- ==========================================
 -- MOTOR DE MENÚS
@@ -52,8 +34,7 @@ type MenuOption = (String, IO ())
 
 runMenu :: String -> String -> [MenuOption] -> IO ()
 runMenu menuId prompt options = do
-    let optsStr = unlines $ map fst options
-    selection <- rofi menuId prompt optsStr
+    selection <- rofiLines menuId prompt ["-i"] (map fst options)
     case lookup selection options of
         Just action -> action
         Nothing     -> exitSuccess 
@@ -61,7 +42,7 @@ runMenu menuId prompt options = do
 confirmAction :: String -> IO () -> IO ()
 confirmAction warningMsg action = do
     let prompt = iconWarn ++ " " ++ warningMsg ++ " - ¿Seguro?"
-    selection <- rofi "hypr-system-confirm" prompt "Sí\nNo"
+    selection <- rofiLines "hypr-system-confirm" prompt ["-i"] ["Sí", "No"]
     if selection == "Sí" then action else exitSuccess
 
 -- ==========================================
@@ -110,7 +91,7 @@ searchByName = do
 
 searchByContent :: IO ()
 searchByContent = do
-    query <- rofi "hypr-system-search-content" "Texto a buscar" ""
+    query <- rofiSelection "hypr-system-search-content" "Texto a buscar" ["-i"] ""
     unless (null query) $ do
         let rgCmd = "rg -l -i '" ++ query ++ "' $HOME"
         let fzfCmd = "ghostty -e bash -c \"" ++ rgCmd ++ " | fzf --prompt='Resultados> ' --preview 'cat {}' --layout=reverse --border | xargs -r xdg-open\""

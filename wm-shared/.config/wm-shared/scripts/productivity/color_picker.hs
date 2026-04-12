@@ -1,13 +1,12 @@
-#!/usr/bin/env runhaskell
+#!/usr/bin/env -S sh -c 'script_dir=$(dirname "$1"); exec runhaskell -i"$script_dir" -i"$script_dir/.." "$1" "$@"' sh
 {-# LANGUAGE OverloadedStrings #-}
 
 import System.Process (readProcessWithExitCode, spawnCommand)
 import System.Exit (exitSuccess, ExitCode(..))
-import System.Directory (getHomeDirectory)
-import Control.Exception (catch, IOException)
 import Control.Monad (void, unless)
-import Data.Char (isSpace, toUpper)
-import Data.List (dropWhileEnd)
+import Data.Char (toUpper)
+
+import StandaloneUtils (notifySend, rofiLines, rofiSelection, trim)
 
 -- ==========================================
 -- ICONOS
@@ -20,24 +19,8 @@ icHistory = "\xf018"
 icCopy    = "\xf0c5"
 icBack    = "\xf006e"
 
--- ==========================================
--- HELPERS
--- ==========================================
-
-trim :: String -> String
-trim = dropWhileEnd isSpace . dropWhile isSpace
-
-rofi :: String -> String -> String -> IO String
-rofi menuId prompt opts = do
-    home <- getHomeDirectory
-    let theme = home ++ "/.config/rofi/themes/modern.rasi"
-        helper = home ++ "/.config/rofi/scripts/frequent-menu.py"
-    (exitCode, out, _) <- catch (readProcessWithExitCode helper ["--menu-id", menuId, "--prompt", prompt, "--theme", theme, "--", "-i"] opts)
-                                (\(_ :: IOException) -> return (ExitFailure 1, "", ""))
-    return $ trim out
-
 notify :: String -> String -> IO ()
-notify title msg = void $ spawnCommand $ "notify-send -u normal -a 'Color Picker' '" ++ title ++ "' '" ++ msg ++ "'"
+notify title msg = notifySend ["-u", "normal", "-a", "Color Picker", title, msg]
 
 copyToClipboard :: String -> IO ()
 copyToClipboard text = void $ spawnCommand $ "echo -n '" ++ text ++ "' | wl-copy"
@@ -96,7 +79,7 @@ mainMenu = do
     let options = [ icPicker  ++ " Capturar Color de Pantalla"
                   , icHex     ++ " Introducir Código HEX"
                   ]
-    selection <- rofi "hypr-color-picker-main" "Color Picker" (unlines options)
+    selection <- rofiLines "hypr-color-picker-main" "Color Picker" ["-i"] options
     case () of
         _ | null selection             -> exitSuccess
           | "Capturar" `elem` words selection -> pickFromScreen
@@ -115,7 +98,7 @@ pickFromScreen = do
 
 manualHex :: IO ()
 manualHex = do
-    input <- rofi "hypr-color-picker-manual" "Código HEX (#RRGGBB)" ""
+    input <- rofiSelection "hypr-color-picker-manual" "Código HEX (#RRGGBB)" ["-i"] ""
     unless (null input) $ do
         let clean = case input of
                 ('#':rest) -> '#' : rest
@@ -137,7 +120,7 @@ showColorInfo hex = do
                   , icHSL  ++ " HSL: " ++ hslStr
                   ]
 
-    selection <- rofi "hypr-color-picker-output" ("Color: " ++ hexStr) (unlines options)
+    selection <- rofiLines "hypr-color-picker-output" ("Color: " ++ hexStr) ["-i"] options
     case () of
         _ | null selection          -> return ()
           | "HEX" `elem` words selection -> copyToClipboard hexStr >> notify "Copiado" hexStr
