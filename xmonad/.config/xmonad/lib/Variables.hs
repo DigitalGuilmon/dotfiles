@@ -33,6 +33,9 @@ myRofiFrequentAbs = liftIO $ do
     home <- getHomeDirectory
     return $ home ++ "/.config/rofi/scripts/frequent-menu.py"
 
+myWmSharedScriptShell :: FilePath -> String
+myWmSharedScriptShell relPath = "$HOME/.config/wm-shared/scripts/" ++ relPath
+
 myWorkspaces :: [String]
 myWorkspaces = [wsDev, wsWeb, wsTerm, wsDb, wsApi, wsChat, wsMedia, wsSys, wsVm, wsMisc]
 
