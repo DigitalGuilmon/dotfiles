@@ -3,9 +3,11 @@
 import System.Process (readProcessWithExitCode, spawnProcess)
 import System.Exit (ExitCode(ExitSuccess))
 import System.Directory (getHomeDirectory, listDirectory, doesDirectoryExist, doesFileExist)
-import Data.List (intercalate, isSuffixOf, isInfixOf, break)
+import System.FilePath ((</>), takeExtension, takeFileName)
+import Data.List (intercalate, isSuffixOf, isInfixOf, isPrefixOf, break, minimumBy)
 import Data.Maybe (mapMaybe)
 import Control.Monad (filterM)
+import Data.Ord (comparing)
 
 -- Estructura para manejar los juegos y sus iconos
 data Game = Game { name :: String, appId :: String, iconPath :: FilePath } deriving (Show)
@@ -13,6 +15,7 @@ data Game = Game { name :: String, appId :: String, iconPath :: FilePath } deriv
 main :: IO ()
 main = do
     home <- getHomeDirectory
+    let helper = home ++ "/.config/rofi/scripts/frequent-menu.py"
     -- Rutas comunes de la librería de Steam
     let steamPaths = [ home ++ "/.local/share/Steam/steamapps"
                      , home ++ "/.local/share/steam/steamapps"
@@ -28,7 +31,7 @@ main = do
             let iconCache = home ++ "/.local/share/Steam/appcache/librarycache/"
             
             files <- listDirectory libPath
-            let acfFiles = filter (isSuffixOf ".acf") files
+            let acfFiles = filter (\f -> "appmanifest_" `isPrefixOf` f && isSuffixOf ".acf" f) files
             
             games <- mapM (parseGame libPath iconCache) acfFiles
             let validGames = mapMaybe id games
@@ -37,8 +40,10 @@ main = do
             let rofiInput = intercalate "\n" $ map (\g -> name g ++ "\0icon\x1f" ++ iconPath g) validGames
             
             -- Ejecución de Rofi inyectando tu estilo de Hyprland (Borde #c678dd y rounding 12)
-            (exitCode, out, _) <- readProcessWithExitCode "rofi" 
-                [ "-dmenu", "-i", "-p", "🕹️  Steam", "-show-icons"
+            (exitCode, out, _) <- readProcessWithExitCode helper
+                [ "--menu-id", "hypr-steam-menu"
+                , "--prompt", "🕹️  Steam"
+                , "--", "-i", "-show-icons"
                 , "-theme-str", "window { width: 35%; border: 2px; border-color: #c678dd; border-radius: 12px; background-color: #1e1e2e; }"
                 , "-theme-str", "element { padding: 8px; border-radius: 10px; }"
                 , "-theme-str", "element selected { background-color: #313244; }"
@@ -63,12 +68,65 @@ parseGame libPath iconCache file = do
     let gId = extractValue "appid" ls
     case (gName, gId) of
         (Just n, Just i) | i /= "228980" -> do
-            -- Steam guarda los iconos como appid_icon.jpg
-            let fullIconPath = iconCache ++ i ++ "_icon.jpg"
-            exists <- doesFileExist fullIconPath
-            let finalIcon = if exists then fullIconPath else "steam"
+            finalIcon <- findBestIcon iconCache i
             return $ Just $ Game n i finalIcon
         _ -> return Nothing
+
+findBestIcon :: FilePath -> String -> IO FilePath
+findBestIcon iconCache appId = do
+    let appDir = iconCache </> appId
+        legacyCandidates =
+            [ iconCache </> (appId ++ "_icon.jpg")
+            , iconCache </> (appId ++ "_icon.png")
+            ]
+
+    legacyIcons <- filterM doesFileExist legacyCandidates
+    appIcons <-
+        ifM (doesDirectoryExist appDir)
+            (collectFiles appDir)
+            (return [])
+
+    let imageFiles = filter isSupportedImage appIcons
+        candidates = imageFiles ++ legacyIcons
+
+    return $ maybe "steam" id (pickPreferredArtwork candidates)
+
+pickPreferredArtwork :: [FilePath] -> Maybe FilePath
+pickPreferredArtwork [] = Nothing
+pickPreferredArtwork files = Just $ minimumBy (comparing artworkPriority) files
+
+artworkPriority :: FilePath -> Int
+artworkPriority path
+    | "library_600x900" `isPrefixOf` fileName = 1
+    | "library_capsule" `isPrefixOf` fileName = 2
+    | "library_header" `isPrefixOf` fileName = 3
+    | "library_hero" `isPrefixOf` fileName && not ("blur" `isInfixOf` fileName) = 4
+    | "_icon" `isInfixOf` fileName = 5
+    | otherwise = 99
+  where
+    fileName = takeFileName path
+
+isSupportedImage :: FilePath -> Bool
+isSupportedImage path =
+    takeExtension path `elem` [".jpg", ".jpeg", ".png"]
+
+collectFiles :: FilePath -> IO [FilePath]
+collectFiles dir = do
+    entries <- listDirectory dir
+    paths <- mapM descend entries
+    return (concat paths)
+  where
+    descend entry = do
+        let path = dir </> entry
+        isDir <- doesDirectoryExist path
+        if isDir
+            then collectFiles path
+            else return [path]
+
+ifM :: IO Bool -> IO a -> IO a -> IO a
+ifM condition onTrue onFalse = do
+    result <- condition
+    if result then onTrue else onFalse
 
 -- Extrae valores manejando nombres completos entre comillas
 extractValue :: String -> [String] -> Maybe String

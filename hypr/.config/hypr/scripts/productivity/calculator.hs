@@ -41,11 +41,12 @@ opciones =
 trim :: String -> String
 trim = dropWhileEnd isSpace . dropWhile isSpace
 
-rofi :: String -> String -> IO String
-rofi prompt opts = do
+rofi :: String -> String -> String -> IO String
+rofi menuId prompt opts = do
     home <- getHomeDirectory
     let theme = home ++ "/.config/rofi/themes/modern.rasi"
-    (exitCode, out, _) <- catch (readProcessWithExitCode "rofi" ["-dmenu", "-i", "-p", prompt, "-theme", theme] opts)
+        helper = home ++ "/.config/rofi/scripts/frequent-menu.py"
+    (exitCode, out, _) <- catch (readProcessWithExitCode helper ["--menu-id", menuId, "--prompt", prompt, "--theme", theme, "--", "-i"] opts)
                                 (\(_ :: IOException) -> return (ExitFailure 1, "", ""))
     return $ trim out
 
@@ -72,7 +73,7 @@ calcLoop lastResult = do
     let prompt = if null lastResult then "Haskell Calc" else "Res: " ++ lastResult
     let menuItems = unlines $ map fst opciones
     
-    selection <- rofi prompt menuItems
+    selection <- rofi "hypr-calculator-main" prompt menuItems
     
     unless (null selection) $ do
         case lookup selection opciones of
@@ -88,7 +89,7 @@ handleOption val lastResult
     
     | "PROMPT:" `isPrefixOf` val = do
         let func = drop 7 val
-        input <- rofi ("Entrada para " ++ func) ""
+        input <- rofi "hypr-calculator-input" ("Entrada para " ++ func) ""
         unless (null input) $ 
             if func == "^" 
             then executeCalc (lastResult ++ "^" ++ input) lastResult -- Ejemplo para potencias

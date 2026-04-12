@@ -27,11 +27,12 @@ icBack      = "\xf006e"
 trim :: String -> String
 trim = dropWhileEnd isSpace . dropWhile isSpace
 
-rofi :: String -> String -> IO String
-rofi prompt opts = do
+rofi :: String -> String -> String -> IO String
+rofi menuId prompt opts = do
     home <- getHomeDirectory
     let theme = home ++ "/.config/rofi/themes/modern.rasi"
-    (exitCode, out, _) <- catch (readProcessWithExitCode "rofi" ["-dmenu", "-i", "-p", prompt, "-theme", theme] opts)
+        helper = home ++ "/.config/rofi/scripts/frequent-menu.py"
+    (exitCode, out, _) <- catch (readProcessWithExitCode helper ["--menu-id", menuId, "--prompt", prompt, "--theme", theme, "--", "-i"] opts)
                                 (\(_ :: IOException) -> return (ExitFailure 1, "", ""))
     return $ trim out
 
@@ -52,14 +53,14 @@ translationMenu = do
                   , (icBack ++ " Volver", mainMenu)
                   ]
     let optsStr = unlines $ map fst options
-    selection <- rofi "Traductor" optsStr
+    selection <- rofi "hypr-english-translation-menu" "Traductor" optsStr
     case lookup selection options of
         Just action -> action
         Nothing     -> mainMenu
 
 performTranslation :: String -> String -> IO ()
 performTranslation langPair promptStr = do
-    query <- rofi promptStr ""
+    query <- rofi "hypr-english-translation-input" promptStr ""
     unless (null query) $ do
         -- Usamos --data-urlencode para que curl maneje automáticamente espacios y símbolos
         let baseUrl = "https://api.mymemory.translated.net/get"
@@ -99,7 +100,7 @@ fetchDefinition word = do
 
 pronounce :: IO ()
 pronounce = do
-    word <- rofi "Escuchar pronunciación (EN)" ""
+    word <- rofi "hypr-english-pronounce-input" "Escuchar pronunciación (EN)" ""
     unless (null word) $ do
         -- Detecta automáticamente si necesitas mpv o vlc
         void $ spawnCommand $ "mpv --no-terminal \"https://translate.google.com/translate_tts?ie=UTF-8&client=tw-ob&q=" ++ word ++ "&tl=en\""
@@ -120,12 +121,12 @@ mainMenu = do
                   , (icSound ++ " Escuchar pronunciación", pronounce)
                   ]
     let optsStr = unlines $ map fst options
-    selection <- rofi "English Live Tutor" optsStr
+    selection <- rofi "hypr-english-main" "English Live Tutor" optsStr
     case lookup selection options of
         Just action -> action
         Nothing     -> exitSuccess
 
 interactiveSearch :: IO ()
 interactiveSearch = do
-    word <- rofi "Introduce palabra en Inglés" ""
+    word <- rofi "hypr-english-dictionary-input" "Introduce palabra en Inglés" ""
     unless (null word) $ fetchDefinition (trim word)

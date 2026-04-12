@@ -1,20 +1,15 @@
 module Scripts.Productivity.Calculator (calculator) where
 
 import XMonad
-import XMonad.Util.Run (runProcessWithInput)
-import Variables (myThemeAbs)
 
 import Data.Char (isLower, isDigit)
+import Scripts.Utils (rofiInput)
 
 -- Calculadora rápida usando rofi y python3 para evaluar expresiones
 -- El resultado se muestra con notify-send y se copia al clipboard
 calculator :: X ()
 calculator = do
-    theme <- myThemeAbs
-    expression <- runProcessWithInput "rofi"
-        ["-dmenu", "-p", "Calc:", "-theme", theme, "-i",
-         "-mesg", "Ejemplos: 2+2 | sqrt(144) | 100*0.15 | 2**10"] ""
-    let expr = takeWhile (/= '\n') expression
+    expr <- rofiInput "Calc:" ["-i", "-mesg", "Ejemplos: 2+2 | sqrt(144) | 100*0.15 | 2**10"] ""
     case expr of
         "" -> return ()
         _  | isSafeExpr expr -> spawn $ "errfile=$(mktemp /tmp/calc_err.XXXXXX) && trap 'rm -f \"$errfile\"' EXIT && "

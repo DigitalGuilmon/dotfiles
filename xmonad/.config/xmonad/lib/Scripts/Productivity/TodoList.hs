@@ -1,9 +1,7 @@
 module Scripts.Productivity.TodoList (todoMenu) where
 
 import XMonad
-import XMonad.Util.Run (runProcessWithInput)
-import Variables (myTheme, myThemeAbs)
-import Scripts.Utils (shellEscape)
+import Scripts.Utils (rofiInput, rofiMenuCommand, rofiSelect, shellEscape)
 
 todoActions :: String
 todoActions = unlines
@@ -20,10 +18,7 @@ todoFile = "$HOME/.local/share/xmonad-todo.md"
 -- Gestor de tareas TODO usando rofi y un archivo markdown simple
 todoMenu :: X ()
 todoMenu = do
-    theme <- myThemeAbs
-    selection <- runProcessWithInput "rofi"
-        ["-dmenu", "-p", "TODO:", "-theme", theme, "-i"] todoActions
-    let res = takeWhile (/= '\n') selection
+    res <- rofiSelect "xmonad-todo-menu" "TODO:" ["-i"] todoActions
     case res of
         "Ver tareas pendientes" -> viewTodos
         "Agregar tarea"         -> addTodo
@@ -35,16 +30,13 @@ todoMenu = do
 -- Muestra las tareas pendientes en rofi (solo lectura visual)
 viewTodos :: X ()
 viewTodos = spawn $ "touch " ++ todoFile ++ " && "
-    ++ "cat " ++ todoFile ++ " | rofi -dmenu -p 'Tareas:' -theme " ++ myTheme
-    ++ " -i > /dev/null"
+    ++ "cat " ++ todoFile ++ " | " ++ rofiMenuCommand "xmonad-todo-view" "Tareas:" ["-i"]
+    ++ " > /dev/null"
 
 -- Agrega una nueva tarea al archivo
 addTodo :: X ()
 addTodo = do
-    theme <- myThemeAbs
-    task <- runProcessWithInput "rofi"
-        ["-dmenu", "-p", "Nueva tarea:", "-theme", theme] ""
-    let res = takeWhile (/= '\n') task
+    res <- rofiInput "Nueva tarea:" [] ""
     case res of
         "" -> return ()
         _  -> spawn $ "mkdir -p $(dirname " ++ todoFile ++ ") && "
@@ -56,7 +48,7 @@ addTodo = do
 -- evitando problemas con caracteres especiales y tareas duplicadas.
 completeTodo :: X ()
 completeTodo = spawn $ "touch " ++ todoFile ++ " && "
-    ++ "sel=$(grep -nF '- [ ]' " ++ todoFile ++ " | rofi -dmenu -p 'Completar:' -theme " ++ myTheme ++ " -i) && "
+    ++ "sel=$(grep -nF '- [ ]' " ++ todoFile ++ " | " ++ rofiMenuCommand "xmonad-todo-complete" "Completar:" ["-i"] ++ ") && "
     ++ "[ -n \"$sel\" ] && "
     ++ "linenum=$(printf '%s' \"$sel\" | cut -d: -f1) && "
     ++ "[ -n \"$linenum\" ] && "
@@ -66,7 +58,7 @@ completeTodo = spawn $ "touch " ++ todoFile ++ " && "
 -- Elimina una tarea: muestra todas con número de línea, el usuario elige cuál borrar
 deleteTodo :: X ()
 deleteTodo = spawn $ "touch " ++ todoFile ++ " && "
-    ++ "sel=$(nl -ba -s': ' " ++ todoFile ++ " | rofi -dmenu -p 'Eliminar:' -theme " ++ myTheme ++ " -i) && "
+    ++ "sel=$(nl -ba -s': ' " ++ todoFile ++ " | " ++ rofiMenuCommand "xmonad-todo-delete" "Eliminar:" ["-i"] ++ ") && "
     ++ "[ -n \"$sel\" ] && "
     ++ "linenum=$(printf '%s' \"$sel\" | awk '{print $1}' | tr -d ':') && "
     ++ "[ -n \"$linenum\" ] && "

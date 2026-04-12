@@ -1,8 +1,7 @@
 module Scripts.System.SystemInfo (systemInfo) where
 
 import XMonad
-import XMonad.Util.Run (runProcessWithInput)
-import Variables (myThemeAbs)
+import Scripts.Utils (rofiSelect)
 
 infoOptions :: String
 infoOptions = unlines
@@ -21,10 +20,7 @@ infoOptions = unlines
 -- Muestra la info seleccionada con notify-send
 systemInfo :: X ()
 systemInfo = do
-    theme <- myThemeAbs
-    selection <- runProcessWithInput "rofi"
-        ["-dmenu", "-p", "SysInfo:", "-theme", theme, "-i"] infoOptions
-    let res = takeWhile (/= '\n') selection
+    res <- rofiSelect "xmonad-system-info" "SysInfo:" ["-i"] infoOptions
     case res of
         "CPU y Carga del sistema" -> spawn "notify-send '🖥️ CPU' \"$(top -bn1 | head -5 | tail -3)\""
         "Memoria RAM"             -> spawn "notify-send '🧠 RAM' \"$(free -h | head -2)\""

@@ -1,9 +1,7 @@
 module Scripts.Productivity.EmojiPicker (emojiPicker) where
 
 import XMonad
-import XMonad.Util.Run (runProcessWithInput)
-import Variables (myThemeAbs)
-import Scripts.Utils (shellEscape)
+import Scripts.Utils (rofiSelect, shellEscape)
 
 -- Lista de emojis frecuentes con descripción para búsqueda rápida
 emojiList :: String
@@ -63,10 +61,7 @@ emojiList = unlines
 -- Selector de emojis usando rofi: copia el emoji al clipboard con xclip
 emojiPicker :: X ()
 emojiPicker = do
-    theme <- myThemeAbs
-    selection <- runProcessWithInput "rofi"
-        ["-dmenu", "-p", "Emoji:", "-theme", theme, "-i"] emojiList
-    let res = takeWhile (/= '\n') selection
+    res <- rofiSelect "xmonad-emoji-picker" "Emoji:" ["-i"] emojiList
     case res of
         "" -> return ()
         _  -> do

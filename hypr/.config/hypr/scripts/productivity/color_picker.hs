@@ -27,11 +27,12 @@ icBack    = "\xf006e"
 trim :: String -> String
 trim = dropWhileEnd isSpace . dropWhile isSpace
 
-rofi :: String -> String -> IO String
-rofi prompt opts = do
+rofi :: String -> String -> String -> IO String
+rofi menuId prompt opts = do
     home <- getHomeDirectory
     let theme = home ++ "/.config/rofi/themes/modern.rasi"
-    (exitCode, out, _) <- catch (readProcessWithExitCode "rofi" ["-dmenu", "-i", "-p", prompt, "-theme", theme] opts)
+        helper = home ++ "/.config/rofi/scripts/frequent-menu.py"
+    (exitCode, out, _) <- catch (readProcessWithExitCode helper ["--menu-id", menuId, "--prompt", prompt, "--theme", theme, "--", "-i"] opts)
                                 (\(_ :: IOException) -> return (ExitFailure 1, "", ""))
     return $ trim out
 
@@ -95,7 +96,7 @@ mainMenu = do
     let options = [ icPicker  ++ " Capturar Color de Pantalla"
                   , icHex     ++ " Introducir Código HEX"
                   ]
-    selection <- rofi "Color Picker" (unlines options)
+    selection <- rofi "hypr-color-picker-main" "Color Picker" (unlines options)
     case () of
         _ | null selection             -> exitSuccess
           | "Capturar" `elem` words selection -> pickFromScreen
@@ -114,7 +115,7 @@ pickFromScreen = do
 
 manualHex :: IO ()
 manualHex = do
-    input <- rofi "Código HEX (#RRGGBB)" ""
+    input <- rofi "hypr-color-picker-manual" "Código HEX (#RRGGBB)" ""
     unless (null input) $ do
         let clean = case input of
                 ('#':rest) -> '#' : rest
@@ -136,7 +137,7 @@ showColorInfo hex = do
                   , icHSL  ++ " HSL: " ++ hslStr
                   ]
 
-    selection <- rofi ("Color: " ++ hexStr) (unlines options)
+    selection <- rofi "hypr-color-picker-output" ("Color: " ++ hexStr) (unlines options)
     case () of
         _ | null selection          -> return ()
           | "HEX" `elem` words selection -> copyToClipboard hexStr >> notify "Copiado" hexStr

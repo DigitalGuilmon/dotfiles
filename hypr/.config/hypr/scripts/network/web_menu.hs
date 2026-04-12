@@ -9,8 +9,10 @@ main :: IO ()
 main = do
     home <- getHomeDirectory
     let theme = home ++ "/.config/rofi/themes/modern.rasi"
+        helper = home ++ "/.config/rofi/scripts/frequent-menu.py"
 
-    let options = [ "📺 YouTube"
+    let options = [ "🔍 Google"
+                  , "📺 YouTube"
                   , "🐦 X (Twitter)"
                   , "👽 Reddit"
                   , "🟢 WhatsApp"
@@ -23,19 +25,19 @@ main = do
                   ]
         inputStr = intercalate "\n" options
 
-    (exitCode, out, _) <- readProcessWithExitCode "rofi" 
-        [ "-dmenu"
-        , "-i"
-        , "-p", "🌐 Ir a"
-        , "-l", show (length options)
-        , "-theme", theme
-        ] 
+    (exitCode, out, _) <- readProcessWithExitCode helper
+        [ "--menu-id", "hypr-web-menu"
+        , "--prompt", "🌐 Ir a"
+        , "--theme", theme
+        , "--", "-i", "-l", show (length options)
+        ]
         inputStr
 
     if exitCode == ExitSuccess
         then do
             let selection = filter (/= '\n') out
             case selection of
+                "🔍 Google"           -> openInNewWindow "https://www.google.com"
                 "📺 YouTube"          -> openInNewWindow "https://www.youtube.com"
                 "🐦 X (Twitter)"       -> openInNewWindow "https://x.com"
                 "👽 Reddit"           -> openInNewWindow "https://www.reddit.com"

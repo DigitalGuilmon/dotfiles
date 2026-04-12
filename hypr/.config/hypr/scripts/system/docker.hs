@@ -28,11 +28,12 @@ icBack   = "\xf006e"
 trim :: String -> String
 trim = dropWhileEnd isSpace . dropWhile isSpace
 
-rofi :: String -> String -> IO String
-rofi prompt opts = do
+rofi :: String -> String -> String -> IO String
+rofi menuId prompt opts = do
     home <- getHomeDirectory
     let theme = home ++ "/.config/rofi/themes/modern.rasi"
-    (exitCode, out, _) <- catch (readProcessWithExitCode "rofi" ["-dmenu", "-i", "-p", prompt, "-theme", theme] opts)
+        helper = home ++ "/.config/rofi/scripts/frequent-menu.py"
+    (exitCode, out, _) <- catch (readProcessWithExitCode helper ["--menu-id", menuId, "--prompt", prompt, "--theme", theme, "--", "-i"] opts)
                                 (\(_ :: IOException) -> return (ExitFailure 1, "", ""))
     return $ trim out
 
@@ -53,7 +54,7 @@ dockerMainMenu = do
                   , (icDocker ++ " Docker Compose Up (CWD)", void $ spawnCommand "ghostty -e 'docker-compose up'")
                   ]
     let optsStr = unlines $ map fst options
-    selection <- rofi "Docker Manager" optsStr
+    selection <- rofi "hypr-docker-main" "Docker Manager" optsStr
     case lookup selection options of
         Just action -> action
         Nothing     -> exitSuccess
@@ -67,7 +68,7 @@ listContainersMenu = do
         then notify "Error" "No se pudieron listar los contenedores o Docker no está corriendo."
         else do
             let containers = lines out
-            selection <- rofi "Seleccionar Contenedor" (unlines containers ++ icBack ++ " Volver")
+            selection <- rofi "hypr-docker-containers" "Seleccionar Contenedor" (unlines containers ++ icBack ++ " Volver")
             if selection == (icBack ++ " Volver") || null selection
                 then dockerMainMenu
                 else handleContainerSelection selection
@@ -86,7 +87,7 @@ handleContainerSelection rawLine = do
                   , (icBack  ++ " Volver",   listContainersMenu)
                   ]
     
-    selection <- rofi ("Contenedor: " ++ cName) (unlines $ map fst actions)
+    selection <- rofi "hypr-docker-actions" ("Contenedor: " ++ cName) (unlines $ map fst actions)
     case lookup selection actions of
         Just action -> action
         Nothing     -> listContainersMenu
@@ -103,7 +104,7 @@ dockerCmd cmd cID cName = do
 -- 4. CONFIRMACIÓN DE PRUNE
 confirmPrune :: IO ()
 confirmPrune = do
-    selection <- rofi "Eliminar todo lo que no se usa (Prune)?" "No\nSí"
+    selection <- rofi "hypr-docker-prune-confirm" "Eliminar todo lo que no se usa (Prune)?" "No\nSí"
     if selection == "Sí"
         then do
             void $ spawnCommand "docker system prune -f"

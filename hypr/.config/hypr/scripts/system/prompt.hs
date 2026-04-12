@@ -101,10 +101,11 @@ promptDB sql =
 
 trim = dropWhileEnd isSpace . dropWhile isSpace
 
-rofi prompt options = do
+rofi menuId prompt options = do
     home <- getHomeDirectory
     let theme = home ++ "/.config/rofi/themes/modern.rasi"
-    (exitCode, out, _) <- catch (readProcessWithExitCode "rofi" ["-dmenu", "-i", "-p", prompt, "-theme", theme, "-markup-rows"] (unlines options))
+        helper = home ++ "/.config/rofi/scripts/frequent-menu.py"
+    (exitCode, out, _) <- catch (readProcessWithExitCode helper ["--menu-id", menuId, "--prompt", prompt, "--theme", theme, "--", "-i", "-markup-rows"] (unlines options))
                                 (\(_ :: IOException) -> return (ExitFailure 1, "", ""))
     return $ trim out
 
@@ -121,7 +122,7 @@ mainMenu = do
                   , fmt colorWarning icReview "Code Review (Clean Code)"
                   , fmt colorDB      icDB     "SQL/DB Optimizer"
                   ]
-    selection <- rofi "Software Engineering Toolbox" options
+    selection <- rofi "hypr-prompt-main" "Software Engineering Toolbox" options
     
     if null selection then exitSuccess
     else if "Architect" `isInfixOf` selection then handlePrompt promptArch "Requisitos del sistema"
@@ -132,7 +133,7 @@ mainMenu = do
 
 handlePrompt :: (String -> String) -> String -> IO ()
 handlePrompt templateFunc inputLabel = do
-    userInput <- rofi inputLabel []
+    userInput <- rofi "hypr-prompt-input" inputLabel []
     unless (null userInput) $ do
         let finalPrompt = templateFunc userInput
         -- Copiado seguro a portapapeles (Wayland)

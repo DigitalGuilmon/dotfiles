@@ -17,7 +17,7 @@ main = mainMenu
 mainMenu :: IO ()
 mainMenu = do
     let options = iconWifi ++ " Wi-Fi\n" ++ iconBt ++ " Bluetooth\n" ++ iconVpn ++ " VPN"
-    selection <- rofi "Redes" options
+    selection <- rofi "hypr-network-main" "Redes" options
     case selection of
         _ | "Wi-Fi" `isInfixOf` selection     -> wifiMenu
         _ | "Bluetooth" `isInfixOf` selection -> btMenu
@@ -29,7 +29,7 @@ wifiMenu = do
     -- readProcessWithExitCode evita que el script crashee si el comando falla
     (_, status, _) <- readProcessWithExitCode "nmcli" ["radio", "wifi"] ""
     let toggle = if "enabled" `isInfixOf` status then "Desactivar Wi-Fi" else "Activar Wi-Fi"
-    selection <- rofi "Wi-Fi" (toggle ++ "\nVolver")
+    selection <- rofi "hypr-network-wifi" "Wi-Fi" (toggle ++ "\nVolver")
     case selection of
         -- Añadimos >> return () para que el tipo coincida con IO ()
         "Activar Wi-Fi"    -> spawnCommand "nmcli radio wifi on" >> return ()
@@ -41,7 +41,7 @@ btMenu :: IO ()
 btMenu = do
     (_, status, _) <- readProcessWithExitCode "bluetoothctl" ["show"] ""
     let toggle = if "Powered: yes" `isInfixOf` status then "Desactivar Bluetooth" else "Activar Bluetooth"
-    selection <- rofi "Bluetooth" (toggle ++ "\nVolver")
+    selection <- rofi "hypr-network-bluetooth" "Bluetooth" (toggle ++ "\nVolver")
     case selection of
         "Activar Bluetooth"    -> spawnCommand "bluetoothctl power on" >> return ()
         "Desactivar Bluetooth" -> spawnCommand "bluetoothctl power off" >> return ()
@@ -52,18 +52,19 @@ vpnMenu :: IO ()
 vpnMenu = do
     (_, vpns, _) <- readProcessWithExitCode "nmcli" ["-t", "-f", "NAME,TYPE", "connection", "show"] ""
     let vpnList = unlines [line | line <- lines vpns, "vpn" `isInfixOf` line || "wireguard" `isInfixOf` line]
-    selection <- rofi "VPN" (vpnList ++ "Volver")
+    selection <- rofi "hypr-network-vpn" "VPN" (vpnList ++ "Volver")
     if selection == "Volver" || null selection
         then mainMenu
         else spawnCommand ("nmcli connection up " ++ head (lines selection)) >> return ()
 
-rofi :: String -> String -> IO String
-rofi prompt opts = do
+rofi :: String -> String -> String -> IO String
+rofi menuId prompt opts = do
     home <- getHomeDirectory
     let theme = home ++ "/.config/rofi/themes/modern.rasi" -- Construimos la ruta real
+        helper = home ++ "/.config/rofi/scripts/frequent-menu.py"
     
     -- Manejo seguro por si rofi se cierra con Escape
-    (exitCode, out, _) <- readProcessWithExitCode "rofi" ["-dmenu", "-i", "-p", prompt, "-theme", theme] opts
+    (exitCode, out, _) <- readProcessWithExitCode helper ["--menu-id", menuId, "--prompt", prompt, "--theme", theme, "--", "-i"] opts
     
     -- Evita hacer 'init' a una string vacía
     return $ if null out then "" else init out

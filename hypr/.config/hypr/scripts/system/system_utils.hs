@@ -29,11 +29,12 @@ iconWarn    = "\xf071"
 trim :: String -> String
 trim = dropWhileEnd isSpace . dropWhile isSpace
 
-rofi :: String -> String -> IO String
-rofi prompt opts = do
+rofi :: String -> String -> String -> IO String
+rofi menuId prompt opts = do
     home <- getHomeDirectory
     let theme = home ++ "/.config/rofi/themes/modern.rasi"
-    (exitCode, out, _) <- catch (readProcessWithExitCode "rofi" ["-dmenu", "-i", "-p", prompt, "-theme", theme] opts)
+        helper = home ++ "/.config/rofi/scripts/frequent-menu.py"
+    (exitCode, out, _) <- catch (readProcessWithExitCode helper ["--menu-id", menuId, "--prompt", prompt, "--theme", theme, "--", "-i"] opts)
                                 (\(_ :: IOException) -> return (ExitFailure 1, "", ""))
     return $ trim out
 
@@ -49,10 +50,10 @@ notify title msg = void $ spawnCommand $ "notify-send '" ++ title ++ "' '" ++ ms
 
 type MenuOption = (String, IO ())
 
-runMenu :: String -> [MenuOption] -> IO ()
-runMenu prompt options = do
+runMenu :: String -> String -> [MenuOption] -> IO ()
+runMenu menuId prompt options = do
     let optsStr = unlines $ map fst options
-    selection <- rofi prompt optsStr
+    selection <- rofi menuId prompt optsStr
     case lookup selection options of
         Just action -> action
         Nothing     -> exitSuccess 
@@ -60,7 +61,7 @@ runMenu prompt options = do
 confirmAction :: String -> IO () -> IO ()
 confirmAction warningMsg action = do
     let prompt = iconWarn ++ " " ++ warningMsg ++ " - ¿Seguro?"
-    selection <- rofi prompt "Sí\nNo"
+    selection <- rofi "hypr-system-confirm" prompt "Sí\nNo"
     if selection == "Sí" then action else exitSuccess
 
 -- ==========================================
@@ -71,7 +72,7 @@ main :: IO ()
 main = mainMenu
 
 mainMenu :: IO ()
-mainMenu = runMenu "Sistema"
+mainMenu = runMenu "hypr-system-main" "Sistema"
     [ (iconMonitor ++ " Monitores",                monitorsMenu)
     , (iconFolder  ++ " Archivos y Búsqueda (FZF)", filesMenu)
     , (iconKill    ++ " Matar Proceso (FZF)",        killMenu)
@@ -79,7 +80,7 @@ mainMenu = runMenu "Sistema"
     ]
 
 filesMenu :: IO ()
-filesMenu = runMenu "Archivos"
+filesMenu = runMenu "hypr-system-files" "Archivos"
     [ (iconFolder ++ " Explorador (Ranger)",         safeSpawn "ghostty -e ranger" >> exitSuccess)
     , (iconSearch ++ " Buscar por Nombre (fd)",      searchByName)
     , (iconText   ++ " Buscar por Contenido (rg)",   searchByContent)
@@ -87,14 +88,14 @@ filesMenu = runMenu "Archivos"
     ]
 
 monitorsMenu :: IO ()
-monitorsMenu = runMenu "Gestión de Monitores"
+monitorsMenu = runMenu "hypr-system-monitors" "Gestión de Monitores"
     [ ("Recargar Configuración",      safeSpawn "hyprctl reload" >> exitSuccess)
     , ("Espejar Pantallas (Toggle)",  safeSpawn "hyprctl keyword monitor ,preferred,auto,1,mirror,eDP-1" >> exitSuccess)
     , (iconBack ++ " Volver",          mainMenu)
     ]
 
 sessionMenu :: IO ()
-sessionMenu = runMenu "Sesión"
+sessionMenu = runMenu "hypr-system-session" "Sesión"
     [ ("Bloquear Pantalla",      safeSpawn "hyprlock" >> exitSuccess)
     , ("Cerrar Sesión Hyprland", confirmAction "Cerrar sesión" $ safeSpawn "hyprctl dispatch exit" >> exitSuccess)
     , ("Reiniciar",              confirmAction "Reiniciar PC"  $ safeSpawn "reboot" >> exitSuccess)
@@ -109,7 +110,7 @@ searchByName = do
 
 searchByContent :: IO ()
 searchByContent = do
-    query <- rofi "Texto a buscar" ""
+    query <- rofi "hypr-system-search-content" "Texto a buscar" ""
     unless (null query) $ do
         let rgCmd = "rg -l -i '" ++ query ++ "' $HOME"
         let fzfCmd = "ghostty -e bash -c \"" ++ rgCmd ++ " | fzf --prompt='Resultados> ' --preview 'cat {}' --layout=reverse --border | xargs -r xdg-open\""

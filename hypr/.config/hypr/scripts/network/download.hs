@@ -65,7 +65,7 @@ main = do
             in fmt colorFile icon name) sortedFiles
 
     -- Ejecutar Rofi
-    selection <- rofi "Descargas Recientes" menuOptions
+    selection <- rofi "hypr-downloads-main" "Descargas Recientes" menuOptions
     
     unless (null selection) $ do
         let cleanName = extractName selection
@@ -78,11 +78,12 @@ main = do
 -- HELPERS DE SISTEMA
 -- ==========================================
 
-rofi :: String -> [String] -> IO String
-rofi prompt options = do
+rofi :: String -> String -> [String] -> IO String
+rofi menuId prompt options = do
     home <- getHomeDirectory
     let theme = home </> ".config/rofi/themes/modern.rasi"
-    (exitCode, out, _) <- catch (readProcessWithExitCode "rofi" ["-dmenu", "-i", "-p", prompt, "-theme", theme, "-markup-rows"] (unlines options))
+        helper = home </> ".config/rofi/scripts/frequent-menu.py"
+    (exitCode, out, _) <- catch (readProcessWithExitCode helper ["--menu-id", menuId, "--prompt", prompt, "--theme", theme, "--", "-i", "-markup-rows"] (unlines options))
                                 (\(_ :: IOException) -> return (ExitFailure 1, "", ""))
     return $ trim out
 

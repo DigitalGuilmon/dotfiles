@@ -16,11 +16,22 @@ myBorderWidth = 2
 myTheme :: String
 myTheme       = "~/.config/rofi/cyberpunk.rasi"
 
+myThemeShell :: String
+myThemeShell  = "$HOME/.config/rofi/cyberpunk.rasi"
+
 -- Ruta resuelta para uso en runProcessWithInput (no pasa por shell)
 myThemeAbs :: MonadIO m => m String
 myThemeAbs = liftIO $ do
     home <- getHomeDirectory
     return $ home ++ "/.config/rofi/cyberpunk.rasi"
+
+myRofiFrequentShell :: String
+myRofiFrequentShell = "$HOME/.config/rofi/scripts/frequent-menu.py"
+
+myRofiFrequentAbs :: MonadIO m => m String
+myRofiFrequentAbs = liftIO $ do
+    home <- getHomeDirectory
+    return $ home ++ "/.config/rofi/scripts/frequent-menu.py"
 
 myWorkspaces :: [String]
 myWorkspaces = [wsDev, wsWeb, wsTerm, wsDb, wsApi, wsChat, wsMedia, wsSys, wsVm, wsMisc]

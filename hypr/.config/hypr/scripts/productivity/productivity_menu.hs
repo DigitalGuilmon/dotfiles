@@ -41,10 +41,10 @@ getThemePath = do
 -- ==========================================
 type MenuOption = (String, IO ())
 
-runMenu :: String -> [MenuOption] -> IO ()
-runMenu prompt options = do
+runMenu :: String -> String -> [MenuOption] -> IO ()
+runMenu menuId prompt options = do
     let optsStr = unlines $ map fst options
-    selection <- rofi prompt optsStr
+    selection <- rofi menuId prompt optsStr
     case lookup selection options of
         Just action -> action
         Nothing     -> exitSuccess 
@@ -56,7 +56,7 @@ main :: IO ()
 main = mainMenu
 
 mainMenu :: IO ()
-mainMenu = runMenu "Productividad"
+mainMenu = runMenu "hypr-productivity-main" "Productividad"
     [ (iconProject ++ " Proyectos (dev)",  projectsMenu)
     , (iconNote    ++ " Notas Rápidas",    notesMenu)
     , (iconTimer   ++ " Temporizadores",   timerMenu)
@@ -72,7 +72,8 @@ mainMenu = runMenu "Productividad"
 clipboardMenu :: IO ()
 clipboardMenu = do
     theme <- getThemePath
-    safeSpawn $ "cliphist list | rofi -dmenu -p 'Portapapeles' -theme " ++ theme ++ " | cliphist decode | wl-copy"
+    safeSpawn $ "cliphist list | $HOME/.config/rofi/scripts/frequent-menu.py --menu-id 'hypr-productivity-clipboard' --prompt 'Portapapeles' --theme "
+        ++ theme ++ " -- -i | cliphist decode | wl-copy"
     exitSuccess
 
 emojiMenu :: IO ()
@@ -86,7 +87,7 @@ emojiMenu = do
 -- ==========================================
 notesMenu :: IO ()
 notesMenu = do
-    input <- rofi "Añadir al Inbox (Vault)" ""
+    input <- rofi "hypr-productivity-notes-input" "Añadir al Inbox (Vault)" ""
     unless (null input) $ do
         home <- getHomeDirectory
         let vaultDir = home ++ "/dev/vault/notes"
@@ -110,7 +111,7 @@ notesMenu = do
 -- ==========================================
 webSearchMenu :: IO ()
 webSearchMenu = do
-    query <- rofi "Buscar en Web (DuckDuckGo)" ""
+    query <- rofi "hypr-productivity-web-search" "Buscar en Web (DuckDuckGo)" ""
     unless (null query) $ do
         let urlQuery = map (\c -> if c == ' ' then '+' else c) query
         catch (void $ spawnProcess "xdg-open" ["https://duckduckgo.com/?q=" ++ urlQuery]) 
@@ -121,7 +122,7 @@ webSearchMenu = do
 -- 3. TEMPORIZADORES
 -- ==========================================
 timerMenu :: IO ()
-timerMenu = runMenu "Temporizador"
+timerMenu = runMenu "hypr-productivity-timer" "Temporizador"
     [ ("25 Minutos (Modo Enfoque)", startTimer 25)
     , ("15 Minutos (Breve)",        startTimer 15)
     , ("05 Minutos (Descanso)",      startTimer 5)
@@ -157,9 +158,9 @@ projectsMenu = do
                     notify "normal" "Proyectos" "No se encontraron carpetas en ~/dev"
                     mainMenu
                 else do
-                    let projectOptions = map (\folder -> (folder, openProject devDir folder)) projectsList
-                                         ++ [(iconBack ++ " Volver", mainMenu)]
-                    runMenu "Abrir Proyecto" projectOptions
+                     let projectOptions = map (\folder -> (folder, openProject devDir folder)) projectsList
+                                          ++ [(iconBack ++ " Volver", mainMenu)]
+                     runMenu "hypr-productivity-projects" "Abrir Proyecto" projectOptions
 
 openProject :: String -> String -> IO ()
 openProject baseDir folder = do
@@ -170,10 +171,12 @@ openProject baseDir folder = do
 -- WRAPPERS Rofi & Shell Seguros
 -- ==========================================
 
-rofi :: String -> String -> IO String
-rofi prompt opts = do
+rofi :: String -> String -> String -> IO String
+rofi menuId prompt opts = do
     theme <- getThemePath
-    res <- safeReadProcess "rofi" ["-dmenu", "-i", "-p", prompt, "-theme", theme] opts
+    home <- getHomeDirectory
+    let helper = home ++ "/.config/rofi/scripts/frequent-menu.py"
+    res <- safeReadProcess helper ["--menu-id", menuId, "--prompt", prompt, "--theme", theme, "--", "-i"] opts
     return $ if null res then "" else init res
 
 safeSpawn :: String -> IO ()

@@ -9,6 +9,7 @@ main :: IO ()
 main = do
     home <- getHomeDirectory
     let theme = home ++ "/.config/rofi/themes/modern.rasi"
+        helper = home ++ "/.config/rofi/scripts/frequent-menu.py"
 
     let options = [ "✨ Gemini"
                   , "🧠 Claude"
@@ -19,13 +20,12 @@ main = do
                   ]
         inputStr = intercalate "\n" options
 
-    (exitCode, out, _) <- readProcessWithExitCode "rofi" 
-        [ "-dmenu"
-        , "-i"
-        , "-p", "🤖 AI"
-        , "-l", show (length options)
-        , "-theme", theme
-        ] 
+    (exitCode, out, _) <- readProcessWithExitCode helper
+        [ "--menu-id", "hypr-ai-menu"
+        , "--prompt", "🤖 AI"
+        , "--theme", theme
+        , "--", "-i", "-l", show (length options)
+        ]
         inputStr
 
     if exitCode == ExitSuccess

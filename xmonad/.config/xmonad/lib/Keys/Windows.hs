@@ -5,6 +5,7 @@ import qualified XMonad.StackSet as W
 import XMonad.Layout.MultiToggle (Toggle(..))
 import XMonad.Layout.MultiToggle.Instances (StdTransformers(NBFULL))
 
+import Scripts.System.LayoutMenu (layoutMenu)
 import Scripts.System.WindowControls (sinkWindow, sinkAll)
 
 windowKeys :: [(String, X ())]
@@ -25,6 +26,7 @@ windowKeys =
     , ("M-t",          sinkWindow)                -- Hundir ventana enfocada (quitar float)
     , ("M-S-t",        sinkAll)                   -- Hundir todas las ventanas flotantes
     -- Navegación de layouts
+    , ("M-u",          layoutMenu)                -- Menú Rofi para cambiar layout
     , ("M-<Space>",    sendMessage NextLayout)    -- Siguiente layout
     , ("M-S-<Space>",  sendMessage FirstLayout)   -- Resetear al primer layout
     ]

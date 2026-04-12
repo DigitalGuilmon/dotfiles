@@ -28,7 +28,7 @@ mainMenu = do
                   iconBright ++ " Brillo\n" ++ 
                   iconMedia ++ " Medios\n" ++ 
                   iconNight ++ " Modo Nocturno"
-    selection <- rofi "Multimedia" options
+    selection <- rofi "hypr-multimedia-main" "Multimedia" options
     case selection of
         _ | "Audio" `isInfixOf` selection   -> audioMenu
         _ | "Brillo" `isInfixOf` selection  -> brightMenu
@@ -39,7 +39,7 @@ mainMenu = do
 audioMenu :: IO ()
 audioMenu = do
     let options = "Subir Volumen (+5%)\nBajar Volumen (-5%)\nMutear/Desmutear\n" ++ iconBack ++ " Volver"
-    selection <- rofi "Control de Audio" options
+    selection <- rofi "hypr-multimedia-audio" "Control de Audio" options
     case selection of
         _ | "+5%" `isInfixOf` selection    -> spawnCommand "wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%+" >> audioMenu
         _ | "-5%" `isInfixOf` selection    -> spawnCommand "wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-" >> audioMenu
@@ -50,7 +50,7 @@ audioMenu = do
 brightMenu :: IO ()
 brightMenu = do
     let options = "Brillo +10%\nBrillo -10%\nMáximo\nMínimo\n" ++ iconBack ++ " Volver"
-    selection <- rofi "Brillo" options
+    selection <- rofi "hypr-multimedia-brightness" "Brillo" options
     case selection of
         "Brillo +10%" -> spawnCommand "brightnessctl set +10%" >> brightMenu
         "Brillo -10%" -> spawnCommand "brightnessctl set 10%-" >> brightMenu
@@ -62,7 +62,7 @@ brightMenu = do
 mediaMenu :: IO ()
 mediaMenu = do
     let options = "Play/Pause\nSiguiente\nAnterior\n" ++ iconBack ++ " Volver"
-    selection <- rofi "Reproductor" options
+    selection <- rofi "hypr-multimedia-player" "Reproductor" options
     case selection of
         "Play/Pause" -> spawnCommand "playerctl play-pause" >> mediaMenu
         "Siguiente"  -> spawnCommand "playerctl next" >> mediaMenu
@@ -73,15 +73,17 @@ mediaMenu = do
 nightMenu :: IO ()
 nightMenu = do
     let options = "Activar Modo Noche\nDesactivar Modo Noche\n" ++ iconBack ++ " Volver"
-    selection <- rofi "Luz Nocturna" options
+    selection <- rofi "hypr-multimedia-night" "Luz Nocturna" options
     case selection of
         "Activar Modo Noche"    -> spawnCommand "wlsunset -t 4500 -T 6500" >> exitSuccess
         "Desactivar Modo Noche" -> spawnCommand "pkill wlsunset" >> exitSuccess
         "Volver"                -> mainMenu
         _                       -> exitSuccess
 
-rofi :: String -> String -> IO String
-rofi prompt opts = do
+rofi :: String -> String -> String -> IO String
+rofi menuId prompt opts = do
     theme <- getThemePath
-    res <- readProcess "rofi" ["-dmenu", "-i", "-p", prompt, "-theme", theme] opts
+    home <- getHomeDirectory
+    let helper = home ++ "/.config/rofi/scripts/frequent-menu.py"
+    res <- readProcess helper ["--menu-id", menuId, "--prompt", prompt, "--theme", theme, "--", "-i"] opts
     return $ if null res then "" else init res

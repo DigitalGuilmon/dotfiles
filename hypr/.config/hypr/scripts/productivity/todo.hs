@@ -27,11 +27,12 @@ icList    = "\xf03a"
 trim :: String -> String
 trim = dropWhileEnd isSpace . dropWhile isSpace
 
-rofi :: String -> String -> IO String
-rofi prompt opts = do
+rofi :: String -> String -> String -> IO String
+rofi menuId prompt opts = do
     home <- getHomeDirectory
     let theme = home ++ "/.config/rofi/themes/modern.rasi"
-    (exitCode, out, _) <- catch (readProcessWithExitCode "rofi" ["-dmenu", "-i", "-p", prompt, "-theme", theme] opts)
+        helper = home ++ "/.config/rofi/scripts/frequent-menu.py"
+    (exitCode, out, _) <- catch (readProcessWithExitCode helper ["--menu-id", menuId, "--prompt", prompt, "--theme", theme, "--", "-i"] opts)
                                 (\(_ :: IOException) -> return (ExitFailure 1, "", ""))
     return $ trim out
 
@@ -86,7 +87,7 @@ mainMenu = do
                   , icDelete ++ " Limpiar Completadas"
                   ]
 
-    selection <- rofi ("TODO [" ++ stats ++ "]") (unlines options)
+    selection <- rofi "hypr-todo-main" ("TODO [" ++ stats ++ "]") (unlines options)
     case () of
         _ | null selection                        -> exitSuccess
           | "Agregar" `elem` words selection      -> addTask
@@ -97,7 +98,7 @@ mainMenu = do
 
 addTask :: IO ()
 addTask = do
-    input <- rofi "Nueva Tarea" ""
+    input <- rofi "hypr-todo-add" "Nueva Tarea" ""
     unless (null input) $ do
         now <- getCurrentTime
         let timestamp = formatTime defaultTimeLocale "%Y-%m-%d" now
@@ -117,7 +118,7 @@ viewPending = do
             mainMenu
         else do
             let display = map formatPending (zip [1..] pending)
-            selection <- rofi "Pendientes (seleccionar para completar)" (unlines display)
+            selection <- rofi "hypr-todo-pending" "Pendientes (seleccionar para completar)" (unlines display)
             unless (null selection) $ do
                 let idx = parseIndex selection
                 case idx of
@@ -135,12 +136,12 @@ viewCompleted = do
             mainMenu
         else do
             let display = map formatCompleted (zip [1..] completed)
-            _ <- rofi "Completadas" (unlines display)
+            _ <- rofi "hypr-todo-completed" "Completadas" (unlines display)
             mainMenu
 
 cleanCompleted :: IO ()
 cleanCompleted = do
-    confirm <- rofi "¿Eliminar todas las completadas?" "Sí\nNo"
+    confirm <- rofi "hypr-todo-clean-confirm" "¿Eliminar todas las completadas?" "Sí\nNo"
     when (confirm == "Sí") $ do
         tasks <- readTasks
         let remaining = filter (not . ("[x] " `isPrefixOf`)) tasks

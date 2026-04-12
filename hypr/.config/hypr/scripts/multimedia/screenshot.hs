@@ -12,6 +12,7 @@ main = do
     home <- getHomeDirectory
     let dir = home ++ "/Pictures/Screenshots"
         theme = home ++ "/.config/rofi/themes/modern.rasi"
+        helper = home ++ "/.config/rofi/scripts/frequent-menu.py"
     createDirectoryIfMissing True dir
 
     now <- getCurrentTime
@@ -25,13 +26,12 @@ main = do
                   ]
         inputStr = intercalate "\n" options
 
-    (exitCode, out, _) <- readProcessWithExitCode "rofi" 
-        [ "-dmenu"
-        , "-i"
-        , "-p", "📸 Captura"
-        , "-l", show (length options)
-        , "-theme", theme
-        ] 
+    (exitCode, out, _) <- readProcessWithExitCode helper
+        [ "--menu-id", "hypr-screenshot"
+        , "--prompt", "📸 Captura"
+        , "--theme", theme
+        , "--", "-i", "-l", show (length options)
+        ]
         inputStr
 
     if exitCode == ExitSuccess

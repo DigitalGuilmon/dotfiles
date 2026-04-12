@@ -2,8 +2,7 @@ module Keys.System where
 
 import XMonad
 import qualified XMonad.StackSet as W
-import XMonad.Util.Run (runProcessWithInput)
-import Variables (myThemeAbs)
+import Scripts.Utils (rofiSelect)
 
 import Scripts.System.PowerMenu (powerMenu)
 import Scripts.System.Monitors (monitorMenu)
@@ -27,10 +26,7 @@ systemKeys =
 -- Pide confirmación antes de cerrar todas las ventanas
 confirmKillAll :: X ()
 confirmKillAll = do
-    theme <- myThemeAbs
-    response <- runProcessWithInput "rofi"
-        ["-dmenu", "-p", "¿Cerrar TODAS las ventanas?", "-theme", theme, "-i"] "Sí\nNo"
-    let res = takeWhile (/= '\n') response
+    res <- rofiSelect "xmonad-confirm-kill-all" "¿Cerrar TODAS las ventanas?" ["-i"] "Sí\nNo"
     case res of
         "Sí" -> withWindowSet $ \s -> mapM_ killWindow (W.allWindows s)
         _    -> return ()

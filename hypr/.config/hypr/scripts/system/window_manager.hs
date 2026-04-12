@@ -4,7 +4,7 @@ import System.Environment (getArgs)
 import System.Exit (ExitCode(ExitSuccess))
 import System.Directory (getHomeDirectory)
 import System.Process (readProcessWithExitCode, spawnProcess)
-import Data.List (intercalate)
+import Data.List (find, intercalate)
 
 data WindowEntry = WindowEntry
     { windowAddress :: String
@@ -25,6 +25,8 @@ main = do
 
 showWindowActions :: String -> IO ()
 showWindowActions theme = do
+    home <- getHomeDirectory
+    let helper = home ++ "/.config/rofi/scripts/frequent-menu.py"
     let options = [ "🔎 Mostrar todas las ventanas"
                   , "❌ Cerrar Todo (Global)"
                   , "🧹 Cerrar Workspace Actual"
@@ -36,12 +38,11 @@ showWindowActions theme = do
                   ]
         inputStr = intercalate "\n" options
 
-    (exitCode, out, _) <- readProcessWithExitCode "rofi"
-        [ "-dmenu"
-        , "-i"
-        , "-p", "🪟 Ventanas"
-        , "-l", show (length options)
-        , "-theme", theme
+    (exitCode, out, _) <- readProcessWithExitCode helper
+        [ "--menu-id", "hypr-window-actions"
+        , "--prompt", "🪟 Ventanas"
+        , "--theme", theme
+        , "--", "-i", "-l", show (length options)
         ]
         inputStr
 
@@ -63,26 +64,27 @@ showWindowActions theme = do
 
 pickWindow :: String -> IO ()
 pickWindow theme = do
+    home <- getHomeDirectory
+    let helper = home ++ "/.config/rofi/scripts/frequent-menu.py"
     windows <- getWindows
     let labels = if null windows
             then ["No hay ventanas abiertas"]
             else map formatWindowLabel windows
 
-    (exitCode, out, _) <- readProcessWithExitCode "rofi"
-        [ "-dmenu"
-        , "-i"
-        , "-p", "Todas las ventanas"
-        , "-format", "i"
-        , "-l", show (min 12 (length labels))
-        , "-theme", theme
+    (exitCode, out, _) <- readProcessWithExitCode helper
+        [ "--menu-id", "hypr-window-list"
+        , "--prompt", "Todas las ventanas"
+        , "--theme", theme
+        , "--", "-i", "-l", show (min 12 (length labels))
         ]
         (intercalate "\n" labels)
 
     if exitCode == ExitSuccess && not (null windows)
-        then case reads (filter (/= '\n') out) of
-            [(idx, "")] | idx >= 0 && idx < length windows ->
-                focusWindow (windowAddress (windows !! idx))
-            _ -> return ()
+        then do
+            let selectedLabel = filter (/= '\n') out
+            case find ((== selectedLabel) . formatWindowLabel) windows of
+                Just entry -> focusWindow (windowAddress entry)
+                Nothing    -> return ()
         else
             return ()
 
@@ -138,9 +140,15 @@ splitOn delimiter input =
 
 moveToWorkspace :: String -> IO ()
 moveToWorkspace theme = do
+    home <- getHomeDirectory
+    let helper = home ++ "/.config/rofi/scripts/frequent-menu.py"
     let wsOptions = intercalate "\n" $ map (\n -> show n ++ " - Workspace " ++ show n) ([1..9] :: [Int])
-    (exitCode, out, _) <- readProcessWithExitCode "rofi"
-        [ "-dmenu", "-i", "-p", "Mover a Workspace", "-theme", theme ]
+    (exitCode, out, _) <- readProcessWithExitCode helper
+        [ "--menu-id", "hypr-window-move-workspace"
+        , "--prompt", "Mover a Workspace"
+        , "--theme", theme
+        , "--", "-i"
+        ]
         wsOptions
     if exitCode == ExitSuccess
         then do

@@ -15,12 +15,13 @@ import Data.List (dropWhileEnd, isPrefixOf, isInfixOf, intercalate)
 trim :: String -> String
 trim = dropWhileEnd isSpace . dropWhile isSpace
 
-rofi :: String -> String -> IO String
-rofi prompt opts = do
+rofi :: String -> String -> String -> IO String
+rofi menuId prompt opts = do
     home <- getHomeDirectory
     let theme = home ++ "/.config/rofi/themes/modern.rasi"
-    (exitCode, out, _) <- catch (readProcessWithExitCode "rofi"
-        ["-dmenu", "-i", "-p", prompt, "-theme", theme, "-markup-rows"] opts)
+        helper = home ++ "/.config/rofi/scripts/frequent-menu.py"
+    (exitCode, out, _) <- catch (readProcessWithExitCode helper
+        ["--menu-id", menuId, "--prompt", prompt, "--theme", theme, "--", "-i", "-markup-rows"] opts)
         (\(_ :: IOException) -> return (ExitFailure 1, "", ""))
     return $ trim out
 
@@ -162,7 +163,7 @@ main = do
     
     if null content
         then do
-            _ <- rofi "Error" "No se pudo leer keybinds.conf"
+            _ <- rofi "hypr-keybind-cheatsheet-error" "Error" "No se pudo leer keybinds.conf"
             exitSuccess
         else do
             let ls = lines content
@@ -171,5 +172,5 @@ main = do
                     Nothing -> []) ls
                 formatted = map formatKeybind binds
             
-            _ <- rofi "⌨️ Keybindings Hyprland" (unlines formatted)
+            _ <- rofi "hypr-keybind-cheatsheet-main" "⌨️ Keybindings Hyprland" (unlines formatted)
             exitSuccess
